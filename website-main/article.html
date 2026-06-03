@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Poppins:ital,wght@0,300;0,400;0,700&display=swap" rel="stylesheet">
+    <title>Article Viewer</title>
+    <style>
+        /* Base styling matching your dark blue racing theme */
+        body {
+            background-color: #f1efe5; /* Matches your site's bright blue background */
+            color: black;
+            font-family: 'Poppins', sans-serif; /* Matches your site's font */
+            margin: 0;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 2500px;
+            margin: 0 auto;
+            alighn-items: center;
+        }
+
+        .back-link {
+            color: #FF007F;
+            text-decoration: none;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size:2rem;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        #article-title {
+            font-size: 3.5rem;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            color: #0078FF
+        }
+
+        #article-subtitle {
+            font-size: 1.5rem;
+            font-style: italic;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+
+        #article-image {
+            width: 70%;
+            max-height: 500px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-bottom: 30px;
+            align-self: center;
+        }
+
+        #article-content { 
+            font-size: 2rem;
+            line-height: 1.8;
+            white-space: pre-line; /* Keeps your paragraph line breaks intact */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Back button pointing to your main page -->
+        <a href="index.html" class="back-link">← Back to Articles</a>
+
+        <!-- Empty elements that JavaScript will fill in automatically -->
+        <h1 id="article-title">Loading...</h1>
+        <p id="article-subtitle"></p>
+        <img id="article-image" src="" alt="">
+        <p id="article-content"></p>
+    </div>
+
+    <script>
+        // 1. Data Store: Add all your actual article content here
+        const articles = {
+            "monte-charles": {
+                title: "Monte Charles",
+                subtitle: "Charles Leclerc Vince il Gran Premio Di Monaco !",
+                image: "assets/images/monaco.jpg", // Fixed to match your actual folder structure in image_95b1c5.jpg
+                content: `There are fewer milestones in a Formula One driver’s career more meaningful and touching than a race win on home soil. This perhaps rings even truer in the case of monégasque Charles Leclerc, who from childhood seldom missed a Monaco Grand Prix, following with a tight heart and sparkly eyes as the red car zoomed past the Monte Carlo circuit, dreaming of one day being in one of the single seaters to make its dance down the Mediterranean streets.
+
+At 19 years-old and now a Formula 2 driver, Charles Leclerc told a white lie to his father two days before the latter’s passing: that he’d made it to Formula One. Unbeknownst to him, this lie would come true a month later when he signed with Sauber for his debut season in the sport.
+
+In the years to follow, the infamous “Monaco curse” that has foiled Leclerc’s chances at his home race saw him facing a DNF three years in a row followed by a DNS, a crash, a pole-turned P4 due to bad strategy calls, and a P6 in 2023. Stepping into the Monaco Grand Prix Weekend, Ferrari —now under the leadership of freshly-appointed team principal Fred Vasseur— knew well enough that a good result would not only break the alleged curse and allow Leclerc to achieve another significant milestone in his career, but would be the sign the scuderia needs to be certain that the team’s restructuring operation is heading in the right direction.
+
+Saturday’s qualifying results planted the seed of hope in the hearts of Ferrari and Tifosi alike, that this third attempt at a Monaco pole-converted-win might finally be the triumphant one. With honour, hope, and a title fight on the line, Leclerc lined his vehicle at the front of the pack ahead of the five red lights; the entire municipality of Monaco held its breath while the lights went out for a solemn moment, save for the rhythmic sounds of the engines roaring crashing against the harbour's waves, in sync with the heartbeat of all whose eyes were glued to the red car.
+
+The first lap did not disappoint in the mayhem department, culminating in a red flag before the final car crossed the finish line due to 3 simultaneous accidents across the field: Checo Perez’ Red Bull coming undone after meeting the wall due to a coming together with Kevin Magnussen at the back of the field, Esteban Ocon attempting to overtake his teammate Pierre Gasly for the final points position —a sudden and unexpected move that ended with the latter rear ending his car—, and Carlos Sainz attempting an overtake on Oscar Piastri for second place, leaving the former with a puncture that had him limping to the pit lane under the red flag.
+
+Despite this pandemonium, race leader Leclerc remained level-headed, leading from the race restart until the chequered flag with ease, nursing his tyres and dictating the pace as needed. The emotions culminated to a climax as he neared the finish line to “bring it home” in every meaning of the phrase. Leclerc explained in a post race interview that in those finals laps, he especially thought of his father and that white lie.
+
+Now, 26 years old, Charles has not only achieved his and his father’s dream by making it to Formula One, but has realised the aspiration of every citizen of the Monaco Municipality who have long dreamed of seeing one of their own crowned on the Monte Carlo streets. And what a moment it was for Leclerc who carried to the top step not only the pride of him and his family, but that of Ferrari, Italy, the Tifosi, and Monaco. 
+
+Dedicating the win to his late father Hervé, and his late godfather Jules Bianchi, tears did little to show how much the victory meant for Charles: the 26 year-old face of Ferrari and Formula 1 but more importantly, the little boy with sparkly eyes who followed the red car with delight not knowing it would come to bear his number and his honour.
+
+A result 1 year, 10 months, and 16 days in the waiting, this win assured the team that the mistakes that defined their past few seasons are a thing of the past, and that their objective to steer the ship Ferrari in its rightful path towards glory is well underway, with Leclerc as the rightful captain.
+
+`
+            },
+            "op1": {
+                title: "OP1",
+                subtitle: "Oscar Piastri Clutches his first win - the first of many !",
+                image: "assets/images/OP1.jpg", // Fixed to match your actual folder structure in image_95b1c5.jpg
+                content: `504 days since he first saw the chequered flag as a Formula One driver, Oscar Piastri comes home to claim that very flag, earning his first Grand Prix win on but his 35th attempt.
+
+After a more than promising 2023 debut season with McLaren that culminated in 2 podium finishes, 2 fastest laps, and a ninth place in the drivers’ championship, Piastri confidently cemented himself as a powerful rookie on par with the seasoned drivers he drove alongside, never shying from on-track battles and always keeping a calm and collected mindset when the need arose. 
+
+At the dawn of the new season, the Aussie returned for a second year with the Woking-based team, determined to prove his status as a rising star in the sport. And prove he did, collecting points at every single race weekend of the season so far, consistently qualifying and finishing close to experienced teammate Lando Norris. With a performance that has been nothing short of consistent and confident, it has become clear that Piastri has no intention to deny himself the opportunity to fight for his own triumphs against his older teammate, and that proved to be the case today at the Hungarian Grand Prix. Sharing the front row with the other McLaren of Lando Norris, Piastri got the better launch at the race start, enduring a three-car tussle involving the former and Verstappen and coming out unscathed with the race lead and Norris following closely behind. 
+
+As was the case in Silverstone, McLaren would prioritise Norris in terms of team strategy, calling him first to the pits with the intention of protecting from third place holder Hamilton who was steadily closing in —a decision that resulted in Norris successfully performing an undercut on his teammate and grasping the race lead by lap 50. What ensued was an intra-team negotiation over Norris giving the position back to Piastri after both McLarens were safely away from any external threat, at which point Norris stated that he believes Piastri should fight to overtake him for the position —whether he said this aware that the team strategy had jeopardised Piastri’s lead or not is left to be speculated. 
+
+With two laps left until the end of the race, Norris decided to put the team’s success before his own and conceded the race lead to Piastri, staying in close vicinity until the end of the race where the latter emerged first to greet the chequered flag, claiming his first Grand Prix race win, and leading McLaren’s first 1-2 finish since Monza 2021.
+
+Skilled beyond his years and only in the second of his F1 career, Oscar Piastri continues to amaze with a performance that could hardly be attributed to a rookie of his experience. With the highly competitive single-seater that the team have provided him with this season under him and the fierce competition of his teammate nothing but a motivator for the steel-willed Aussie, this is sure to be but the first of many wins to crown the young man’s outstanding racecraft and champion mentality. 
+`
+        },
+            "LLO-sainz": {
+                title: "Paddock Star, Williams Bound",
+                subtitle: "Sainz finalizes his choice of team after being the season's diamond",
+                font: "'Playfair Display', serif",
+                image: "assets/images/sainz.jpg", // Fixed to match your actual folder structure in image_95b1c5.jpg
+                content: `<i>Dearest Gentle reader</i>,
+
+Have you missed me ? I dearly hope you were not under the impression that far too much time would pass without hearing from your favourite gossip monger. In the weeks we have been apart, I have not rested, to be sure. For you see —like all of you, my dearest members of the paddock— I have been keeping a set of close eyes and perked ears on the comings and goings amongst our paddock, and I come forth today bearing nothing short of exciting news and scrumptious rumours regarding an announcement made by a certain driver who has been spared the attention of none since the start of this season: Mister Carlos Sainz. 
+
+It has come to this author's attention —as I am certain it has to your collective consciousness— that Mister Sainz has at last extracted the veil of mystery from his future whereabouts on the grid, and his destination has avered as none other than the Williams team. As this is undoubtedly a most curious of announcements, let us take a path on the journey that has led us to this fateful day, and unearth what factors might have influenced this driver's decision —and, perhaps, whether they lied within his control or not.
+
+There is not a conscience amongst us that does not bear a recollection of the fateful day where we came to know of Sainz' departure from Scuderia Ferrari: a team that had housed him for the past three years but had ultimately set their sights on Sir Lewis Hamilton to accompany their star driver Charles Leclerc on the race track for the 2025 season and onwards. The reactions to this on dit ranged from glee and excitement for the new pairing to what can only be described as a dizzying mix of pity and intrigue for the Spaniard who had been the first witness —or, for lack of better word, victim— of how the deck would be shuffled on this here silly season.
+
+<b>A comet on the radar</b>
+
+With no clear destination on his ticket, the start of the season signalled takeoff for Sainz, who only bore one goal in mind: to prove himself a worthy asset to any top team who would have the fortune of signing him. To be sure, this author's curious eyes followed his trajectory, and my thirst for knowledge has uncovered no lack of context for the events to unfold in the time from then until now.
+
+As it stood, the beginning of Carlos’ season was nothing short of smooth sailing with 3 consecutive podium finishes, save for one weekend where an urgent appendix removal procedure saw him ceding his single seater to rising star Ollie Bearman. In what can only be described as an impressive return to the tracks, Sainz would stand on the top step at the Australian Grand Prix 14 days after his operation, a fact that only added to the praise attributed to his performance down under. To be sure, for the first month of the season, he seldom found himself deprived of praises that compared his talent —or at times, deemed it superior— to the likes of Schumacher, Senna, Rosberg, and Button. Even further, questions began to be raised on the origin and nature of Ferrari's decision: had they —as so commonly iterated— "fired the wrong driver", and had their announcement really been equipped with as much foresight as had been initially believed ?
+
+<b>Icarus too burns</b>
+
+It can often be the case that a rise to the stars, if not undertaken with the utmost care, should end too close to the sun. And for Sainz who had once been declared a season’s diamond of sorts, the race weekends continued to unfold before our very eyes and with them, so did the turbulence. An incident at the Chinese sprint race saw him running his teammate off the track in an attempt to overtake, one that put the condition of both drivers' single-seaters and races at risk. The commentary box took swift notice of the unsafe manoeuvre, quickly followed by the agreement that no action would surely be pursued, as that would do nothing but add insult to injury for the team.
+
+This would sadly —and rather unsurprisingly, one would argue— not be the last time controversy would befall the team. For it was at the Spanish Grand Prix that Sainz committed to a third lap overtake that granted the position on his end, but not without damage to Leclerc's front wing that ultimately cost him a podium finish. Displeased with the former’s actions, Leclerc explained that both drivers were instructed to manage their tyres at the crucial first stint, adding: “I guess he wanted to impress at his home race, [...] do something spectacular, considering the moment in his career”. On the other end of the media pen was Sainz, asserting that he had no fault in the incident: “For me it was clear, we had a new soft and we had to attack. I don't know what happened to him in the first lap, but I couldn't stay behind him all my life [...] I don't know what he's complaining about this time.” 
+
+Be it slander or sportsmanship, there is but one certainty to come of this kerfuffle —Leclerc’s characteristic daring and adaptive style presents itself as nothing if not in stark contrast to Sainz’ aggressive and strategic one. Whether or not this fact influenced the team’s decision when it came to curating their driver lineup is not this author's story to tell. What I can be certain about, however, is that some urgent talks were surely had chez Ferrari to avoid similar incidents for the rest of the season, especially with Leclerc presenting the team's most powerful and likely contender for a championship battle —even with the team's resistance to enforcing a number one driver policy as shown in the orders that ushered Sainz to victory at the Australian feature.
+
+Putting aside any controversy that may suggest an imminent power struggle at the home of the prancing horse, Mister Sainz would ultimately fail to rise to the standard set by his starting performance, despite being —for the most part— graciously spared of the infamous issues that notoriously never fail to foil his teammate's races. For it is no secret that it is often Leclerc —whose "bad luck" has branded itself as a wicked calling card of sorts— who most often mysteriously finds himself at the receiving end of a flawed strategy call or mechanical issue, for one reason or the other. To the untrained eye, it may almost seem as if Sainz finds no issue with the team's results and that he is satisfied with fourth or fifth place finishes that "save the day" for the developing team, a tune earths apart from Leclerc's who seldom echoes satisfaction with anything but first place.
+
+<b> Stick The landing </b>
+
+With the months passing, so did the Sainz craze that flew through the paddock. Rumours of Red Bull and Mercedes contracts were still in the air, but as the soft spring breeze settled for summer heat, these on dits were replaced by a different conjecture, that Sainz had begun modestly setting his sights on the likes of Alpine, Williams, and Sauber. 
+
+It cannot be overlooked that the care with which Sainz took to making his decision did not come without dire consequences to his fellow drivers. As he mulled over his choices and weighed his options en attente of an offer to satisfy his demands as a young driver in the prime of his career, others were hung out to dry as their teams put a halt on contract negotiations to present their own enticing offers for Sainz' choosing. Surely enough, a handful of drivers such as Valtteri Bottas and Zhou Gyuanyu have voiced their concerns, placing into question the reasons behind Sainz' soaring popularity across the driver market and their subsequent struggles. What was their diagnosis, you may ask ? You will be pleased to know they spared no amount of ambiguity, chalking it down to —besides Sainz’ impressive career and points tally that have certainly made him a most coveted driver, to be sure— a host of unnamed factors beyond performance and racecraft; I will leave it to you, my dearest readers, to label these reasons following your inclinations.
+
+Where we stand now, it appears Sainz has made his choice and placed his trust in the Williams team for the years to come. With this announcement came its own collective of theories: a salary with more zeros than years Sainz has spent in the sport altogether; blueprint for a powerful car that will see Williams flying through the field with the Spaniard as their captain, an exit clause that can see him jumping ship to Mercedes or Red Bull if he is offered —although this author must say I find this theory to be quite distasteful, and can only hope that such an undignifying conjecture was not entertained.
+
+When all is said and done, we must now do nothing but wish the best for Mister Sainz as he embarks on his new journey. It also would not hurt a soul if we were to weigh the opportunities this announcement has created —or in some cases, terminated— across the grid: who do you reckon, my dearest of readers, will be the next tale to set our paddock abuzz ? If anyone should bravely uncover the parameters of such exciting news, it is none other than I. 
+
+<i>Yours truly,
+Lady LightsOut.</i>
+`
+            }
+        };
+
+        // 2. Read the URL parameters (e.g., looks for "?id=monte-charles")
+        const urlParams = new URLSearchParams(window.location.search);
+        const articleId = urlParams.get('id');
+
+        // 3. Find the article and put it into the HTML
+        if (articleId && articles[articleId]) {
+            const currentArticle = articles[articleId];
+            
+            document.getElementById('article-title').innerText = currentArticle.title;
+            document.getElementById('article-subtitle').innerText = currentArticle.subtitle;
+            document.getElementById('article-image').src = currentArticle.image;
+            document.getElementById('article-image').alt = currentArticle.title;
+            document.getElementById('article-content').innerText = currentArticle.content;
+            
+            document.title = currentArticle.title + " | Lights Out"; 
+        } else {
+            document.getElementById('article-title').innerText = "Article Not Found";
+            document.getElementById('article-content').innerText = "Sorry, we couldn't find the article you were looking for.";
+        }
+
+        // 3. Find the article and put it into the HTML
+if (articleId && articles[articleId]) {
+    const currentArticle = articles[articleId];
+    
+    document.getElementById('article-title').innerText = currentArticle.title;
+    document.getElementById('article-subtitle').innerText = currentArticle.subtitle;
+    document.getElementById('article-image').src = currentArticle.image;
+    document.getElementById('article-image').alt = currentArticle.title;
+document.getElementById('article-content').innerHTML = currentArticle.content;    
+    // Switch to Playfair Display if the article has it; otherwise, default to Poppins
+    if (currentArticle.font) {
+        document.getElementById('article-title').style.fontFamily = currentArticle.font;
+        document.getElementById('article-subtitle').style.fontFamily = currentArticle.font;
+        document.getElementById('article-content').style.fontFamily = currentArticle.font;
+    } else {
+        const defaultFont = "'Poppins', sans-serif";
+        document.getElementById('article-title').style.fontFamily = defaultFont;
+        document.getElementById('article-subtitle').style.fontFamily = defaultFont;
+        document.getElementById('article-content').style.fontFamily = defaultFont;
+    }
+
+    document.title = currentArticle.title + " | Lights Out"; 
+}
+    </script>
