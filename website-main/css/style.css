@@ -1,0 +1,788 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background-color: #0078ff;
+    font-family: 'Outfit', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+main {
+    width: 100%;
+}
+
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+    padding: 2.5rem 3.5rem;
+    z-index: 10;
+    pointer-events: none;
+}
+
+.navbar nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.5rem;
+    pointer-events: auto;
+}
+
+.navbar nav a {
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 2rem;
+    font-weight: 400;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.navbar nav a:hover,
+.navbar nav a.active {
+    opacity: 0.6;
+}
+
+.navbar nav a:hover {
+    transform: translateY(-2px);
+}
+
+.menu-toggle {
+    display: none;
+}
+
+.nav-toggle {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.page-section {
+    width: 100%;
+    min-height: 100vh;
+    scroll-margin-top: 9rem;
+}
+
+.home-section,
+.about-section,
+.articles-banner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 8rem 2rem 3rem;
+}
+
+.hero-image {
+    width: auto;
+    height: auto;
+    max-width: 92vw;
+    max-height: 82vh;
+    object-fit: contain;
+}
+
+.articles-section {
+    padding: 8rem 0 clamp(10rem, 14vw, 16rem);
+}
+
+.magazines-section {
+    padding: clamp(7rem, 10vw, 12rem) 0 clamp(10rem, 14vw, 16rem);
+}
+
+.podcast-section {
+    padding: clamp(7rem, 10vw, 12rem) 0 clamp(8rem, 10vw, 12rem);
+}
+
+.articles-banner {
+    min-height: 80vh;
+    padding-top: 0;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    column-gap: clamp(90px, 9vw, 150px);
+    row-gap: 150px;
+    width: 88%;
+    max-width: 1600px;
+    margin: 90px auto 0;
+}
+
+.grid-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 22px;
+}
+
+.item-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: clamp(1.8rem, 2vw, 2.5rem);
+    font-weight: 600;
+    line-height: 1.18;
+    color: #ffffff;
+}
+
+.item-description {
+    max-width: 420px;
+    font-family: 'Poppins', sans-serif;
+    font-size: clamp(1.25rem, 1.35vw, 1.5rem);
+    font-weight: 300;
+    line-height: 1.45;
+    color: #111111;
+}
+
+.image-wrapper {
+    width: 100%;
+    max-width: 400px;
+    overflow: hidden;
+}
+
+.image-wrapper img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+    transition: transform 0.45s ease;
+}
+
+.grid-item:hover .image-wrapper img {
+    transform: scale(1.035);
+}
+
+.see-more-btn {
+    display: inline-block;
+    background-color: #111111;
+    color: #ffffff;
+    text-decoration: none;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 500;
+    padding: 0.9rem 2rem;
+    margin-top: 8px;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.see-more-btn:hover {
+    background-color: #ff007f;
+    opacity: 1;
+    transform: translateY(-2px);
+}
+
+.see-more-btn:active {
+    transform: translateY(0);
+}
+
+.contact-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 8rem 0 5rem;
+}
+
+.contact-container {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(280px, 1fr);
+    gap: 5vw;
+    width: 90vw;
+    max-width: 1800px;
+    align-items: center;
+}
+
+.contact-form-block {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+}
+
+.contact-banner {
+    width: 100%;
+    height: auto;
+    max-width: 760px;
+    margin-bottom: 1.5rem;
+}
+
+.retro-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.input-group label {
+    color: #ffffff;
+    font-size: 1.15rem;
+    font-weight: 500;
+}
+
+.retro-form textarea {
+    width: 100%;
+    min-height: 260px;
+    background-color: #ffffff;
+    border: 3px solid transparent;
+    padding: clamp(1rem, 3vw, 2.5rem);
+    font-family: 'Outfit', sans-serif;
+    font-size: clamp(1.1rem, 2vw, 1.8rem);
+    color: #111111;
+    resize: vertical;
+    outline: none;
+}
+
+.retro-form input[type="email"] {
+    width: 100%;
+    min-height: 72px;
+    background-color: #ff007f;
+    border: 3px solid transparent;
+    padding: 0 clamp(1rem, 3vw, 2.5rem);
+    font-family: 'Outfit', sans-serif;
+    font-size: clamp(1.1rem, 2vw, 1.8rem);
+    color: #ffffff;
+    outline: none;
+}
+
+.retro-form input::placeholder {
+    color: rgba(255, 255, 255, 0.82);
+}
+
+.retro-form textarea:focus,
+.retro-form input[type="email"]:focus {
+    border-color: #111111;
+}
+
+.retro-form .has-error {
+    border-color: #ffdf00;
+}
+
+.field-error,
+.form-status {
+    min-height: 1.4em;
+    font-size: 1rem;
+    line-height: 1.4;
+}
+
+.field-error,
+.form-status.is-error {
+    color: #ffdf00;
+}
+
+.form-status,
+.form-status.is-success {
+    color: #ffffff;
+}
+
+.submit-btn {
+    align-self: flex-start;
+    background-color: #111111;
+    color: #ffffff;
+    border: none;
+    padding: 1rem 3rem;
+    font-family: 'Outfit', sans-serif;
+    font-size: clamp(1.1rem, 2vw, 1.8rem);
+    font-weight: normal;
+    cursor: pointer;
+    margin-top: 1rem;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.submit-btn:hover {
+    transform: translateY(-2px);
+}
+
+.submit-btn:active {
+    transform: translateY(0);
+}
+
+.submit-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.65;
+    transform: none;
+}
+
+.contact-graphic-block {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.contact-image {
+    width: 100%;
+    height: auto;
+    max-height: 90vh;
+    object-fit: contain;
+}
+
+.reveal-on-scroll {
+    opacity: 0;
+    transform: translateY(46px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+    transition-delay: var(--reveal-delay, 0ms);
+}
+
+.reveal-on-scroll.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.scroll-top-btn {
+    position: fixed;
+    right: 1.5rem;
+    bottom: 1.5rem;
+    width: 3rem;
+    height: 3rem;
+    background-color: #111111;
+    color: #ffffff;
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.4rem;
+    line-height: 1;
+    cursor: pointer;
+    z-index: 20;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(14px);
+    transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s ease;
+}
+
+.scroll-top-btn.is-visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.scroll-top-btn:hover {
+    background-color: #ff007f;
+    transform: translateY(-2px);
+}
+
+.scroll-top-btn:active {
+    transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    .reveal-on-scroll,
+    .image-wrapper img,
+    .see-more-btn,
+    .navbar nav a,
+    .submit-btn,
+    .scroll-top-btn {
+        transition: none;
+    }
+
+    .reveal-on-scroll {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+@media (max-width: 1024px) {
+    .contact-container {
+        grid-template-columns: 1fr;
+        width: 95vw;
+    }
+
+    .retro-form textarea {
+        height: 350px;
+    }
+
+    .contact-image {
+        max-height: 55vh;
+    }
+}
+
+@media (max-width: 768px) {
+    .navbar {
+        justify-content: flex-end;
+        padding: 1rem;
+        pointer-events: auto;
+    }
+
+    .menu-toggle {
+        display: inline-flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 5px;
+        width: 2.75rem;
+        height: 2.75rem;
+        background-color: #111111;
+        border: 2px solid #ffffff;
+        border-radius: 50%;
+        cursor: pointer;
+        pointer-events: auto;
+        z-index: 12;
+    }
+
+    .menu-toggle span {
+        display: block;
+        width: 1.15rem;
+        height: 2px;
+        margin: 0 auto;
+        background-color: #ffffff;
+        transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+
+    .nav-toggle:checked + .menu-toggle span:nth-child(1) {
+        transform: translateY(7px) rotate(45deg);
+    }
+
+    .nav-toggle:checked + .menu-toggle span:nth-child(2) {
+        opacity: 0;
+    }
+
+    .nav-toggle:checked + .menu-toggle span:nth-child(3) {
+        transform: translateY(-7px) rotate(-45deg);
+    }
+
+    .navbar nav {
+        position: absolute;
+        top: 4.5rem;
+        right: 1rem;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 0.65rem;
+        min-width: 11rem;
+        padding: 1rem;
+        background-color: #111111;
+        border: 2px solid #ffffff;
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        transform: translateY(-10px);
+        transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
+    }
+
+    .nav-toggle:checked ~ nav {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+        transform: translateY(0);
+    }
+
+    .navbar nav a {
+        font-size: 1.15rem;
+    }
+
+    .page-section {
+        min-height: auto;
+        scroll-margin-top: 6rem;
+    }
+
+    .home-section,
+    .about-section,
+    .articles-banner {
+        min-height: 68vh;
+        padding: 4.75rem 1rem 1.5rem;
+    }
+
+    .hero-image {
+        max-height: 58vh;
+    }
+
+    .articles-section {
+        padding: 3.5rem 0 5rem;
+    }
+
+    .articles-banner {
+        min-height: 42vh;
+    }
+
+    .grid-container {
+        grid-template-columns: 1fr;
+        gap: 4.5rem;
+        margin-top: 3.5rem;
+        width: min(88vw, 480px);
+    }
+
+    .item-title {
+        font-size: 1.55rem;
+    }
+
+    .item-description {
+        font-size: 1rem;
+    }
+
+    .contact-section {
+        min-height: auto;
+        padding: 6rem 0 3rem;
+    }
+
+    .contact-container {
+        width: min(92vw, 620px);
+        gap: 2rem;
+    }
+
+    .retro-form textarea {
+        min-height: 220px;
+        height: 220px;
+    }
+
+    .retro-form input[type="email"] {
+        min-height: 60px;
+    }
+
+    .submit-btn {
+        width: 100%;
+    }
+
+    .scroll-top-btn {
+        right: 1rem;
+        bottom: 1rem;
+        width: 2.75rem;
+        height: 2.75rem;
+        font-size: 1.2rem;
+    }
+}
+
+/* 2. Container holding the cards */
+.card-container {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(220px, 1fr));
+  justify-content: center;
+  justify-items: center;
+  gap: clamp(2.5rem, 5vw, 5rem);
+  max-width: 1500px;
+  width: min(88vw, 1500px);
+  margin: 0 auto;
+  padding: 0;
+}
+
+/* 3. Individual Card Styling */
+.card {
+  width: 100%;
+  max-width: 420px; /* Prevents them from getting too wide */
+  text-align: center;
+  color: #ffffff; /* White text color */
+}
+
+/* 4. Image Styling */
+.card img {
+  width: 100%;
+  aspect-ratio: 1 / 1; /* Keeps images perfectly square */
+  object-fit: cover; /* Prevents distortion if images are different sizes */
+  border-radius: 4px; /* Subtle rounding on the image corners */
+  margin-bottom: 15px;
+}
+
+.card img {
+  width: 100%;          /* Forces the image to span the full width of the card */
+  height: auto;         /* Maintains original aspect ratio */
+  aspect-ratio: 1 / 1;  /* Crops/forces it into a perfect square layout */
+  object-fit: cover;    /* Ensures the image fills the square cleanly without stretching */
+}
+
+/* 5. Typography */
+.card h2 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin: 10px 0 5px 0;
+}
+
+.card p {
+  font-size: 1.5rem;
+  font-weight: 400;
+  line-height: 1.4;
+  font-style:italic;
+  margin: 0.5rem 0;
+  opacity: 0.9; /* Softens the description text slightly */
+}
+
+/* 6. Responsive Design for Mobile Devices */
+@media (max-width: 768px) {
+  .card-container {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+    width: min(88vw, 440px);
+  }
+}
+
+/* Container for the entire section */
+.media-section {
+  background-color: #007aff; /* Matches your vibrant blue */
+  padding: 60px 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Flex wrapper holding both columns */
+.media-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 80px; /* Generous spacing between YouTube and Spotify */
+  max-width: 1000px;
+  width: 100%;
+}
+
+/* Individual columns (keeps heading stacked perfectly over image) */
+.media-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centers the heading and image horizontally */
+  flex: 1;
+  max-width: 400px; /* Prevents the images from becoming too giant */
+}
+
+/* Headings (Youtube / Spotify) */
+.media-column h2 {
+  color: #ffffff;
+  font-family: 'Georgia', serif; /* Use serif to match the stylized Canva text */
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+  font-weight: 700;
+}
+
+/* Image wrapper and sizing */
+.media-box img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: contain; /* Ensures the graphic shapes don't get cropped */
+}
+
+/* Mobile Responsive Adjustments */
+@media (max-width: 768px) {
+  .media-container {
+    flex-direction: column; /* Stacks YouTube on top of Spotify on small screens */
+    gap: 50px;
+    align-items: center;
+  }
+}
+
+.articles.banner {
+  display: flex;
+  justify-content: center; /* Centers it horizontally */
+  align-items: center;     /* Centers it vertically (if the container has a height) */
+  width: 100%;             /* Ensures the container spans the full screen width */
+}
+
+.articles-banner-image {
+  max-width: 100%;         /* Prevents the image from overflowing the screen */
+  height: auto;            /* Keeps the image aspect ratio perfect */
+  padding: 20px 20px;
+}
+
+.banner-magazines {
+  display: flex;
+  justify-content: center; /* Centers horizontally */
+  align-items: center;     /* Centers vertically */
+  width: 100%;             /* Ensures container takes full width */
+}
+
+.magazines-banner-image {
+  max-width: 100%;         /* Prevents the image from stretching past the screen */
+  height: auto;            /* Maintains aspect ratio */
+}
+
+.podcast-banner {
+  display: flex;
+  justify-content: center; /* Centers horizontally */
+  align-items: center;     /* Centers vertically */
+  width: 100%;             /* Ensures container takes full width */
+  margin-bottom: clamp(4rem, 7vw, 7rem);
+}
+
+.banner-image-podcast {
+  max-width: 100%;         /* Keeps the banner responsive */
+  height: auto;            /* Maintains aspect ratio */
+}
+
+.media-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 100px; /* The gap between Youtube and Spotify columns */
+  max-width: 5000px;
+  margin: 0 auto; /* Centers the whole container block on the screen */
+  width: 100%;
+}
+
+/* Style for each single media block */
+.media-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centers the text above the image */
+  flex: 1;
+  max-width: 800px; /* Adjusts how big the graphics grow */
+}
+
+/* Headings styles (Youtube & Spotify) */
+.media-column h2 {
+  color: #ffffff;
+  font-family: 'Georgia', serif; /* Gives you that Canva editorial style text */
+  font-size: 5rem;
+  margin-bottom: 20px;
+  font-weight: 700;
+}
+
+/* Image settings to keep them clean and crisp */
+.media-box img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: contain; 
+}
+
+.podcast-logo {
+  max-width: min(100%, 520px);
+  margin: 0 auto;
+}
+
+/* Responsive breakpoint for mobile */
+@media (max-width: 768px) {
+  .media-container {
+    flex-direction: column; /* Stacks column elements layout vertically on mobile screens */
+    align-items: center;
+    gap: 2.5rem;
+    width: min(88vw, 460px);
+  }
+
+  .articles-section {
+    padding-bottom: 5rem;
+  }
+
+  .magazines-section {
+    padding-top: 4.5rem;
+    padding-bottom: 5.5rem;
+  }
+
+  .podcast-section {
+    padding-top: 4.5rem;
+  }
+
+  .podcast-banner {
+    margin-bottom: 3rem;
+  }
+
+  .media-column h2 {
+    font-size: 2.25rem;
+    margin-bottom: 0.9rem;
+  }
+
+  .podcast-logo {
+    max-width: min(82vw, 360px);
+  }
+}
