@@ -811,12 +811,4 @@ main {
     border-radius: 8px;    /* Optional: keeps your corners clean */
   }
   
-  /* Optional: Shrink down the text size slightly for mobile proportions */
-  .item-title {
-    font-size: 1.2rem;
-  }
-  
-  .item-description {
-    font-size: 0.9rem;
-  }
 }
