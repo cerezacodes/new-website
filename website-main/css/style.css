@@ -785,30 +785,5 @@ main {
   .podcast-logo {
     max-width: min(82vw, 360px);
   }
-}
-
-/* Media query targeting screens that are 768px wide or smaller (mobiles/tablets) */
-@media screen and (max-width: 768px) {
-  
-  /* Scale down the entire card structure if needed */
-  .card-container {
-    display: flex;
-    flex-direction: column; /* Stacks cards vertically on mobile */
-    align-items: center;    /* Centers them nicely */
-    gap: 20px;              /* Adds spacing between stacked cards */
-  }
-
-  .card {
-    width: 80%;            /* Controls the overall width of the card on mobile */
-    max-width: 280px;      /* Prevents the card from stretching too wide */
-    margin: 0 auto;
-  }
-
-  /* Force the images inside the cards to resize proportionally */
-  .card img {
-    width: 100%;           /* Fills the width of the card container */
-    height: auto;          /* Maintains the aspect ratio so images don't look squished */
-    border-radius: 8px;    /* Optional: keeps your corners clean */
-  }
   
 }
