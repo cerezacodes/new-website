@@ -82,7 +82,7 @@ main {
 }
 
 .hero-image {
-    width: auto;
+    width: 50%;
     height: auto;
     max-width: 92vw;
     max-height: 82vh;
@@ -554,68 +554,87 @@ main {
     }
 }
 
+/* ==========================================================================
+   CLEANED & RE-ALIGNED ARTICLES GRID (MAX 5 PER ROW)
+   ========================================================================== */
+
 /* 2. Container holding the cards */
 .card-container {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(220px, 1fr));
-  justify-content: center;
-  justify-items: center;
-  gap: clamp(2.5rem, 5vw, 5rem);
-  max-width: 1500px;
-  width: min(88vw, 1500px);
-  margin: 0 auto;
+  display: flex;
+  flex-direction: row;        /* Forces items to stay side-by-side */
+  flex-wrap: wrap;            /* Allows them to drop to the next line cleanly if needed */
+  justify-content: center;    /* Centers the rows and individual items horizontally */
+  align-items: flex-start;    /* Keeps tops of cards perfectly level */
+  gap: 30px;                  /* Generous space between cards */
+  width: 90%;                 /* Takes up most of the screen width */
+  max-width: 1400px;          /* Prevents sprawling too wide on ultra-wide monitors */
+  margin: 40px auto 0;        /* Centers the whole grid box on your blue page */
   padding: 0;
+  box-sizing: border-box;
 }
 
 /* 3. Individual Card Styling */
 .card {
-  width: 100%;
-  max-width: 420px; /* Prevents them from getting too wide */
-  text-align: center;
-  color: #ffffff; /* White text color */
+  /* Dictates a base target width of roughly 18% so 5 can mathematically sit together */
+  flex: 0 1 calc(20% - 30px);   
+  min-width: 220px;             /* Prevents cards from squishing into oblivion */
+  max-width: 250px;             /* Matches the exact tight profile from your target image */
+  display: flex;
+  flex-direction: column;
+  align-items: center;          /* Centers images and headings inside the card boundaries */
+  text-align: center;           /* Forces text strings to align perfectly center */
+  color: #ffffff;
+  box-sizing: border-box;
 }
 
-/* 4. Image Styling */
-.card img {
+/* 4. Anchor tag inside the card */
+.card a {
   width: 100%;
-  aspect-ratio: 1 / 1; /* Keeps images perfectly square */
-  object-fit: cover; /* Prevents distortion if images are different sizes */
-  border-radius: 4px; /* Subtle rounding on the image corners */
+  display: block;
+}
+
+/* 5. Image Sizing */
+.card img {
+  width: 100%;       
+  height: auto;         
+  aspect-ratio: 1 / 1;          /* Enforces perfect squares */
+  object-fit: cover;            /* Crops clean thumbnails automatically */
+  border-radius: 4px; 
   margin-bottom: 15px;
 }
 
-.card img {
-  width: 100%;          /* Forces the image to span the full width of the card */
-  height: auto;         /* Maintains original aspect ratio */
-  aspect-ratio: 1 / 1;  /* Crops/forces it into a perfect square layout */
-  object-fit: cover;    /* Ensures the image fills the square cleanly without stretching */
+/* 6. Strict Typography Overrides for Cards */
+.card h2.item-title {
+  font-family: 'Poppins', sans-serif !important;
+  font-size: 1.25rem !important;  /* Overrides massive font sizes from your upper CSS */
+  font-weight: 600 !important;
+  line-height: 1.2 !important;
+  margin: 12px 0 6px 0 !important;
 }
 
-/* 5. Typography */
-.card h2 {
-  font-size: 1.8rem;
-  font-weight: 700;
-  margin: 10px 0 5px 0;
+.card p.item-description {
+  font-family: 'Poppins', sans-serif !important;
+  font-size: 0.95rem !important; /* Smaller, neat descriptions to fit the tight card look */
+  font-weight: 400 !important;
+  line-height: 1.4 !important;
+  font-style: normal !important; /* Reverts any old italics */
+  margin: 0 !important;
+  opacity: 0.85 !important;
 }
 
-.card p {
-  font-size: 1.5rem;
-  font-weight: 400;
-  line-height: 1.4;
-  font-style:italic;
-  margin: 0.5rem 0;
-  opacity: 0.9; /* Softens the description text slightly */
-}
-
-/* 6. Responsive Design for Mobile Devices */
+/* 7. Mobile View Adjustments */
 @media (max-width: 768px) {
   .card-container {
-    grid-template-columns: 1fr;
+    flex-direction: column;    /* Neat, uniform single column stack on phones */
+    align-items: center;
     gap: 3rem;
-    width: min(88vw, 440px);
+  }
+
+  .card {
+    max-width: 100%;
+    flex: 1 1 100%;
   }
 }
-
 /* Container for the entire section */
 .media-section {
   background-color: #007aff; /* Matches your vibrant blue */
