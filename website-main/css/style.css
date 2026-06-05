@@ -627,11 +627,10 @@ main {
   .card-container {
     flex-direction: column;    /* Neat, uniform single column stack on phones */
     align-items: center;
-    gap: 3rem;
   }
 
   .card {
-    max-width: 100%;
+    max-width: 80%;
     flex: 1 1 100%;
   }
 }
@@ -805,4 +804,33 @@ main {
     max-width: min(82vw, 360px);
   }
   
+}
+
+@media (max-width: 768px) {
+    /* 1. Remove padding from the banner containers so images can touch the screen edges */
+    .home-section,
+    .about-section,
+    .articles-banner,
+    .banner-magazines,
+    .podcast-banner {
+        padding-left: 0 ;
+        padding-right: 0 ;
+        width: 100% ;
+    }
+
+    /* 2. Force the images to take up 100% of the viewport width */
+    .hero-image,
+    .articles-banner-image,
+    .banner-image-podcast {
+        width: 100% ;
+        max-width: 100% ; /* Overrides the min/max restrictions */
+        height: auto ;
+        padding: 0 ;      /* Removes any custom image padding */
+    }
+.image-wrapper {
+        width: 70% ;
+        max-width: 100% ;
+        height: auto ;
+        padding: 0 ;
+    }
 }
