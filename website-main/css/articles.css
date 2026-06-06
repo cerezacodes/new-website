@@ -165,3 +165,81 @@ body {
     grid-template-columns: 1fr; /* Switch to a 1-column list on smaller viewports */
   }
 }
+/* --- MOBILE RESPONSIVE FIXES (Screens 768px and smaller) --- */
+@media (max-width: 768px) {
+  
+  /* 1. Fix the Top Navbar */
+  .navbar {
+    position: relative; /* Unfixes it so it stays at the top and doesn't overlap content */
+    padding: 1.5rem 1rem !important;
+    justify-content: center; /* Centers your links on mobile screens */
+  }
+
+  .navbar nav {
+    gap: 1rem;
+    justify-content: center;
+  }
+
+  .navbar nav a {
+    font-size: 0.9rem; /* Slightly smaller text so links fit on one line */
+  }
+
+  /* 2. Fix the Filter Buttons Container */
+  .filter-nav {
+    margin-top: 1rem !important; /* Removes the huge desktop gap */
+    display: flex;
+    gap: 0.5rem;
+    padding: 0 1rem;
+    overflow-x: auto; /* Adds a clean swipe-able horizontal scroll bar if buttons overflow */
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch; /* Butter-smooth scrolling on iOS devices */
+  }
+
+  /* Hide scrollbars for the filter bar to keep it looking clean */
+  .filter-nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .filter-btn {
+    font-size: 0.8rem;
+    padding: 0.4rem 1rem;
+    margin:0;
+    flex-shrink: 0; /* Prevents the text inside the pink pills from getting squished */
+  }
+
+  /* 3. Drop the Article Cards to a Single-Column Stack */
+  .news-grid-container {
+    grid-template-columns: 1fr !important; /* Force a single column instead of two */
+    padding: 1rem;
+    gap: 1.5rem;
+  }
+
+  /* 4. Transform Card from Row to Column (Image Top, Text Bottom) */
+  .news-card {
+    flex-direction: column !important; 
+    height: auto !important; /* Let the height adapt naturally to text length */
+    max-height: none;
+  }
+
+  /* Image takes full width at the top of the card */
+  .card-image-box {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 100% !important;
+    height: 200px; /* Lock standard image height on mobile */
+  }
+
+  /* Text takes full width at the bottom of the card */
+  .card-text-box {
+    width: 100% !important;
+    padding: 1.2rem !important;
+    gap: 1rem;
+  }
+  
+  .card-title {
+    font-size: 1.1rem;
+    -webkit-line-clamp: none; /* Let the whole title read without clipping on mobile */
+  }
+   .card-description {
+    font-size: 0.8rem;
+}
