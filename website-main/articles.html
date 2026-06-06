@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="css/articles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Poppins:ital,wght@0,300;0,400;0,700&display=swap" rel="stylesheet">
+
+
+  <header class="navbar">
+        <input class="nav-toggle" type="checkbox" id="nav-toggle" aria-label="Toggle navigation menu">
+        <label class="menu-toggle" for="nav-toggle" aria-label="Open navigation menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </label>
+        <nav id="site-nav">
+            <a href="index.html#home">home</a>
+            <a href="index.html#about">about</a>
+            <a href="articles.html">articles</a>
+            <a href = "index.html#magazines"> magazines</a>
+            <a href = "index.html#podcast">podcast</a>
+            <a href="index.html#contact">contact</a>
+        </nav>
+    </header>
+</head>
+
+<body>
+  
+<!-- Category Filter Navigation Bar -->
+<nav class="filter-nav">
+  <button class="filter-btn active" data-filter="all">All</button>
+  <button class="filter-btn" data-filter="monaco">Monaco</button>
+  <button class="filter-btn" data-filter="LLO">Lady Lights Out</button>
+  <button class="filter-btn" data-filter="technical">Let's Torque Wheel</button>
+  <button class="filter-btn" data-filter="history">Let's Torque History</button>
+</nav>
+<main class="news-grid-container">
+
+<article class="news-card" data-category="monaco">
+    <div class="card-image-box">
+      <img src="assets/images/lewis-fashion.jpg" alt="Lewis Hamilton Fashion">
+    </div>
+    <div class="card-text-box">
+      <h3 class="card-title">Paddock Fashion: Monaco GP</h3>
+      <p class="card-description">We take a look at the best looks to grace the Monte Carlo Paddock</p>
+      <span class="card-time" data-timestamp="2026-06-06T20:52:00Z">Calculating time...</span>    
+    </div>
+  </article>
+
+  <article class="news-card" data-category="monaco">
+    <div class="card-image-box">
+      <img src="assets/images/monaco-fppp.jpg" alt="Monaco Free Practice">
+    </div>
+    <div class="card-text-box">
+      <h3 class="card-title">Chasing the Apex </h3>
+            <p class="card-description">Everything you missed from the chaotic practice sessions in Monaco</p>
+      <span class="card-time" data-timestamp="2026-06-06T20:52:00Z">Calculating time...</span>
+    </div>
+  </article>
+
+  
+
+  <!-- Card 2: Standard Article -->
+  <article class="news-card" data-category="monaco">
+    <div class="card-image-box">
+      <a href="article.html?id=OB87">
+      <img src="assets/images/oliver-bearman.jpg" alt="Ollie Bearman">
+      </a>
+    </div>
+    <div class="card-text-box">
+      <h3 class="card-title">Lights On Ollie Bearman</h3>
+      <p class="card-description">We shine a light on Jeddah's Super sub, the "bimbo della rossa"</p>
+      <span class="card-time" data-timestamp="2026-06-06T20:52:00Z">Calculating time...</span>
+    </div>
+  </article>
+
+<article class="news-card" data-category="LLO monaco">
+    <div class="card-image-box">
+      <a href="article.html?id=LLO-silver-war">
+        <img src="assets/images/kimi-george.jpg" alt="Lady LightsOut">
+      </a>
+    </div>
+    <div class="card-text-box">
+<h3 class="card-title">The Silver War Anew</h3>
+      <p class="card-description">Lady LightsOut Returns to report on the befuddling rivalry between the two Mercedes drivers</p>
+      <span class="card-time" data-timestamp="2026-06-06T20:52:00Z">Calculating time...</span>    
+</div>
+  </article>
+
+   <script>
+    document.addEventListener('DOMContentLoaded', () => {
+  const filterButtons = document.querySelectorAll('.filter-btn');
+  const articles = document.querySelectorAll('.news-card');
+
+  filterButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      // 1. Remove the 'active' class from all buttons and add it to the clicked one
+      filterButtons.forEach(btn => btn.classList.remove('active'));
+      button.classList.add('active');
+
+      // 2. Get the filter value from the clicked button
+      const filterValue = button.getAttribute('data-filter');
+
+      // 3. Loop through articles to show or hide them
+      articles.forEach(article => {
+        // Get categories assigned to the article and split them into an array
+        const articleCategories = article.getAttribute('data-category').split(' ');
+
+        if (filterValue === 'all' || articleCategories.includes(filterValue)) {
+          // Show the article smoothly
+          article.style.display = 'flex'; 
+          // Optional: Add a tiny fade-in effect class if you want animations later
+        } else {
+          // Hide the article entirely
+          article.style.display = 'none';
+        }
+      });
+    });
+  });
+});
+
+function updateTimeAgo() {
+  const timeLabels = document.querySelectorAll('.card-time');
+  
+  // Captures the exact live date and time right now (June 2026)
+  const now = new Date();
+
+  timeLabels.forEach(label => {
+    const timestampStr = label.getAttribute('data-timestamp');
+    if (!timestampStr) return;
+
+    const postDate = new Date(timestampStr);
+    
+    // Calculates the difference in milliseconds and converts to total seconds
+    const secondsAgo = Math.floor((now - postDate) / 1000);
+
+    // Guard rail: If the machine's clock is slightly out of sync or it's a brand new post
+    if (secondsAgo < 0) {
+      label.textContent = "Just now";
+      return;
+    }
+
+    // Time conversion intervals mapped out in seconds
+    const intervals = {
+      year: 31536000,
+      month: 2592000,
+      week: 604800,
+      day: 86400,
+      hour: 3600,
+      minute: 60
+    };
+
+    let timeString = "Just now";
+
+    // Loop through the breakdown to catch the largest dynamic time frame
+    for (const [unit, value] of Object.entries(intervals)) {
+      const count = Math.floor(secondsAgo / value);
+      if (count >= 1) {
+        // Handles automatic pluralization (e.g., "1 hour ago" vs "3 hours ago")
+        timeString = `${count} ${unit}${count > 1 ? 's' : ''} ago`;
+        break;
+      }
+    }
+
+    // Fallback block for anything under 60 seconds
+    if (timeString === "Just now" && secondsAgo >= 1) {
+      timeString = `${secondsAgo} second${secondsAgo > 1 ? 's' : ''} ago`;
+    }
+
+    // Swaps out your placeholder text dynamically with the finalized calculation
+    label.textContent = timeString;
+  });
+}
+
+// Fire the script immediately as soon as the DOM finishes building
+document.addEventListener('DOMContentLoaded', updateTimeAgo);
+
+// Re-run the calculations every 60 seconds so active users see the numbers tick up live
+setInterval(updateTimeAgo, 60000);
+
+  </script>
+
+</main>
+</body>
+</html>

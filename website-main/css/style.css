@@ -26,7 +26,10 @@ main {
     display: flex;
     justify-content: flex-end;
     width: 100%;
-    padding: 2.5rem 3.5rem;
+    /* 1. Crucial: Include padding in the 100% width calculation */
+    box-sizing: border-box; 
+    /* 2. Scaled down padding slightly so it doesn't overlap the filter filters */
+    padding: 1.5rem 2.5rem; 
     z-index: 10;
     pointer-events: none;
 }
@@ -34,19 +37,23 @@ main {
 .navbar nav {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
+    justify-content: right;
     gap: 1.5rem;
     pointer-events: auto;
 }
 
 .navbar nav a {
-    color: #ffffff;
+    /* 3. Change color to a dark tone so it's visible on the light grey background */
+    color: #ffffff; 
     text-decoration: none;
     font-size: 1rem;
-    font-weight: 400;
+    /* 4. Switched to 600 for a cleaner, premium bold appearance */
+    font-weight: 600; 
+    font-family: 'Poppins', sans-serif;
     transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
+/* Subtle interactive states */
 .navbar nav a:hover,
 .navbar nav a.active {
     opacity: 0.6;

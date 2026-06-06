@@ -1,0 +1,167 @@
+/* 1. Global Page Background (Essential to make white cards stand out) */
+body {
+  background-color: #f3f4f6 !important; /* Forces the light grey page background */
+  font-family: 'Poppins', sans-serif;
+  padding: 2rem;
+  margin-top: 20px;
+  margin: 0;
+}
+
+/* 2. Main Container Constraints */
+.news-grid-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); 
+  gap: 1.5rem;
+  padding: 10rem 1rem; /* Adds horizontal padding to prevent cards from touching the edges of the viewport */
+  margin: 30px 30px 30px 30px;    /* Centers the entire grid on your page */
+}
+
+/* 3. The Refined Card Layout */
+.news-card {
+  background-color: #ffffff !important; /* Crisp white background */
+  border-radius: 16px; /* Smooth rounded corners */
+  overflow: hidden;
+  display: flex;
+  width: 95%;
+  align-self: center; /* Centers the card within its grid cell */
+  height: 250px; /* Hard lock on the card height */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* Soft premium shadow drop */
+  border: 1px solid rgba(0, 0, 0, 0.03); /* Tiny boundary line */
+}
+
+/* 4. Force the Image Box to Stay 40% Wide Even If The Image Is Broken! */
+.card-image-box {
+  width: 30%;
+  min-width: 30%; /* Stops the container from collapsing when image fails to load */
+  max-width: 30%;
+  height: 100%;
+  background-color: #e5e7eb; /* Soft grey placeholder color so it looks like a box when broken */
+  position: relative;
+}
+
+/* Make sure the image behaves perfectly when it does load */
+.card-image-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* 5. The Content Block Box Layout */
+.card-text-box {
+  width: 60%;
+  padding: 1.5rem; /* Generous inside margins */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* Securely pins title to top and timestamp to bottom */
+  box-sizing: border-box; /* Includes padding in width calculations */
+}
+
+/* 6. Typography Adjustments */
+.card-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1.4;
+  color: #111111;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3; /* Clips the title neatly at 3 lines maximum */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.card-time {
+  font-size: 0.8rem;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.filter-btn
+{
+  padding: 0.5rem 1.5rem;
+  margin: 0 0.5rem;
+  background-color: #ff007f;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 1.5rem;
+}
+
+.filter-btn-active
+{
+  padding: 0.5rem 1.5rem;
+  margin: 0 0.5rem;
+  background-color: #0078ff;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 1.2rem;
+}
+
+.card-title{
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.4;
+  color: #0078ff;
+  margin: 15px 5px 5px 5px;;
+}
+
+.card-description{
+  font: 'Poppins', sans-serif;
+  font-size: 1.2rem;
+  color: #111111;
+  margin: 0.5rem 0;
+}
+
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 1.5rem 2.5rem;
+    display: flex;
+    justify-content: flex-end;
+    /* Change this from 10 to a much higher value */
+    z-index: 9999 !important; 
+    pointer-events: none;
+}
+
+.navbar nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.5rem;
+    pointer-events: auto;
+}
+
+.filter-nav {
+    margin-top: 6rem; /* Creates breathing room beneath the fixed navbar */
+}
+
+.navbar nav a {
+    color: #0078ff;
+    text-decoration: none;
+    font-size: 1.5rem;
+    font-weight: 400;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.navbar nav a:hover,
+.navbar nav a.active {
+    opacity: 0.6;
+}
+
+.navbar nav a:hover {
+    transform: translateY(-2px);
+}
+
+
+/* --- MOBILE RESPONSIVENESS --- */
+@media (max-width: 900px) {
+  .news-grid-container {
+    grid-template-columns: 1fr; /* Switch to a 1-column list on smaller viewports */
+  }
+}
