@@ -85,14 +85,14 @@ main {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 8rem 2rem 3rem;
+    padding: 0;
 }
 
 .hero-image {
-    width: 50%;
+    width: 100%;
     height: auto;
     max-width: 92vw;
-    max-height: 82vh;
+    max-height: auto;
     object-fit: contain;
 }
 
@@ -412,6 +412,12 @@ main {
         height: 350px;
     }
 
+    .see-more-btn:hover {
+    background-color: #ff007f;
+    opacity: 1;
+    transform: translateY(-2px);
+}
+
     .contact-image {
         max-height: 55vh;
     }
@@ -498,12 +504,14 @@ main {
     .home-section,
     .about-section,
     .articles-banner {
-        min-height: 68vh;
+        min-height: 50vh;
         padding: 4.75rem 1rem 1.5rem;
     }
 
     .hero-image {
-        max-height: 58vh;
+        max-width: 100%;
+        padding:0;
+        margins:0;
     }
 
     .articles-section {
@@ -522,11 +530,13 @@ main {
     }
 
     .item-title {
-        font-size: 1.55rem;
+        font-size: 1.4rem;
     }
 
     .item-description {
         font-size: 1rem;
+        margin-right: 2rem;
+        margin-left: 2rem;
     }
 
     .contact-section {
@@ -680,12 +690,19 @@ main {
   font-weight: 700;
 }
 
-/* Image wrapper and sizing */
+.media-box {
+  display: flex;
+  max-width: 600px;;
+  justify-content: center; /* Centers horizontally */
+  align-items: center;     /* Centers vertically */
+  margin-left: 20px;
+    margin-right: 20px;
+}
+
 .media-box img {
-  width: 100%;
+  max-width: 100%; /* Changed from width: 100% so it doesn't force-stretch */
   height: auto;
-  display: block;
-  object-fit: contain; /* Ensures the graphic shapes don't get cropped */
+  object-fit: contain;
 }
 
 /* Mobile Responsive Adjustments */
@@ -764,11 +781,16 @@ main {
 }
 
 /* Image settings to keep them clean and crisp */
+.media-box {
+  display: flex;
+  justify-content: center; /* Centers horizontally */
+  align-items: center;     /* Centers vertically */
+}
+
 .media-box img {
-  width: 100%;
+  max-width: 100%; /* Changed from width: 100% so it doesn't force-stretch */
   height: auto;
-  display: block;
-  object-fit: contain; 
+  object-fit: contain;
 }
 
 .podcast-logo {
