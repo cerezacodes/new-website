@@ -1,7 +1,7 @@
 /* 1. Global Page Background (Essential to make white cards stand out) */
 body {
   background-color: #f3f4f6 !important; /* Forces the light grey page background */
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Poppins', sans-serif, 'Playfair Display', serif; /* Global font stack */
   padding: 2rem;
   margin-top: 20px;
   margin: 0;
@@ -58,17 +58,6 @@ body {
 }
 
 /* 6. Typography Adjustments */
-.card-title {
-  font-size: 1.1rem;
-  font-weight: 700;
-  line-height: 1.4;
-  color: #111111;
-  margin: 0;
-  display: -webkit-box;
-  -webkit-line-clamp: 3; /* Clips the title neatly at 3 lines maximum */
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
 
 .card-time {
   font-size: 0.8rem;
@@ -86,26 +75,22 @@ body {
   border-radius: 25px;
   cursor: pointer;
   font-size: 1.5rem;
+  font-family: 'Poppins', sans-serif;
 }
 
-.filter-btn-active
+.filter-btn:hover
 {
-  padding: 0.5rem 1.5rem;
-  margin: 0 0.5rem;
   background-color: #0078ff;
-  color: white;
-  border: none;
-  border-radius: 25px;
-  cursor: pointer;
-  font-size: 1.2rem;
 }
 
 .card-title{
-  font-size: 1.5rem;
+  font-size: 1.8rem;
   font-weight: 700;
   line-height: 1.4;
   color: #0078ff;
-  margin: 15px 5px 5px 5px;;
+  margin: 15px 5px 5px 5px;
+  font-family: 'Poppins', sans-serif;
+  font-style: bold;
 }
 
 .card-description{
@@ -208,11 +193,14 @@ body {
   }
 
   /* 3. Drop the Article Cards to a Single-Column Stack */
-  .news-grid-container {
-    grid-template-columns: 1fr !important; /* Force a single column instead of two */
-    padding: 1rem;
-    gap: 1.5rem;
-  }
+.news-grid-container {
+  grid-template-columns: 1fr !important; /* Force a single column instead of two */
+  padding: 1rem; /* Controls the spacing on the edges of the screen */
+  gap: 1.5rem;
+  width: 100% !important;     /* Force it to span the full viewport width */
+  max-width: 100% !important; /* Override any desktop max-width (like 1200px) */
+  box-sizing: border-box;
+}
 
   /* 4. Transform Card from Row to Column (Image Top, Text Bottom) */
   .news-card {
@@ -232,8 +220,7 @@ body {
   /* Text takes full width at the bottom of the card */
   .card-text-box {
     width: 100% !important;
-    padding: 1.2rem !important;
-    gap: 1rem;
+    padding: 1rem !important;
   }
   
   .card-title {
