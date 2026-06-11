@@ -200,14 +200,20 @@ body {
   width: 100% !important;     /* Force it to span the full viewport width */
   max-width: 100% !important; /* Override any desktop max-width (like 1200px) */
   box-sizing: border-box;
+margin: 0 auto !important; 
+  justify-content: center !important;
+
 }
 
-  /* 4. Transform Card from Row to Column (Image Top, Text Bottom) */
-  .news-card {
-    flex-direction: column !important; 
-    height: auto !important; /* Let the height adapt naturally to text length */
-    max-height: none;
-  }
+ /* 4. Transform Card from Row to Column */
+.news-card {
+  flex-direction: column !important; 
+  height: auto !important; 
+  max-height: none;
+  width: 100% !important;     /* Forces the card to fill the grid column */
+  max-width: 100% !important; /* Overrides any desktop width constraints */
+  box-sizing: border-box;
+}
 
   /* Image takes full width at the top of the card */
   .card-image-box {
