@@ -120,6 +120,7 @@ body {
     justify-content: center;
     gap: 1.5rem;
     pointer-events: auto;
+    font-weight: 700;
 }
 
 .filter-nav {
@@ -131,7 +132,11 @@ body {
     text-decoration: none;
     font-size: 1.5rem;
     font-weight: 400;
-    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.navbar nav, .navbar ul {
+    list-style: none !important;
+    list-style-type: none !important;
 }
 
 .navbar nav a:hover,
@@ -155,18 +160,26 @@ body {
   
   /* 1. Fix the Top Navbar */
   .navbar {
-    position: relative; /* Unfixes it so it stays at the top and doesn't overlap content */
-    padding: 1.5rem 1rem !important;
-    justify-content: center; /* Centers your links on mobile screens */
+    position: relative; 
+    padding: 1rem 1rem !important; /* Slightly reduced top/bottom padding */
+    justify-content: center; 
   }
 
   .navbar nav {
-    gap: 1rem;
+    display: flex;
+    flex-wrap: wrap;
     justify-content: center;
+    
+    /* Using column-gap and row-gap separately gives you perfect control.
+       column-gap keeps horizontal spacing; row-gap brings the two lines closer.
+    */
+    column-gap: 1rem;   /* Spacing between links on the same line */
+    row-gap: 0.3rem;    /* Pulls the top line and bottom line closer together */
   }
 
   .navbar nav a {
-    font-size: 0.9rem; /* Slightly smaller text so links fit on one line */
+    font-size: 0.9rem; 
+    font-weight: 700 !important; /* Forces the text to be crisp and bold */
   }
 
   /* 2. Fix the Filter Buttons Container */
@@ -200,7 +213,7 @@ body {
   width: 100% !important;     /* Force it to span the full viewport width */
   max-width: 100% !important; /* Override any desktop max-width (like 1200px) */
   box-sizing: border-box;
-margin: 0 auto !important; 
+  margin: 0 auto !important; 
   justify-content: center !important;
 
 }
