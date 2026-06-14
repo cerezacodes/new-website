@@ -74,7 +74,7 @@ body {
   border: none;
   border-radius: 25px;
   cursor: pointer;
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   font-family: 'Poppins', sans-serif;
 }
 
@@ -84,7 +84,7 @@ body {
 }
 
 .card-title{
-  font-size: 1.8rem;
+  font-size: 1.3rem;
   font-weight: 700;
   line-height: 1.4;
   color: #0078ff;
@@ -95,7 +95,7 @@ body {
 
 .card-description{
   font: 'Poppins', sans-serif;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   color: #111111;
   margin: 0.5rem 0;
 }
