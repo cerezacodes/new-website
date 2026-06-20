@@ -863,3 +863,26 @@ main {
         padding: 0 ;
     }
 }
+/* View All Button Styling */
+.view-all-box {
+  text-align: center;
+  margin-top: 40px;
+}
+
+.btn-view-all {
+  display: inline-block;
+  font-family: 'Poppins', sans-serif;
+  text-transform: uppercase;
+  font-size: 1.5rem;
+  letter-spacing: 1px;
+  padding: 12px 30px;
+  border: 1px solid #000; /* Adjust to match main accent color */
+  color: #000;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.btn-view-all:hover {
+  background-color:#ff007f;
+  color:#ffffff;
+}
