@@ -97,15 +97,18 @@ main {
 }
 
 .articles-section {
-    padding: 8rem 0 clamp(10rem, 14vw, 16rem);
+    /* Top: ~48px | Left/Right: 0 | Bottom: Scales from 48px to 64px max */
+    padding: 3rem 0 clamp(3rem, 5vw, 4rem);
 }
 
 .magazines-section {
-    padding: clamp(7rem, 10vw, 12rem) 0 clamp(10rem, 14vw, 16rem);
+    /* Top & Bottom: Scales cleanly from 48px to 64px max */
+    padding: clamp(3rem, 5vw, 4rem) 0 clamp(3rem, 5vw, 4rem);
 }
 
 .podcast-section {
-    padding: clamp(7rem, 10vw, 12rem) 0 clamp(8rem, 10vw, 12rem);
+    /* Top & Bottom: Same tight layout */
+    padding: clamp(3rem, 5vw, 4rem) 0 clamp(3rem, 5vw, 4rem);
 }
 
 .articles-banner {
@@ -193,7 +196,7 @@ main {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 8rem 0 5rem;
+    padding: 0rem;
 }
 
 .contact-container {
@@ -505,7 +508,6 @@ main {
     .about-section,
     .articles-banner {
         min-height: 50vh;
-        padding: 4.75rem 1rem 1.5rem;
     }
 
     .hero-image {
@@ -541,7 +543,7 @@ main {
 
     .contact-section {
         min-height: auto;
-        padding: 6rem 0 3rem;
+        padding: 0;
     }
 
     .contact-container {
@@ -712,7 +714,43 @@ main {
     gap: 50px;
     align-items: center;
   }
+/* 1. Global Reset to prevent elements from blowing past the mobile screen width */
+body, main, section, div {
+    max-width: 100%;
+    box-sizing: border-box;
 }
+
+/* 2. Fix the overflowing sections above the grid */
+#home, #about, .podcast-section, .magazines-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    text-align: center;
+    overflow: hidden; /* Clears floating or trailing layout elements */
+}
+
+/* 3. Fix the broken heading layout */
+.section-header {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    clear: both; /* Prevents any floated graphical elements from pushing the header to the right */
+    margin: 20px 0;
+}
+
+.section-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 8vw, 2.5rem); /* Dynamically shrinks text safely on smaller screens */
+    text-align: center;
+    width: auto;
+    margin: 0 auto;
+    display: block;
+}
+}
+
 
 .articles.banner {
   display: flex;
