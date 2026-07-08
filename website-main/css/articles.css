@@ -74,7 +74,7 @@ body {
   border: none;
   border-radius: 25px;
   cursor: pointer;
-  font-size: 1.2rem;
+  font-size: 1rem;
   font-family: 'Poppins', sans-serif;
 }
 
@@ -130,7 +130,7 @@ body {
 .navbar nav a {
     color: #0078ff;
     text-decoration: none;
-    font-size: 1.5rem;
+    font-size: 1rem;
     font-weight: 400;
 }
 

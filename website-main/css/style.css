@@ -759,12 +759,10 @@ body, main, section, div {
   width: 100%;             /* Ensures the container spans the full screen width */
 }
 
-.articles-banner-image {
-  max-width: 100%;         /* Prevents the image from overflowing the screen */
-  height: auto;            /* Keeps the image aspect ratio perfect */
-  padding: 20px 20px;
-}
-
+    .articles-banner-image{
+        width:90%;
+        max-width:350px;
+    }
 .banner-magazines {
   display: flex;
   justify-content: center; /* Centers horizontally */
