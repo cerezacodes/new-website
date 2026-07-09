@@ -116,6 +116,12 @@ main {
     padding-top: 0;
 }
 
+.articles-banner-image {
+    width: 100%;
+    max-width: 1000px;
+    height: auto;
+}
+
 .grid-container {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -759,10 +765,12 @@ body, main, section, div {
   width: 100%;             /* Ensures the container spans the full screen width */
 }
 
+
     .articles-banner-image{
-        width:90%;
-        max-width:350px;
+        width:100%;
+        max-width:100%;
     }
+
 .banner-magazines {
   display: flex;
   justify-content: center; /* Centers horizontally */
