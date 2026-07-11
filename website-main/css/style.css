@@ -930,3 +930,54 @@ body, main, section, div {
   background-color:#ff007f;
   color:#ffffff;
 }
+
+.footer {
+    background-color: #1a1a1a;
+    padding: 40px 20px;
+    border-top: 1px solid #333;
+    width: 100%;
+}
+
+.footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.footer-heading {
+    font-size: 1.8rem;
+    font-weight: 500;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 25px;
+    color: #cccccc;
+}
+
+/* Social Media Icons Layout */
+.social-links {
+    display: flex;
+    justify-content: center;
+    gap: 25px; /* Spacing between icons */
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+}
+
+.social-icon {
+    color: #ffffff;
+    font-size: 1.2rem; /* Icon size */
+    transition: transform 0.2s ease, color 0.2s ease;
+    text-decoration: none;
+}
+
+.footer-email,
+.footer-number {
+    font-size: 1.2rem;       /* Matches heading size */
+    letter-spacing: 1px;     /* Matches heading tracking */
+    color: #cccccc;          /* Light gray heading color */
+}
+
+/* Hover Effect */
+.social-icon:hover {
+    transform: translateY(-5px);
+    color: #00adb5; /* Accent color on hover */
+}
