@@ -116,11 +116,65 @@ main {
     padding: clamp(3rem, 5vw, 4rem) 0 clamp(3rem, 5vw, 4rem);
 }
 
-.articles-banner {
-    min-height: 80vh;
+/* ==========================================================================
+   HERO BANNER & COLLAGE GRAPHIC CORRECTIONS
+   ========================================================================== */
+
+/* 1. Force the parent wrapper to take up 100% of the screen width */
+.home-section,
+div[class*="hero"],
+section:first-of-type {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw !important;
+    margin-right: -50vw !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    box-sizing: border-box;
 }
 
+/* 2. Force the actual image to scale across the whole screen width */
+.section-header img,
 .articles-banner-image,
+div[class*="section-header"] img {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    display: block !important;
+    margin: 0 auto !important;
+    object-fit: cover !important; /* Ensures it covers the area without distorting */
+}
+
+/* 3. Center the "Articles" title graphic below it */
+.articles-banner,
+.articles-banner .section-header {
+    width: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    margin: 3rem auto 1rem auto !important;
+}
+
+.articles-banner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 4rem 1rem 2rem 1rem; /* Generous top padding separates it from the collage; bottom padding separates it from the cards */
+    box-sizing: border-box;
+}
+
+.articles-banner-image {
+    width: 100%;
+    max-width: 600rem; /* Adjust this value down if the "Articles" logo looks too giant on desktop */
+    height: auto;
+    display: block;
+}
+
 .magazines-banner-image,
 .banner-image-podcast {
     width: 100%;
@@ -845,3 +899,27 @@ main {
         max-width: min(82vw, 360px);
     }
 }
+
+.social-icon {
+    color: #ffffff;
+    font-size: 1.2rem; /* Icon size */
+    transition: transform 0.2s ease, color 0.2s ease;
+    text-decoration: none;
+}
+
+
+
+.footer-email,
+.footer-number {
+    font-size: 1.2rem;       /* Matches heading size */
+    letter-spacing: 1px;     /* Matches heading tracking */
+    color: #cccccc;          /* Light gray heading color */
+}
+
+/* Hover Effect */
+
+.social-icon:hover {
+    transform: translateY(-5px);
+    color: #00adb5; /* Accent color on hover */
+} 
+
