@@ -94,16 +94,49 @@
         <!-- Back button pointing to your main page -->
         <a href="articles.html" class="back-link">← Back to Articles</a>
 
-        <!-- Empty elements that JavaScript will fill in automatically -->
         <h1 id="article-title">Loading...</h1>
         <p id="article-subtitle"></p>
         <img id="article-image" src="" alt="">
         <p id="article-content"></p>
+
+        <!-- Dynamic Author Bio Section Elements -->
+        <hr id="author-divider" class="author-separator">
+        <div id="author-box" class="author-container">
+            <div class="author-profile-pic">
+                <img id="authorPic" src="" alt="">
+            </div>
+            <div class="author-info">
+                <span class="written-by">Written by</span>
+                <h3 id="authorName" class="author-name"></h3>
+            </div>
+        </div>
     </div>
 
     <script>
         const articles = { 
-                "Lady-LightsOut-An-Untimely-return":{
+            "F2-Quali-Spa":{
+                title: "F2 Qualifying Recap: Spa-Francorchamps",
+               subtitle: "A detailed recap of the F2 qualifying session at Spa-Francorchamps, highlighting standout performances and unexpected challenges.",
+                image:"assets/images/F2/F2 quali spa.jpg",
+                authorName: "Joseph Worrell",
+                authorPic: "assets/images/authors/joseph-worrell.jpeg",
+                content:`Formula 2 qualifying got underway in damp and drizzly conditions at Spa as the Arden Forest looked to throw an early spanner into the works.
+
+The red flag came out after just 6 minutes, however, after Noel Leon spun at the top of Eau Rouge and subsequently stopped on track shortly after. The Mexican made it back to the pits but remained under investigation from the FIA for bringing out the early red flag.
+
+The red flag lasted for 6 further minutes before the session would then be resumed and it was Alex Dunne who set the early pace with a 1:57.124, 0.265 seconds faster than Nikola Tsolov who was the second fastest car behind.
+
+With 18 minutes remaining in the session, the weather had begun to clear up and as expected, the sector times began to tumble as drivers found more pace. Rafael Câmara put in a lap good enough for P2, still a mere 0.223 tenths off Dunne who was still the man to beat. With 14 minutes to go, the top 5 consisted of Dunne, Câmara, Tsolov, Goethe, and Kush Maini rounding off the top 5, 6 tenths away from Alex Dunne.
+
+10 minutes remained in the session and it was Alex Dunne who led the pack out to set their final runs but with the slipstream being so powerful around the famous Spa circuit, the battle to not be at the front begun as Dunne tried to shake the pack by going into the pits… only for everyone else to follow him in trying to avoid leading the way and therefore providing a slipstream.
+
+As the clock continued to tick down with less than 5 minutes remaining, the yellow flag came out for Laurens Van Hoepen who stopped out on track down the start/finish straight. The red flag was brought out for a second time in the session with 3 minutes and 26 seconds remaining, leading to all cars coming back into the pits unsure whether the session would be resumed. During the yellow flag period, Noel Leon who was on a fast lap had managed to put a lap in good enough for P4 which unfortunately for him was deleted due to the track being under double yellows putting him back down in P17.
+
+The session resumed with just over 3 minutes left on the clock and the rush to exit the pits was on as Noel Leon and Nikola Tsolov led the way. With the track ever improving, lap times started to drop and drivers were finding time. Tsolov briefly took provisional pole but it was Câmara who quickly dispatched him. Dunne could only improve to P3 on his final run and it was Tasanapol Inthraphuvasak who slotted in between them both and took second place.
+
+The final top 5 for qualifying ended with Câmara leading the way with Inthraphuvasak less than a tenth behind. Dunne and Tsolov will both be disappointed with 3rd and 4th respectively but John Bennett rounded off the top 5 for Sunday morning’s feature race.
+`}
+            ,"Lady-LightsOut-An-Untimely-return":{
                     title: "Lady LightsOut: An Untimely Return",
                     subtitle: "Lady LightsOut discusses the shocking news of Horner's return to Formula 1 and the implications for the sport.",
                     font: "'Playfair Display', serif",
@@ -1216,9 +1249,36 @@ Not only is this his maiden victory in the Principality, but it marks an astonis
             document.getElementById('article-image').src = currentArticle.image;
             document.getElementById('article-image').alt = currentArticle.title;
             document.getElementById('article-content').innerText = currentArticle.content;
-            
-            document.title = currentArticle.title + " | Lights Out"; 
+            const divider = document.getElementById('author-divider');
+            const authorBox = document.getElementById('author-box');
+
+            if (currentArticle.authorName && currentArticle.authorPic) {
+                document.getElementById('authorName').innerText = currentArticle.authorName;
+                document.getElementById('authorPic').src = currentArticle.authorPic;
+                document.getElementById('authorPic').alt = currentArticle.authorName;
+                
+                // Show the elements
+                if (divider) divider.style.display = "block";
+                if (authorBox) authorBox.style.display = "flex";
+            } else {
+                // Hide the elements if this article doesn't have an author configured
+                if (divider) divider.style.display = "none";
+                if (authorBox) authorBox.style.display = "none";
+            }
+
+            authorPic.src = currentArticle.authorPic;
+                authorPic.alt = currentArticle.authorName;
+                
+                // Inline CSS to force the image size small (e.g., 50px wide and tall)
+                authorPic.style.width = "70px";
+                authorPic.style.height = "70px";
+                authorPic.style.borderRadius = "50%"; // Keeps it perfectly circular
+                authorPic.style.objectFit = "cover";
+                authorPic.style.margin = "10px";
+
+            document.title = currentArticle.title + " | Lights Out";
         } else {
+    
             document.getElementById('article-title').innerText = "Article Not Found";
             document.getElementById('article-content').innerText = "Sorry, we couldn't find the article you were looking for.";
         }
