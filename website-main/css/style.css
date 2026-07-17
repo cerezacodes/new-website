@@ -1,3 +1,6 @@
+/* ==========================================================================
+   GLOBAL STYLES & RESET
+   ========================================================================== */
 * {
     margin: 0;
     padding: 0;
@@ -19,6 +22,9 @@ main {
     width: 100%;
 }
 
+/* ==========================================================================
+   NAVIGATION
+   ========================================================================== */
 .navbar {
     position: fixed;
     top: 0;
@@ -26,9 +32,7 @@ main {
     display: flex;
     justify-content: flex-end;
     width: 100%;
-    /* 1. Crucial: Include padding in the 100% width calculation */
     box-sizing: border-box; 
-    /* 2. Scaled down padding slightly so it doesn't overlap the filter filters */
     padding: 1.5rem 2.5rem; 
     z-index: 10;
     pointer-events: none;
@@ -43,17 +47,14 @@ main {
 }
 
 .navbar nav a {
-    /* 3. Change color to a dark tone so it's visible on the light grey background */
     color: #ffffff; 
     text-decoration: none;
     font-size: 1rem;
-    /* 4. Switched to 600 for a cleaner, premium bold appearance */
     font-weight: 600; 
     font-family: 'Poppins', sans-serif;
     transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
-/* Subtle interactive states */
 .navbar nav a:hover,
 .navbar nav a.active {
     opacity: 0.6;
@@ -73,6 +74,9 @@ main {
     pointer-events: none;
 }
 
+/* ==========================================================================
+   SECTIONS & BANNERS
+   ========================================================================== */
 .page-section {
     width: 100%;
     min-height: 100vh;
@@ -81,10 +85,18 @@ main {
 
 .home-section,
 .about-section,
-.articles-banner {
+.articles-banner,
+.banner-magazines,
+.podcast-banner {
     display: flex;
     justify-content: center;
     align-items: center;
+    width: 100%;
+}
+
+.home-section,
+.about-section,
+.articles-banner {
     padding: 0;
 }
 
@@ -92,36 +104,37 @@ main {
     width: 100%;
     height: auto;
     max-width: 92vw;
-    max-height: auto;
     object-fit: contain;
 }
 
 .articles-section {
-    /* Top: ~48px | Left/Right: 0 | Bottom: Scales from 48px to 64px max */
     padding: 3rem 0 clamp(3rem, 5vw, 4rem);
 }
 
-.magazines-section {
-    /* Top & Bottom: Scales cleanly from 48px to 64px max */
-    padding: clamp(3rem, 5vw, 4rem) 0 clamp(3rem, 5vw, 4rem);
-}
-
+.magazines-section,
 .podcast-section {
-    /* Top & Bottom: Same tight layout */
     padding: clamp(3rem, 5vw, 4rem) 0 clamp(3rem, 5vw, 4rem);
 }
 
 .articles-banner {
     min-height: 80vh;
-    padding-top: 0;
 }
 
-.articles-banner-image {
+.articles-banner-image,
+.magazines-banner-image,
+.banner-image-podcast {
     width: 100%;
     max-width: 1000px;
     height: auto;
 }
 
+.podcast-banner {
+    margin-bottom: clamp(4rem, 7vw, 7rem);
+}
+
+/* ==========================================================================
+   CARDS & GRIDS
+   ========================================================================== */
 .grid-container {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -198,11 +211,152 @@ main {
     transform: translateY(0);
 }
 
+/* Cleaned Articles Grid */
+.card-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 30px;
+    width: 90%;
+    max-width: 1400px;
+    margin: 40px auto 0;
+    box-sizing: border-box;
+}
+
+.card {
+    flex: 0 1 calc(20% - 30px);   
+    min-width: 220px;
+    max-width: 250px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    color: #ffffff;
+    box-sizing: border-box;
+}
+
+.card a {
+    width: 100%;
+    display: block;
+}
+
+.card img {
+    width: 100%;       
+    height: auto;         
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border-radius: 4px; 
+    margin-bottom: 15px;
+}
+
+.card h2.item-title {
+    font-family: 'Poppins', sans-serif !important;
+    font-size: 1.25rem !important;
+    font-weight: 600 !important;
+    line-height: 1.2 !important;
+    margin: 12px 0 6px 0 !important;
+}
+
+.card p.item-description {
+    font-family: 'Poppins', sans-serif !important;
+    font-size: 0.95rem !important;
+    font-weight: 400 !important;
+    line-height: 1.4 !important;
+    font-style: normal !important;
+    margin: 0 !important;
+    opacity: 0.85 !important;
+}
+
+.view-all-box {
+    text-align: center;
+    margin-top: 40px;
+}
+
+.btn-view-all {
+    display: inline-block;
+    font-family: 'Poppins', sans-serif;
+    text-transform: uppercase;
+    font-size: 1.5rem;
+    letter-spacing: 1px;
+    padding: 12px 30px;
+    border: 1px solid #000;
+    color: #000;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.btn-view-all:hover {
+    background-color: #ff007f;
+    color: #ffffff;
+}
+
+/* ==========================================================================
+   MEDIA SECTIONS (YOUTUBE / SPOTIFY)
+   ========================================================================== */
+.media-section {
+    background-color: #007aff;
+    padding: 60px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.media-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 100px;
+    max-width: 5000px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.media-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    max-width: 800px;
+}
+
+.media-column h2 {
+    color: #ffffff;
+    font-family: 'Georgia', serif;
+    font-size: 5rem;
+    margin-bottom: 20px;
+    font-weight: 700;
+}
+
+.media-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 20px;
+}
+
+.media-box img {
+    max-width: 100%;
+    height: auto;
+    object-fit: contain;
+}
+
+.podcast-logo {
+    max-width: min(100%, 520px);
+    margin: 0 auto;
+}
+
+/* ==========================================================================
+   CONTACT FORM
+   ========================================================================== */
 .contact-section {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 0rem;
+    padding: 0;
 }
 
 .contact-container {
@@ -246,29 +400,27 @@ main {
     font-weight: 500;
 }
 
-.retro-form textarea {
+.retro-form textarea,
+.retro-form input[type="email"] {
     width: 100%;
-    min-height: 260px;
     background-color: #ffffff;
     border: 3px solid transparent;
     padding: clamp(1rem, 3vw, 2.5rem);
     font-family: 'Outfit', sans-serif;
     font-size: clamp(1.1rem, 2vw, 1.8rem);
-    color: #111111;
-    resize: vertical;
     outline: none;
 }
 
+.retro-form textarea {
+    min-height: 260px;
+    color: #111111;
+    resize: vertical;
+}
+
 .retro-form input[type="email"] {
-    width: 100%;
     min-height: 72px;
     background-color: #ff007f;
-    border: 3px solid transparent;
-    padding: 0 clamp(1rem, 3vw, 2.5rem);
-    font-family: 'Outfit', sans-serif;
-    font-size: clamp(1.1rem, 2vw, 1.8rem);
     color: #ffffff;
-    outline: none;
 }
 
 .retro-form input::placeholder {
@@ -309,7 +461,6 @@ main {
     padding: 1rem 3rem;
     font-family: 'Outfit', sans-serif;
     font-size: clamp(1.1rem, 2vw, 1.8rem);
-    font-weight: normal;
     cursor: pointer;
     margin-top: 1rem;
     transition: transform 0.2s ease, opacity 0.2s ease;
@@ -343,6 +494,9 @@ main {
     object-fit: contain;
 }
 
+/* ==========================================================================
+   ANIMATIONS & UTILITIES
+   ========================================================================== */
 .reveal-on-scroll {
     opacity: 0;
     transform: translateY(46px);
@@ -391,6 +545,42 @@ main {
     transform: translateY(0);
 }
 
+/* ==========================================================================
+   FOOTER
+   ========================================================================== */
+.footer {
+    background-color: #1a1a1a;
+    padding: 40px 20px;
+    border-top: 1px solid #333;
+    width: 100%;
+}
+
+.footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.footer-heading {
+    font-size: 1.8rem;
+    font-weight: 500;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 25px;
+    color: #cccccc;
+}
+
+.social-links {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+}
+
+/* ==========================================================================
+   MEDIA QUERIES
+   ========================================================================== */
 @media (prefers-reduced-motion: reduce) {
     html {
         scroll-behavior: auto;
@@ -421,18 +611,45 @@ main {
         height: 350px;
     }
 
-    .see-more-btn:hover {
-    background-color: #ff007f;
-    opacity: 1;
-    transform: translateY(-2px);
-}
-
     .contact-image {
         max-height: 55vh;
     }
 }
 
 @media (max-width: 768px) {
+    body, main, section, div {
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+    #home, #about, .podcast-section, .magazines-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        text-align: center;
+        overflow: hidden;
+    }
+
+    .section-header {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        clear: both;
+        margin: 20px 0;
+    }
+
+    .section-header h2 {
+        font-family: 'Playfair Display', serif;
+        font-size: clamp(2rem, 8vw, 2.5rem);
+        text-align: center;
+        width: auto;
+        margin: 0 auto;
+        display: block;
+    }
+
     .navbar {
         justify-content: flex-end;
         padding: 1rem;
@@ -450,7 +667,6 @@ main {
         border: 2px solid #ffffff;
         border-radius: 50%;
         cursor: pointer;
-        pointer-events: auto;
         z-index: 12;
     }
 
@@ -512,22 +728,31 @@ main {
 
     .home-section,
     .about-section,
-    .articles-banner {
+    .articles-banner,
+    .banner-magazines,
+    .podcast-banner {
         min-height: 50vh;
+        padding-left: 0;
+        padding-right: 0;
     }
 
-    .hero-image {
+    .hero-image,
+    .articles-banner-image,
+    .banner-image-podcast {
+        width: 100%;
         max-width: 100%;
-        padding:0;
-        margin:0;
-    }
-
-    .articles-section {
-        padding: 3.5rem 0 5rem;
+        height: auto;
+        padding: 0;
+        margin: 0;
     }
 
     .articles-banner {
         min-height: 42vh;
+    }
+
+    .articles-section {
+        padding: 3.5rem 0 5rem;
+        padding-bottom: 5rem;
     }
 
     .grid-container {
@@ -577,407 +802,46 @@ main {
         height: 2.75rem;
         font-size: 1.2rem;
     }
-}
 
-/* ==========================================================================
-   CLEANED & RE-ALIGNED ARTICLES GRID (MAX 5 PER ROW)
-   ========================================================================== */
-
-/* 2. Container holding the cards */
-.card-container {
-  display: flex;
-  flex-direction: row;        /* Forces items to stay side-by-side */
-  flex-wrap: wrap;            /* Allows them to drop to the next line cleanly if needed */
-  justify-content: center;    /* Centers the rows and individual items horizontally */
-  align-items: flex-start;    /* Keeps tops of cards perfectly level */
-  gap: 30px;                  /* Generous space between cards */
-  width: 90%;                 /* Takes up most of the screen width */
-  max-width: 1400px;          /* Prevents sprawling too wide on ultra-wide monitors */
-  margin: 40px auto 0;        /* Centers the whole grid box on your blue page */
-  padding: 0;
-  box-sizing: border-box;
-}
-
-/* 3. Individual Card Styling */
-.card {
-  /* Dictates a base target width of roughly 18% so 5 can mathematically sit together */
-  flex: 0 1 calc(20% - 30px);   
-  min-width: 220px;             /* Prevents cards from squishing into oblivion */
-  max-width: 250px;             /* Matches the exact tight profile from your target image */
-  display: flex;
-  flex-direction: column;
-  align-items: center;          /* Centers images and headings inside the card boundaries */
-  text-align: center;           /* Forces text strings to align perfectly center */
-  color: #ffffff;
-  box-sizing: border-box;
-}
-
-/* 4. Anchor tag inside the card */
-.card a {
-  width: 100%;
-  display: block;
-}
-
-/* 5. Image Sizing */
-.card img {
-  width: 100%;       
-  height: auto;         
-  aspect-ratio: 1 / 1;          /* Enforces perfect squares */
-  object-fit: cover;            /* Crops clean thumbnails automatically */
-  border-radius: 4px; 
-  margin-bottom: 15px;
-}
-
-/* 6. Strict Typography Overrides for Cards */
-.card h2.item-title {
-  font-family: 'Poppins', sans-serif !important;
-  font-size: 1.25rem !important;  /* Overrides massive font sizes from your upper CSS */
-  font-weight: 600 !important;
-  line-height: 1.2 !important;
-  margin: 12px 0 6px 0 !important;
-}
-
-.card p.item-description {
-  font-family: 'Poppins', sans-serif !important;
-  font-size: 0.95rem !important; /* Smaller, neat descriptions to fit the tight card look */
-  font-weight: 400 !important;
-  line-height: 1.4 !important;
-  font-style: normal !important; /* Reverts any old italics */
-  margin: 0 !important;
-  opacity: 0.85 !important;
-}
-
-/* 7. Mobile View Adjustments */
-@media (max-width: 768px) {
-  .card-container {
-    flex-direction: column;    /* Neat, uniform single column stack on phones */
-    align-items: center;
-  }
-
-  .card {
-    max-width: 80%;
-    flex: 1 1 100%;
-  }
-}
-/* Container for the entire section */
-.media-section {
-  background-color: #007aff; /* Matches your vibrant blue */
-  padding: 60px 20px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-/* Flex wrapper holding both columns */
-.media-container {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  gap: 80px; /* Generous spacing between YouTube and Spotify */
-  max-width: 1000px;
-  width: 100%;
-}
-
-/* Individual columns (keeps heading stacked perfectly over image) */
-.media-column {
-  display: flex;
-  flex-direction: column;
-  align-items: center; /* Centers the heading and image horizontally */
-  flex: 1;
-  max-width: 400px; /* Prevents the images from becoming too giant */
-}
-
-/* Headings (Youtube / Spotify) */
-.media-column h2 {
-  color: #ffffff;
-  font-family: 'Georgia', serif; /* Use serif to match the stylized Canva text */
-  font-size: 1.8rem;
-  margin-bottom: 20px;
-  font-weight: 700;
-}
-
-.media-box {
-  display: flex;
-  max-width: 600px;;
-  justify-content: center; /* Centers horizontally */
-  align-items: center;     /* Centers vertically */
-  margin-left: 20px;
-    margin-right: 20px;
-}
-
-.media-box img {
-  max-width: 100%; /* Changed from width: 100% so it doesn't force-stretch */
-  height: auto;
-  object-fit: contain;
-}
-
-/* Mobile Responsive Adjustments */
-@media (max-width: 768px) {
-  .media-container {
-    flex-direction: column; /* Stacks YouTube on top of Spotify on small screens */
-    gap: 50px;
-    align-items: center;
-  }
-/* 1. Global Reset to prevent elements from blowing past the mobile screen width */
-body, main, section, div {
-    max-width: 100%;
-    box-sizing: border-box;
-}
-
-/* 2. Fix the overflowing sections above the grid */
-#home, #about, .podcast-section, .magazines-section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    text-align: center;
-    overflow: hidden; /* Clears floating or trailing layout elements */
-}
-
-/* 3. Fix the broken heading layout */
-.section-header {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    clear: both; /* Prevents any floated graphical elements from pushing the header to the right */
-    margin: 20px 0;
-}
-
-.section-header h2 {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(2rem, 8vw, 2.5rem); /* Dynamically shrinks text safely on smaller screens */
-    text-align: center;
-    width: auto;
-    margin: 0 auto;
-    display: block;
-}
-}
-
-
-.articles.banner {
-  display: flex;
-  justify-content: center; /* Centers it horizontally */
-  align-items: center;     /* Centers it vertically (if the container has a height) */
-  width: 100%;             /* Ensures the container spans the full screen width */
-}
-
-
-    .articles-banner-image{
-        width:100%;
-        max-width:100%;
+    .card-container {
+        flex-direction: column;
+        align-items: center;
     }
 
-.banner-magazines {
-  display: flex;
-  justify-content: center; /* Centers horizontally */
-  align-items: center;     /* Centers vertically */
-  width: 100%;             /* Ensures container takes full width */
-}
-
-.magazines-banner-image {
-  max-width: 100%;         /* Prevents the image from stretching past the screen */
-  height: auto;            /* Maintains aspect ratio */
-}
-
-.podcast-banner {
-  display: flex;
-  justify-content: center; /* Centers horizontally */
-  align-items: center;     /* Centers vertically */
-  width: 100%;             /* Ensures container takes full width */
-  margin-bottom: clamp(4rem, 7vw, 7rem);
-}
-
-.banner-image-podcast {
-  max-width: 100%;         /* Keeps the banner responsive */
-  height: auto;            /* Maintains aspect ratio */
-}
-
-.media-container {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  gap: 100px; /* The gap between Youtube and Spotify columns */
-  max-width: 5000px;
-  margin: 0 auto; /* Centers the whole container block on the screen */
-  width: 100%;
-}
-
-/* Style for each single media block */
-.media-column {
-  display: flex;
-  flex-direction: column;
-  align-items: center; /* Centers the text above the image */
-  flex: 1;
-  max-width: 800px; /* Adjusts how big the graphics grow */
-}
-
-/* Headings styles (Youtube & Spotify) */
-.media-column h2 {
-  color: #ffffff;
-  font-family: 'Georgia', serif; /* Gives you that Canva editorial style text */
-  font-size: 5rem;
-  margin-bottom: 20px;
-  font-weight: 700;
-}
-
-/* Image settings to keep them clean and crisp */
-.media-box {
-  display: flex;
-  justify-content: center; /* Centers horizontally */
-  align-items: center;     /* Centers vertically */
-}
-
-.media-box img {
-  max-width: 100%; /* Changed from width: 100% so it doesn't force-stretch */
-  height: auto;
-  object-fit: contain;
-}
-
-.podcast-logo {
-  max-width: min(100%, 520px);
-  margin: 0 auto;
-}
-
-/* Responsive breakpoint for mobile */
-@media (max-width: 768px) {
-  .media-container {
-    flex-direction: column; /* Stacks column elements layout vertically on mobile screens */
-    align-items: center;
-    gap: 2.5rem;
-    width: min(88vw, 460px);
-  }
-
-  .articles-section {
-    padding-bottom: 5rem;
-  }
-
-  .magazines-section {
-    padding-top: 4.5rem;
-    padding-bottom: 5.5rem;
-  }
-
-  .podcast-section {
-    padding-top: 4.5rem;
-  }
-
-  .podcast-banner {
-    margin-bottom: 3rem;
-  }
-
-  .media-column h2 {
-    font-size: 2.25rem;
-    margin-bottom: 0.9rem;
-  }
-
-  .podcast-logo {
-    max-width: min(82vw, 360px);
-  }
-  
-}
-
-@media (max-width: 768px) {
-    /* 1. Remove padding from the banner containers so images can touch the screen edges */
-    .home-section,
-    .about-section,
-    .articles-banner,
-    .banner-magazines,
-    .podcast-banner {
-        padding-left: 0 ;
-        padding-right: 0 ;
-        width: 100% ;
+    .card {
+        max-width: 80%;
+        flex: 1 1 100%;
     }
 
-    /* 2. Force the images to take up 100% of the viewport width */
-    .hero-image,
-    .articles-banner-image,
-    .banner-image-podcast {
-        width: 100% ;
-        max-width: 100% ; /* Overrides the min/max restrictions */
-        height: auto ;
-        padding: 0 ;      /* Removes any custom image padding */
+    .media-container {
+        flex-direction: column;
+        align-items: center;
+        gap: 2.5rem;
+        width: min(88vw, 460px);
     }
-.image-wrapper {
-        width: 70% ;
-        max-width: 100% ;
-        height: auto ;
-        padding: 0 ;
+
+    .media-column h2 {
+        font-size: 2.25rem;
+        margin-bottom: 0.9rem;
     }
-}
-/* View All Button Styling */
-.view-all-box {
-  text-align: center;
-  margin-top: 40px;
-}
 
-.btn-view-all {
-  display: inline-block;
-  font-family: 'Poppins', sans-serif;
-  text-transform: uppercase;
-  font-size: 1.5rem;
-  letter-spacing: 1px;
-  padding: 12px 30px;
-  border: 1px solid #000; /* Adjust to match main accent color */
-  color: #000;
-  text-decoration: none;
-  transition: all 0.3s ease;
-}
+    .image-wrapper {
+        width: 70%;
+        max-width: 100%;
+        height: auto;
+        padding: 0;
+    }
 
-.btn-view-all:hover {
-  background-color:#ff007f;
-  color:#ffffff;
-}
+    .magazines-section {
+        padding-top: 4.5rem;
+        padding-bottom: 5.5rem;
+    }
 
-.footer {
-    background-color: #1a1a1a;
-    padding: 40px 20px;
-    border-top: 1px solid #333;
-    width: 100%;
-}
+    .podcast-section {
+        padding-top: 4.5rem;
+    }
 
-.footer-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    text-align: center;
-}
-
-.footer-heading {
-    font-size: 1.8rem;
-    font-weight: 500;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    margin-bottom: 25px;
-    color: #cccccc;
-}
-
-/* Social Media Icons Layout */
-.social-links {
-    display: flex;
-    justify-content: center;
-    gap: 25px; /* Spacing between icons */
-    margin-bottom: 30px;
-    flex-wrap: wrap;
-}
-
-.social-icon {
-    color: #ffffff;
-    font-size: 1.2rem; /* Icon size */
-    transition: transform 0.2s ease, color 0.2s ease;
-    text-decoration: none;
-}
-
-.footer-email,
-.footer-number {
-    font-size: 1.2rem;       /* Matches heading size */
-    letter-spacing: 1px;     /* Matches heading tracking */
-    color: #cccccc;          /* Light gray heading color */
-}
-
-/* Hover Effect */
-.social-icon:hover {
-    transform: translateY(-5px);
-    color: #00adb5; /* Accent color on hover */
+    .podcast-logo {
+        max-width: min(82vw, 360px);
+    }
 }
