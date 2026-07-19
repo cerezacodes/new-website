@@ -5,13 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Poppins:ital,wght@0,300;0,400;0,700&display=swap" rel="stylesheet">
-    <title>Article Viewer</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Poppins:ital,wght@0,300;0,400;0,700&display=swap" rel="stylesheet">    <title>Article Viewer</title>
     <style>
         body {
             background-color: #f1efe5; /* Matches your site's bright blue background */
             color: black;
-            font-family: 'Poppins', sans-serif; /* Matches your site's font */
+            font-family: "Libre Baskerville", serif;
             margin: 0;
             padding-right: 20px;
             padding-left: 20px;
@@ -42,7 +41,6 @@
         #article-title {
             font-size: 2.25rem;
             margin-bottom: 10px;
-            text-transform: uppercase;
             color: #0078FF
         }
 
@@ -140,7 +138,35 @@
 
     <script>
         const articles = {
-            "Quali-Recap-Spa-Francorchamps":{
+            "Racing-for-Anthoine": {
+                title: "Racing for Anthoine: Remembering the lives lost in the pursuit of speed",
+                subtitle: "The paddock unites at Spa to honor the legacy of Anthoine Hubert and the lives that changed the sport forever.",
+                image:"assets/images/F1/anthoine hubert.avif",
+                authorName: "Eya Amri",
+                authorPic: "assets/images/authors/eya-amri.jpg",
+                content:`The Ardennes forest has an unmatched ability to look breathtakingly beautiful while hiding an unyielding, solemn weight. As the paddock rolled into Spa-Francorchamps for this year’s Belgian Grand Prix, that weight was felt collectively on Thursday evening. Clad in matching navy t-shirts, members of the F1, F2, and F3 grids gathered on the start-finish straight for the annual "Racing for Anthoine" run. Led by Pierre Gasly alongside Anthoine’s mother, Nathalie, the paddock walked and ran the 7km track, pausing at the top of Raidillon to lay flowers and remember a talent gone far too soon. Seven years may have passed, but the racing community refuses to let his memory fade.
+
+                <b>A Champion's Journey</b>
+
+                Anthoine Hubert was a driver defined not just by raw speed, but by an exceptional, intelligent consistency. His single-seater career ignited in 2013 when he dominated the French F4 Championship on his very first attempt, racking up eleven victories. He climbed steadily through the junior ranks, but it was his 2018 GP3 Series campaign that solidified his status as a future star. In a fiercely competitive grid, Hubert’s calculated brilliance earned him the championship title and caught the eye of the Renault Sport Academy, which granted him full backing for his step up to Formula 2 in 2019.
+
+                As an F2 rookie with BWT Arden, he quickly proved he belonged on the world stage. He captured an emotional and tactical sprint victory in Monaco, followed by a brilliant win on home soil at Paul Ricard. He was a driver on a clear, undeniable trajectory toward Formula 1, making what happened on August 31, 2019, an absolute tragedy for the entire sporting world.
+
+                <b>Shadows Over the Ardennes</b>
+              
+                The annual pilgrimage to Spa no longer just carries the memory of Hubert. The collective pause on the Kemmel Straight during Thursday's run also paid tribute to Dilano van 't Hoff. The young Dutch talent lost his life at the circuit in 2023 during a waterlogged Formula Regional European Championship race. Van 't Hoff's passing served as a devastating reminder that the dangers of racing in extreme weather conditions remain an ongoing battle, particularly on high-speed stretches where visibility drops to zero.
+              
+                When talking about the modern era of single-seater safety, the grid also races with the spirit of Jules Bianchi. It has been over a decade since Bianchi’s tragic accident at the water-soaked 2014 Japanese Grand Prix, which ultimately claimed his life the following year. Jules was a prodigious Ferrari Academy driver destined for greatness, and his loss fundamentally altered the sport's approach to driver protection.
+              
+                <b>The Cost of Speed</b>
+              
+                The loss of Bianchi, Hubert, and van 't Hoff forced motorsport's governing bodies to look reality in the face. Out of these dark moments came a relentless, aggressive push for safety innovation.
+              
+                The introduction of the titanium halo cockpit protection device was initially met with aesthetic criticism, yet it has since saved many a life, shielding drivers from flying debris and massive impacts in accidents across the formula pyramid. Coupled with strict modern regulations on fireproof suits that give drivers invaluable seconds to escape engulfing flames, and restructured, energy-absorbing impact structures, the sport is safer than it has ever been.
+
+                As the engines roar through the Belgian hills this weekend, the paddock moves forward, but it does so carrying the names of the ones who helped shape a safer future for the sport they loved.
+            `}   
+            ,"Quali-Recap-Spa-Francorchamps":{
                 title: "Qualifying Recap: Spa-Francorchamps",
                 subtitle: "Kimi Antonelli claimed his sixth pole position of the season at Spa after a grid penalty stripped provisional third place from Lando Norris.",
                 image:"assets/images/F1/qualifying spa.avif",
@@ -1450,19 +1476,19 @@ if (articleId && articles[articleId]) {
     document.getElementById('article-subtitle').innerText = currentArticle.subtitle;
     document.getElementById('article-image').src = currentArticle.image;
     document.getElementById('article-image').alt = currentArticle.title;
-document.getElementById('article-content').innerHTML = currentArticle.content;    
-    // Switch to Playfair Display if the article has it; otherwise, default to Poppins
+document.getElementById('article-content').innerHTML = currentArticle.content;    // Switch to Playfair Display if the article has it; otherwise, default to Poppins
     if (currentArticle.font) {
         document.getElementById('article-title').style.fontFamily = currentArticle.font;
         document.getElementById('article-subtitle').style.fontFamily = currentArticle.font;
         document.getElementById('article-content').style.fontFamily = currentArticle.font;
     } else {
-        const defaultFont = "'Poppins', sans-serif";
+        const defaultFont = "'Libre Baskerville', serif";
         document.getElementById('article-title').style.fontFamily = defaultFont;
         document.getElementById('article-subtitle').style.fontFamily = defaultFont;
         document.getElementById('article-content').style.fontFamily = defaultFont;
     }
-
-    document.title = currentArticle.title + " | Lights Out"; 
+    
+    // ADD THIS LINE HERE:
+    document.title = `${article.title} | Lights Out`;
 }
     </script>
