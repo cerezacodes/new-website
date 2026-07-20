@@ -46,18 +46,31 @@
 
 <main style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; max-width: 1200px; margin: 0 auto; padding: 0 20px; box-sizing: border-box;"> 
 
-<article style="display: flex; flex-direction: column; background: #fff; border: 1px solid #eee; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
-      <div style="width: 100%; aspect-ratio: 16/9; overflow: hidden;">
-        <a href="article.html?id=Spa-Race-Recap">
-          <img src="assets/images/F1/Spa race.avif" alt="Kimi Antonelli at Spa-Francorchamps" style="width: 100%; height: 100%; object-fit: cover;">
-        </a>
-      </div>
-      <div style="padding: 20px; display: flex; flex-direction: column; flex-grow: 1; font-family: 'Poppins', sans-serif;">
-        <h3 style="font-family: 'Playfair Display', serif; font-size: 1.3rem; margin: 0 0 10px 0; line-height: 1.4;">Kimi Antonelli Reigns Supreme in Spa Thriller</h3>
-        <p style="font-size: 0.9rem; color: #555; line-height: 1.6; margin: 0 0 15px 0; flex-grow: 1;">Six wins for the championship leader after surviving a dramatic, penalty-filled race of attrition in Belgium.</p>
-        <span class="card-time" data-timestamp="2026-07-19T19:00:00Z" style="font-size: 0.8rem; color: #888; text-transform: uppercase; letter-spacing: 0.5px;">Calculating time...</span>    
-      </div>
-    </article> 
+<article class="news-card" data-category="spa">
+    <div class="card-image-box">
+      <a href="article.html?id=Three-things-you-missed-Spa">
+      <img src="assets/images/F1/3 things spa.jpg" alt="Isack Hadjar at Spa-Francorchamps.">
+      </a>
+    </div>
+    <div class="card-text-box">
+      <h3 class="card-title">Three Things You Missed at the Belgian Grand Prix</h3>
+      <p class="card-description">How brilliant strategy calls, exclusive upgrades, and a historic rookie points streak stole the show under the radar at Spa.</p>
+      <span class="card-time" data-timestamp="2026-07-20T09:00:00Z">Calculating time...</span>    
+    </div>
+  </article> 
+
+<article class="news-card" data-category="spa">
+    <div class="card-image-box">
+      <a href="article.html?id=Spa-Race-Recap">
+      <img src="assets/images/F1/Spa race.avif" alt="Kimi Antonelli at Spa-Francorchamps.">
+      </a>
+    </div>
+    <div class="card-text-box">
+      <h3 class="card-title">Kimi Antonelli Reigns Supreme in Spa Thriller</h3>
+      <p class="card-description">Six wins for the championship leader after surviving a dramatic, penalty-filled race of attrition in Belgium.</p>
+      <span class="card-time" data-timestamp="2026-07-19T19:00:00Z">Calculating time...</span>    
+    </div>
+  </article> 
 
    <article style="display: flex; flex-direction: column; background: #fff; border: 1px solid #eee; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
       <div style="width: 100%; aspect-ratio: 16/9; overflow: hidden;">
@@ -72,7 +85,6 @@
       </div>
     </article>
 
-
   <article style="display: flex; flex-direction: column; background: #fff; border: 1px solid #eee; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
       <div style="width: 100%; aspect-ratio: 16/9; overflow: hidden;">
         <a href="article.html?id=Racing-for-Anthoine">
@@ -83,19 +95,6 @@
         <h3 style="font-family: 'Playfair Display', serif; font-size: 1.3rem; margin: 0 0 10px 0; line-height: 1.4;">Racing For Anthoine: Remembering the lives lost in the pursuit of speed</h3>
         <p style="font-size: 0.9rem; color: #555; line-height: 1.6; margin: 0 0 15px 0; flex-grow: 1;">The paddock unites at Spa to honor the legacy of Anthoine Hubert and the lives that changed the sport forever."</p>
         <span class="card-time" data-timestamp="2026-07-19T10:30:00Z" style="font-size: 0.8rem; color: #888; text-transform: uppercase; letter-spacing: 0.5px;">Calculating time...</span>    
-      </div>
-    </article>
-
-    <article style="display: flex; flex-direction: column; background: #fff; border: 1px solid #eee; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
-      <div style="width: 100%; aspect-ratio: 16/9; overflow: hidden;">
-        <a href="article.html?id=Quali-Recap-Spa-Francorchamps">
-          <img src="assets/images/F1/qualifying spa.avif" alt="F1 Qualifying: Spa-Francorchamps" style="width: 100%; height: 100%; object-fit: cover;">
-        </a>
-      </div>
-      <div style="padding: 20px; display: flex; flex-direction: column; flex-grow: 1; font-family: 'Poppins', sans-serif;">
-        <h3 style="font-family: 'Playfair Display', serif; font-size: 1.3rem; margin: 0 0 10px 0; line-height: 1.4;">Qualifying Recap: Spa-Francorchamps</h3>
-        <p style="font-size: 0.9rem; color: #555; line-height: 1.6; margin: 0 0 15px 0; flex-grow: 1;">Kimi Antonelli claimed his sixth pole position of the season at Spa after a grid penalty stripped provisional third place from Lando Norris."</p>
-        <span class="card-time" data-timestamp="2026-07-18T17:30:00Z" style="font-size: 0.8rem; color: #888; text-transform: uppercase; letter-spacing: 0.5px;">Calculating time...</span>    
       </div>
     </article>
 
@@ -247,4 +246,58 @@
 
     <button class="scroll-top-btn" type="button" aria-label="Scroll back to top">↑</button>
 </body>
+<style>
+/* Updated to match your .news-card structure */
+.news-card {
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.card-image-box {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+}
+
+.card-image-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card-text-box {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  font-family: 'Poppins', sans-serif;
+}
+
+.card-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.3rem;
+  margin: 0 0 10px 0;
+  line-height: 1.4;
+}
+
+.card-description {
+  font-size: 0.9rem;
+  color: #555;
+  line-height: 1.6;
+  margin: 0 0 15px 0;
+  flex-grow: 1;
+}
+
+.news-card .card-time {
+  font-size: 0.8rem;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+</style>
 </html>
