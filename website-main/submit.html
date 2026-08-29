@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Submit Article | Lights Out</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="js/submit.js" defer></script>
+</head>
+<body>
+  <header class="navbar">
+    <nav id="site-nav">
+      <a href="index.html">Home</a>
+      <a href="articles.html">Articles</a>
+      <a href="submit.html">Submit Article</a>
+    </nav>
+  </header>
+
+  <main style="max-width: 650px; margin: 40px auto; padding: 0 20px;">
+    <h2 style="margin-bottom: 20px;">Submit Your Article</h2>
+    
+    <form id="articleForm" style="display: flex; flex-direction: column; gap: 16px;">
+      <div>
+        <label for="authorName" style="display: block; font-weight: bold; margin-bottom: 5px;">Author Name *</label>
+        <input type="text" id="authorName" required style="width: 100%; padding: 10px; box-sizing: border-box;">
+      </div>
+
+      <div>
+        <label for="authorEmail" style="display: block; font-weight: bold; margin-bottom: 5px;">Author Email *</label>
+        <input type="email" id="authorEmail" required style="width: 100%; padding: 10px; box-sizing: border-box;">
+      </div>
+
+      <div>
+        <label for="title" style="display: block; font-weight: bold; margin-bottom: 5px;">Article Title *</label>
+        <input type="text" id="title" required style="width: 100%; padding: 10px; box-sizing: border-box;">
+      </div>
+
+      <div>
+        <label for="category" style="display: block; font-weight: bold; margin-bottom: 5px;">Category</label>
+        <select id="category" style="width: 100%; padding: 10px; box-sizing: border-box;">
+          <option value="culture">Culture</option>
+          <option value="opinion">Opinion</option>
+          <option value="reviews">Reviews</option>
+          <option value="news">News</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="content" style="display: block; font-weight: bold; margin-bottom: 5px;">Article Content *</label>
+        <textarea id="content" rows="10" required style="width: 100%; padding: 10px; box-sizing: border-box;" placeholder="Paste your draft or write your article here..."></textarea>
+      </div>
+
+      <button type="submit" id="submitBtn" style="padding: 12px; font-weight: bold; cursor: pointer; background-color: #000; color: #fff; border: none; border-radius: 4px;">Submit Draft</button>
+      
+      <p id="formStatus" style="font-weight: bold; margin-top: 10px;"></p>
+    </form>
+  </main>
+</body>
+</html>
+
+<script>
+  // Replace with your actual URL and Key:
+const SUPABASE_URL = 'https://tffnjaywwjszurbwdylm.supabase.co/rest/v1/';
+const SUPABASE_ANON_KEY = 'sb_publishable_ET_3FUuZaJ0TJUCABt3fvQ_uqPRUMfk'; // Paste your full publishable key here
+  
+</script>
