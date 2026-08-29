@@ -1,0 +1,5 @@
+.env
+.env.local
+.env.*.local
+js/runtime-config.js
+node_modules/
