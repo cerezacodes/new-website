@@ -59,35 +59,53 @@
 </body>
 </html>
 
+<!-- Make sure this CDN script is in your <head> or right above your custom script -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script>
-  // Replace with your actual URL and Key:
-const SUPABASE_URL = 'https://tffnjaywwjszurbwdylm.supabase.co/rest/v1/';
-const SUPABASE_ANON_KEY = 'sb_publishable_ET_3FUuZaJ0TJUCABt3fvQ_uqPRUMfk'; // Paste your full publishable key here
-  
+  // 1. Use 'supabaseClient' instead of 'supabase' to avoid name collisions
+  const SUPABASE_URL = 'https://tffnjaywwjszurbwdylm.supabase.co';
+  const SUPABASE_ANON_KEY = 'YOUR_PUBLISHABLE_ANON_KEY_HERE';
 
+  const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  // 2. Update the form submit listener to use supabaseClient
   document.getElementById('articleForm').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  
-  const statusEl = document.getElementById('formStatus');
-  statusEl.textContent = 'Submitting...';
+    e.preventDefault();
+    
+    const statusEl = document.getElementById('formStatus');
+    const submitBtn = document.getElementById('submitBtn');
+    
+    submitBtn.disabled = true;
+    statusEl.style.color = 'black';
+    statusEl.textContent = 'Publishing article...';
 
-  const authorName = document.getElementById('authorName').value;
-  const title = document.getElementById('title').value;
-  const category = document.getElementById('category').value;
-  const content = document.getElementById('content').value;
+    const authorName = document.getElementById('authorName').value;
+    const title = document.getElementById('title').value;
+    const category = document.getElementById('category').value;
+    const content = document.getElementById('content').value;
 
-  const { data, error } = await supabase
-    .from('articles')
-    .insert([{ title, author_name: authorName, category, content }]);
+    try {
+      const { data, error } = await supabaseClient
+        .from('articles')
+        .insert([{ title, author_name: authorName, category, content }]);
 
-  if (error) {
-    console.error('Supabase error:', error);
-    statusEl.style.color = 'red';
-    statusEl.textContent = 'Failed: ' + error.message;
-  } else {
-    statusEl.style.color = 'green';
-    statusEl.textContent = 'Article published!';
-    window.location.href = 'articles.html';
-  }
-});
+      if (error) {
+        throw error;
+      }
+
+      statusEl.style.color = 'green';
+      statusEl.textContent = 'Published! Redirecting to articles feed...';
+      
+      setTimeout(() => {
+        window.location.href = 'articles.html';
+      }, 1500);
+
+    } catch (err) {
+      console.error('Submission error:', err);
+      statusEl.style.color = 'red';
+      statusEl.textContent = 'Error: ' + err.message;
+      submitBtn.disabled = false;
+    }
+  });
 </script>

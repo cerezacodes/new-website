@@ -879,6 +879,42 @@
   </article>
 
    <script>
+
+    const SUPABASE_URL = 'https://tffnjaywwjszurbwdylm.supabase.co';
+const SUPABASE_ANON_KEY = 'YOUR_PUBLISHABLE_ANON_KEY_HERE';
+
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+async function fetchArticles() {
+  const feedContainer = document.getElementById('articlesFeed');
+
+  const { data: articles, error } = await supabaseClient
+    .from('articles')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    feedContainer.innerHTML = '<p style="color:red;">Error loading articles: ' + error.message + '</p>';
+    return;
+  }
+
+  if (!articles || articles.length === 0) {
+    feedContainer.innerHTML = '<p>No articles submitted yet.</p>';
+    return;
+  }
+
+  feedContainer.innerHTML = articles.map(article => `
+    <article style="border: 1px solid #ddd; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+      <span style="font-size: 12px; text-transform: uppercase; background: #eee; padding: 4px 8px; border-radius: 4px;">${article.category}</span>
+      <h3 style="margin: 10px 0 5px 0;">${article.title}</h3>
+      <p style="font-size: 14px; color: #666; margin-bottom: 15px;">By ${article.author_name} • ${new Date(article.created_at).toLocaleDateString()}</p>
+      <div style="white-space: pre-wrap; line-height: 1.6;">${article.content}</div>
+    </article>
+  `).join('');
+}
+
+fetchArticles();
+
     document.addEventListener('DOMContentLoaded', () => {
   const filterButtons = document.querySelectorAll('.filter-btn');
   const articles = document.querySelectorAll('.news-card');
