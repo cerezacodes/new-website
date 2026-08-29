@@ -6,6 +6,7 @@
   <title>Submit Article | Lights Out</title>
   <link rel="stylesheet" href="style.css">
   <script src="js/submit.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
   <header class="navbar">
@@ -63,4 +64,30 @@
 const SUPABASE_URL = 'https://tffnjaywwjszurbwdylm.supabase.co/rest/v1/';
 const SUPABASE_ANON_KEY = 'sb_publishable_ET_3FUuZaJ0TJUCABt3fvQ_uqPRUMfk'; // Paste your full publishable key here
   
+
+  document.getElementById('articleForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  
+  const statusEl = document.getElementById('formStatus');
+  statusEl.textContent = 'Submitting...';
+
+  const authorName = document.getElementById('authorName').value;
+  const title = document.getElementById('title').value;
+  const category = document.getElementById('category').value;
+  const content = document.getElementById('content').value;
+
+  const { data, error } = await supabase
+    .from('articles')
+    .insert([{ title, author_name: authorName, category, content }]);
+
+  if (error) {
+    console.error('Supabase error:', error);
+    statusEl.style.color = 'red';
+    statusEl.textContent = 'Failed: ' + error.message;
+  } else {
+    statusEl.style.color = 'green';
+    statusEl.textContent = 'Article published!';
+    window.location.href = 'articles.html';
+  }
+});
 </script>
