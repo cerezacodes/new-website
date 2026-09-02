@@ -20,6 +20,11 @@ create table if not exists public.articles (
 create index if not exists idx_articles_published_at
 on public.articles (published_at desc);
 
+-- Existing projects may have created id as bigint. Article URLs use text slugs,
+-- so migrate that column before publishing new articles.
+alter table public.articles
+alter column id type text using id::text;
+
 alter table public.articles enable row level security;
 
 create policy "Public read access"
