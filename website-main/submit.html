@@ -4,8 +4,95 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Submit Article | Lights Out</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    body {
+      background: #090f1c;
+      color: #ffffff;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .submit-page-title {
+      margin-bottom: 20px;
+      color: #ffffff;
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    .submit-form label,
+    .submit-form .field-label,
+    .submit-form .preview-header,
+    .submit-form .preview-name,
+    .submit-form .preview-section,
+    .submit-form .form-status {
+      color: #ffffff;
+      font-family: 'Playfair Display', serif;
+    }
+
+    .submit-form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .submit-form input,
+    .submit-form select,
+    .submit-form textarea,
+    .submit-form button {
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .submit-form input,
+    .submit-form select,
+    .submit-form textarea {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.18);
+      color: #ffffff;
+    }
+
+    .submit-form input::placeholder,
+    .submit-form textarea::placeholder {
+      color: rgba(255,255,255,0.6);
+    }
+
+    .submit-form .field-label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+
+    .submit-form .preview-box {
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 10px;
+      padding: 12px;
+      background: rgba(255,255,255,0.04);
+      color: #ffffff;
+    }
+
+    .submit-form .preview-name {
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .submit-form .preview-section {
+      color: rgba(255,255,255,0.7);
+      font-size: 0.9rem;
+    }
+
+    .submit-form button {
+      background: #ffffff;
+      color: #090f1c;
+      border: none;
+      border-radius: 4px;
+      font-weight: 700;
+    }
+  </style>
 </head>
 <body>
   <header class="navbar">
@@ -16,29 +103,41 @@
     </nav>
   </header>
 
-  <main style="max-width: 650px; margin: 40px auto; padding: 0 20px;">
-    <h2 style="margin-bottom: 20px;">Submit Your Article</h2>
-    
-    <form id="articleForm" style="display: flex; flex-direction: column; gap: 16px;">
+  <main style="max-width: 760px; margin: 40px auto; padding: 0 20px;">
+    <h2 class="submit-page-title">Submit Your Article</h2>
+
+    <form id="articleForm" class="submit-form">
       <div>
-        <label for="authorName" style="display: block; font-weight: bold; margin-bottom: 5px;">Author Name *</label>
+        <label for="authorName" class="field-label">Author Name *</label>
         <input type="text" id="authorName" required style="width: 100%; padding: 10px; box-sizing: border-box;">
       </div>
 
       <div>
-        <label for="authorEmail" style="display: block; font-weight: bold; margin-bottom: 5px;">Author Email *</label>
+        <label for="authorEmail" class="field-label">Author Email *</label>
         <input type="email" id="authorEmail" required style="width: 100%; padding: 10px; box-sizing: border-box;">
       </div>
 
       <div>
-        <label for="title" style="display: block; font-weight: bold; margin-bottom: 5px;">Article Title *</label>
+        <label for="title" class="field-label">Article Title *</label>
         <input type="text" id="title" required style="width: 100%; padding: 10px; box-sizing: border-box;">
       </div>
 
       <div>
-        <label for="category" style="display: block; font-weight: bold; margin-bottom: 5px;">Category</label>
-        <select id="category" style="width: 100%; padding: 10px; box-sizing: border-box;">
-          <option value="26">2026</option>
+        <label for="subtitle" class="field-label">Article Subtitle *</label>
+        <input type="text" id="subtitle" required style="width: 100%; padding: 10px; box-sizing: border-box;" placeholder="Short summary shown under the headline">
+      </div>
+
+      <div>
+        <label for="category" class="field-label">Category *</label>
+        <select id="category" required style="width: 100%; padding: 10px; box-sizing: border-box;">
+          <option value="">Select a category</option>
+          <option value="zandvoort">Zandvoort '26</option>
+          <option value="hungary">Hungary '26</option>
+          <option value="monaco">Monaco '26</option>
+          <option value="barcelona">Barcelona '26</option>
+          <option value="austria">Austria '26</option>
+          <option value="UK">Britain '26</option>
+          <option value="spa">Belgium '26</option>
           <option value="F2">Formula 2</option>
           <option value="F1A">Formula 1 Academy</option>
           <option value="LLO">Lady Lights Out</option>
@@ -51,65 +150,227 @@
       </div>
 
       <div>
-        <label for="content" style="display: block; font-weight: bold; margin-bottom: 5px;">Article Content *</label>
+        <label for="coverImage" class="field-label">Article Picture *</label>
+        <input type="file" id="coverImage" accept="image/*" required style="width: 100%; padding: 10px; box-sizing: border-box;">
+        <div id="imagePreviewWrap" style="margin-top: 10px; display: none;">
+          <img id="imagePreview" alt="Article preview" style="max-width: 220px; max-height: 220px; object-fit: cover; border-radius: 12px; border: 1px solid #ddd;">
+        </div>
+      </div>
+
+      <div>
+        <label for="seoTags" class="field-label">SEO Tags *</label>
+        <input type="text" id="seoTags" required style="width: 100%; padding: 10px; box-sizing: border-box;" placeholder="Example: Formula 1, Ferrari, Zandvoort, race analysis">
+      </div>
+
+      <div>
+        <label for="content" class="field-label">Article Content *</label>
         <textarea id="content" rows="10" required style="width: 100%; padding: 10px; box-sizing: border-box;" placeholder="Paste your draft or write your article here..."></textarea>
       </div>
 
-      <button type="submit" id="submitBtn" style="padding: 12px; font-weight: bold; cursor: pointer; background-color: #000; color: #fff; border: none; border-radius: 4px;">Submit Draft</button>
-      
-      <p id="formStatus" style="font-weight: bold; margin-top: 10px;"></p>
+      <div class="preview-box">
+        <div class="preview-header" style="font-weight: bold; margin-bottom: 8px;">Author Preview</div>
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <img id="authorPreviewPic" src="assets/images/authors/Melinda-Gaese.jpeg" alt="Author preview" style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 1px solid #ddd; background: #fff;">
+          <div>
+            <div id="authorPreviewName" class="preview-name">Author Name</div>
+            <div id="authorPreviewSection" class="preview-section">Lights Out Writer</div>
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" id="submitBtn" style="padding: 12px; font-weight: bold; cursor: pointer; background-color: #ffffff; color: #090f1c; border: none; border-radius: 4px;">Submit Draft</button>
+
+      <p id="formStatus" class="form-status" style="font-weight: bold; margin-top: 10px;"></p>
     </form>
   </main>
 </body>
 </html>
 
-<!-- Make sure this CDN script is in your <head> or right above your custom script -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
-  // Keep the current live project values here for local testing only.
-  const SUPABASE_URL = 'https://tffnjaywwjszurbwdylm.supabase.co';
-  const SUPABASE_ANON_KEY = 'sb_publishable_ET_3FUuZaJ0TJUCABt3fvQ_uqPRUMfk';
+  const AUTHOR_META = {
+    'Melinda Gaese': {
+      pic: 'assets/images/authors/Melinda-Gaese.jpeg',
+      section: 'Lights Out Writer'
+    },
+    'Bella Rosen': {
+      pic: 'assets/images/authors/bella-rosen.jpeg',
+      section: 'Lights Out Writer'
+    },
+    'Joseph Worrell': {
+      pic: 'assets/images/authors/joseph-worrell.jpeg',
+      section: 'Lights Out Writer'
+    },
+    'Ellie Roddy': {
+      pic: 'assets/images/authors/ellie-roddy.jpeg',
+      section: 'Lights Out Writer'
+    },
+    'Tori Turner': {
+      pic: 'assets/images/authors/tori-turner.jpeg',
+      section: 'Lights Out Writer'
+    },
+    'Arelimar Colon Rodriguez': {
+      pic: 'assets/images/authors/arelimar-rodriguez.jpeg',
+      section: 'Lights Out Writer'
+    },
+    'Eya Amri': {
+      pic: 'assets/images/authors/eya-amri.jpg',
+      section: 'Lights Out Founder and Editor-in-chief'
+    }
+  };
 
-  const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  function getAuthorMeta(name) {
+    const trimmed = (name || '').trim();
+    const key = Object.keys(AUTHOR_META).find((authorName) => authorName.toLowerCase() === trimmed.toLowerCase());
+    return key ? AUTHOR_META[key] : AUTHOR_META.Default;
+  }
 
-  // 2. Update the form submit listener to use supabaseClient
+  function updateAuthorPreview() {
+    const name = document.getElementById('authorName').value || 'Author Name';
+    const meta = getAuthorMeta(name);
+
+    document.getElementById('authorPreviewPic').src = meta.pic;
+    document.getElementById('authorPreviewName').textContent = name || 'Author Name';
+    document.getElementById('authorPreviewSection').textContent = meta.section;
+  }
+
+  document.getElementById('authorName').addEventListener('input', updateAuthorPreview);
+
+  document.getElementById('coverImage').addEventListener('change', function () {
+    const file = this.files && this.files[0];
+    const preview = document.getElementById('imagePreview');
+    const wrap = document.getElementById('imagePreviewWrap');
+
+    if (!file) {
+      wrap.style.display = 'none';
+      preview.src = '';
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function (event) {
+      preview.src = event.target.result;
+      wrap.style.display = 'block';
+    };
+    reader.readAsDataURL(file);
+  });
+
+  function slugify(value) {
+    return (value || '')
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '') || 'untitled-article';
+  }
+
+  function readFileAsDataUrl(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = () => reject(new Error('Unable to read the article image.'));
+      reader.readAsDataURL(file);
+    });
+  }
+
+  const runtimeConfig = window.LIGHTSOUT_ENV || {};
+  const SUPABASE_URL = (runtimeConfig.SUPABASE_URL || '').replace(/\/rest\/v1\/?$/, '');
+  const SUPABASE_ANON_KEY = runtimeConfig.SUPABASE_ANON_KEY || '';
+
+  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+    console.error('Missing Supabase runtime config. Add the values to .env and generate js/runtime-config.js locally.');
+  }
+
+  const supabaseClient = SUPABASE_URL && SUPABASE_ANON_KEY
+    ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+    : null;
+
   document.getElementById('articleForm').addEventListener('submit', async (e) => {
     e.preventDefault();
-    
+
     const statusEl = document.getElementById('formStatus');
     const submitBtn = document.getElementById('submitBtn');
-    
+    const authorName = document.getElementById('authorName').value.trim();
+    const authorEmail = document.getElementById('authorEmail').value.trim();
+    const title = document.getElementById('title').value.trim();
+    const subtitle = document.getElementById('subtitle').value.trim();
+    const category = document.getElementById('category').value;
+    const seoTags = document.getElementById('seoTags').value.trim();
+    const content = document.getElementById('content').value.trim();
+    const imageFile = document.getElementById('coverImage').files[0];
+    const publishedAt = new Date().toISOString();
+
+    if (!authorName || !authorEmail || !title || !subtitle || !category || !seoTags || !content || !imageFile) {
+      statusEl.style.color = 'red';
+      statusEl.textContent = 'Please complete all required fields before submitting.';
+      return;
+    }
+
     submitBtn.disabled = true;
     statusEl.style.color = 'black';
     statusEl.textContent = 'Publishing article...';
 
-    const authorName = document.getElementById('authorName').value;
-    const title = document.getElementById('title').value;
-    const category = document.getElementById('category').value;
-    const content = document.getElementById('content').value;
-
     try {
-      const { data, error } = await supabaseClient
-        .from('articles')
-        .insert([{ title, author_name: authorName, category, content }]);
+      const imageDataUrl = await readFileAsDataUrl(imageFile);
+      const authorMeta = getAuthorMeta(authorName);
+      const articleId = slugify(title);
+
+      const articlePayload = {
+        id: articleId,
+        title,
+        subtitle,
+        author_name: authorName,
+        author_email: authorEmail,
+        author_pic: authorMeta.pic,
+        author_section: authorMeta.section,
+        category,
+        image: imageDataUrl,
+        seo_tags: seoTags,
+        published_at: publishedAt,
+        content
+      };
+
+      const { error } = await supabaseClient.from('articles').insert([articlePayload]);
 
       if (error) {
         throw error;
       }
 
+      const submission = {
+        id: articleId,
+        title,
+        subtitle,
+        authorName,
+        authorPic: authorMeta.pic,
+        author_pic: authorMeta.pic,
+        author_section: authorMeta.section,
+        category,
+        image: imageDataUrl,
+        tags: seoTags,
+        seoTags,
+        publishedAt,
+        published_at: publishedAt,
+        content,
+        description: subtitle
+      };
+
+      const stored = JSON.parse(localStorage.getItem('lightsoutSubmittedArticles') || '[]');
+      stored.unshift(submission);
+      localStorage.setItem('lightsoutSubmittedArticles', JSON.stringify(stored));
+
       statusEl.style.color = 'green';
       statusEl.textContent = 'Published! Redirecting to articles feed...';
-      
+
       setTimeout(() => {
         window.location.href = 'articles.html';
       }, 1500);
-
     } catch (err) {
       console.error('Submission error:', err);
       statusEl.style.color = 'red';
-      statusEl.textContent = 'Error: ' + err.message;
+      statusEl.textContent = 'Error: ' + (err.message || 'Unable to publish this article.');
       submitBtn.disabled = false;
     }
   });
+
+  updateAuthorPreview();
 </script>

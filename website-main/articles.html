@@ -892,135 +892,128 @@
   </article>
 
    <script>
+    const STORAGE_KEY = 'lightsoutSubmittedArticles';
 
-    const SUPABASE_URL = 'https://tffnjaywwjszurbwdylm.supabase.co';
-const SUPABASE_ANON_KEY = 'YOUR_PUBLISHABLE_ANON_KEY_HERE';
-
-const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-async function fetchArticles() {
-  const feedContainer = document.getElementById('articlesFeed');
-
-  const { data: articles, error } = await supabaseClient
-    .from('articles')
-    .select('*')
-    .order('created_at', { ascending: false });
-
-  if (error) {
-    feedContainer.innerHTML = '<p style="color:red;">Error loading articles: ' + error.message + '</p>';
-    return;
-  }
-
-  if (!articles || articles.length === 0) {
-    feedContainer.innerHTML = '<p>No articles submitted yet.</p>';
-    return;
-  }
-
-  feedContainer.innerHTML = articles.map(article => `
-    <article style="border: 1px solid #ddd; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-      <span style="font-size: 12px; text-transform: uppercase; background: #eee; padding: 4px 8px; border-radius: 4px;">${article.category}</span>
-      <h3 style="margin: 10px 0 5px 0;">${article.title}</h3>
-      <p style="font-size: 14px; color: #666; margin-bottom: 15px;">By ${article.author_name} • ${new Date(article.created_at).toLocaleDateString()}</p>
-      <div style="white-space: pre-wrap; line-height: 1.6;">${article.content}</div>
-    </article>
-  `).join('');
-}
-
-fetchArticles();
-
-    document.addEventListener('DOMContentLoaded', () => {
-  const filterButtons = document.querySelectorAll('.filter-btn');
-  const articles = document.querySelectorAll('.news-card');
-
-  filterButtons.forEach(button => {
-    button.addEventListener('click', () => {
-      // 1. Remove the 'active' class from all buttons and add it to the clicked one
-      filterButtons.forEach(btn => btn.classList.remove('active'));
-      button.classList.add('active');
-
-      // 2. Get the filter value from the clicked button
-      const filterValue = button.getAttribute('data-filter');
-
-      // 3. Loop through articles to show or hide them
-      articles.forEach(article => {
-        // Get categories assigned to the article and split them into an array
-        const articleCategories = article.getAttribute('data-category').split(' ');
-
-        if (filterValue === 'all' || articleCategories.includes(filterValue)) {
-          // Show the article smoothly
-          article.style.display = 'flex'; 
-          // Optional: Add a tiny fade-in effect class if you want animations later
-        } else {
-          // Hide the article entirely
-          article.style.display = 'none';
-        }
-      });
-    });
-  });
-});
-
-function updateTimeAgo() {
-  const timeLabels = document.querySelectorAll('.card-time');
-  
-  // Captures the exact live date and time right now (June 2026)
-  const now = new Date();
-
-  timeLabels.forEach(label => {
-    const timestampStr = label.getAttribute('data-timestamp');
-    if (!timestampStr) return;
-
-    const postDate = new Date(timestampStr);
-    
-    // Calculates the difference in milliseconds and converts to total seconds
-    const secondsAgo = Math.floor((now - postDate) / 1000);
-
-    // Guard rail: If the machine's clock is slightly out of sync or it's a brand new post
-    if (secondsAgo < 0) {
-      label.textContent = "Just now";
-      return;
-    }
-
-    // Time conversion intervals mapped out in seconds
-    const intervals = {
-      year: 31536000,
-      month: 2592000,
-      week: 604800,
-      day: 86400,
-      hour: 3600,
-      minute: 60
-    };
-
-    let timeString = "Just now";
-
-    // Loop through the breakdown to catch the largest dynamic time frame
-    for (const [unit, value] of Object.entries(intervals)) {
-      const count = Math.floor(secondsAgo / value);
-      if (count >= 1) {
-        // Handles automatic pluralization (e.g., "1 hour ago" vs "3 hours ago")
-        timeString = `${count} ${unit}${count > 1 ? 's' : ''} ago`;
-        break;
+    function getSubmittedArticles() {
+      try {
+        const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+        return Array.isArray(parsed) ? parsed : [];
+      } catch (error) {
+        return [];
       }
     }
 
-    // Fallback block for anything under 60 seconds
-    if (timeString === "Just now" && secondsAgo >= 1) {
-      timeString = `${secondsAgo} second${secondsAgo > 1 ? 's' : ''} ago`;
+    function buildSubmittedCard(article) {
+      const card = document.createElement('article');
+      const category = article.category || 'news';
+      const title = article.title || 'Untitled Article';
+      const description = article.subtitle || article.description || 'A freshly submitted story from the Lights Out newsroom.';
+      const image = article.image || 'assets/images/intro.png';
+      const authorName = article.authorName || article.author_name || 'Lights Out Team';
+      const publishedAt = article.publishedAt || article.published_at || new Date().toISOString();
+      const articleId = article.id || title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+
+      card.className = 'news-card';
+      card.setAttribute('data-category', category);
+      card.innerHTML = `
+        <div class="card-image-box">
+          <a href="article.html?id=${articleId}">
+            <img src="${image}" alt="${title}">
+          </a>
+        </div>
+        <div class="card-text-box">
+          <h3 class="card-title">${title}</h3>
+          <p class="card-description">${description}</p>
+          <span class="card-time" data-timestamp="${publishedAt}">Calculating time...</span>
+        </div>
+      `;
+
+      return card;
     }
 
-    // Swaps out your placeholder text dynamically with the finalized calculation
-    label.textContent = timeString;
-  });
-}
+    function renderSubmittedArticles() {
+      const container = document.querySelector('.news-grid-container');
+      if (!container) return;
 
-// Fire the script immediately as soon as the DOM finishes building
-document.addEventListener('DOMContentLoaded', updateTimeAgo);
+      const submitted = getSubmittedArticles();
 
-// Re-run the calculations every 60 seconds so active users see the numbers tick up live
-setInterval(updateTimeAgo, 60000);
+      submitted.forEach((article) => {
+        const card = buildSubmittedCard(article);
+        container.prepend(card);
+      });
+    }
 
-  // Replace with your actual URL and Key:
-const SUPABASE_URL = 'https://tffnjaywwjszurbwdylm.supabase.co/rest/v1/';
-const SUPABASE_ANON_KEY = 'sb_publishable_ET_3FUuZaJ0TJUCABt3fvQ_uqPRUMfk'; // Paste your full publishable key here
+    renderSubmittedArticles();
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const filterButtons = document.querySelectorAll('.filter-btn');
+      const articles = document.querySelectorAll('.news-card');
+
+      filterButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          filterButtons.forEach(btn => btn.classList.remove('active'));
+          button.classList.add('active');
+
+          const filterValue = button.getAttribute('data-filter');
+
+          articles.forEach(article => {
+            const articleCategories = article.getAttribute('data-category').split(' ');
+
+            if (filterValue === 'all' || articleCategories.includes(filterValue)) {
+              article.style.display = 'flex';
+            } else {
+              article.style.display = 'none';
+            }
+          });
+        });
+      });
+    });
+
+    function updateTimeAgo() {
+      const timeLabels = document.querySelectorAll('.card-time');
+      const now = new Date();
+
+      timeLabels.forEach(label => {
+        const timestampStr = label.getAttribute('data-timestamp');
+        if (!timestampStr) return;
+
+        const postDate = new Date(timestampStr);
+        const secondsAgo = Math.floor((now - postDate) / 1000);
+
+        if (secondsAgo < 0) {
+          label.textContent = 'Just now';
+          return;
+        }
+
+        const intervals = {
+          year: 31536000,
+          month: 2592000,
+          week: 604800,
+          day: 86400,
+          hour: 3600,
+          minute: 60
+        };
+
+        let timeString = 'Just now';
+
+        for (const [unit, value] of Object.entries(intervals)) {
+          const count = Math.floor(secondsAgo / value);
+          if (count >= 1) {
+            timeString = `${count} ${unit}${count > 1 ? 's' : ''} ago`;
+            break;
+          }
+        }
+
+        if (timeString === 'Just now' && secondsAgo >= 1) {
+          timeString = `${secondsAgo} second${secondsAgo > 1 ? 's' : ''} ago`;
+        }
+
+        label.textContent = timeString;
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', updateTimeAgo);
+    setInterval(updateTimeAgo, 60000);
   </script>
 
 </main>

@@ -258,6 +258,60 @@
     </main>
 
     <button class="scroll-top-btn" type="button" aria-label="Scroll back to top">↑</button>
+
+    <script>
+      const STORAGE_KEY = 'lightsoutSubmittedArticles';
+
+      function getSubmittedArticles() {
+        try {
+          const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+          return Array.isArray(parsed) ? parsed : [];
+        } catch (error) {
+          return [];
+        }
+      }
+
+      function renderSubmittedArticles() {
+        const target = document.querySelector('#articles main');
+        if (!target) return;
+
+        const submissions = getSubmittedArticles();
+        if (!submissions.length) return;
+
+        submissions.forEach((article) => {
+          const card = document.createElement('article');
+          const category = article.category || 'news';
+          const title = article.title || 'Untitled Article';
+          const description = article.subtitle || article.description || 'A newly submitted article.';
+          const image = article.image || 'assets/images/intro.png';
+          const publishedAt = article.publishedAt || article.published_at || new Date().toISOString();
+          const articleId = article.id || title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+
+          card.className = 'news-card';
+          card.setAttribute('data-category', category);
+          card.innerHTML = `
+            <div class="card-image-box">
+              <a href="article.html?id=${articleId}">
+                <img src="${image}" alt="${title}">
+              </a>
+            </div>
+            <div class="card-text-box">
+              <h3 class="card-title">${title}</h3>
+              <p class="card-description">${description}</p>
+              <span class="card-time" data-timestamp="${publishedAt}">Calculating time...</span>
+            </div>
+          `;
+
+          target.prepend(card);
+        });
+
+        if (typeof updateArticleTimes === 'function') {
+          updateArticleTimes();
+        }
+      }
+
+      renderSubmittedArticles();
+    </script>
 </body>
 <style>
 /* Updated to match your .news-card structure */
