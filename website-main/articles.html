@@ -1089,7 +1089,7 @@
             .select('*')
             .order('published_at', { ascending: false });
 
-          if (!error && data && data.length) {
+          if (!error && data) {
             const mapped = data.map(mapDbRowToArticle);
             saveLocalArticles(mapped);
             return mapped;

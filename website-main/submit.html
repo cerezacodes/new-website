@@ -350,7 +350,9 @@
       : null;
 
     if (!supabaseClient) {
-      console.warn('Supabase is not configured for this local site. Falling back to localStorage submission.');
+      statusEl.style.color = 'red';
+      statusEl.textContent = 'Live publishing is unavailable: Supabase is not configured for this site.';
+      return;
     }
 
     if (!authorName || !writerPassword || !title || !subtitle || !category || !seoTags || !content || !imageFile) {
@@ -420,40 +422,16 @@
       };
 
       let dbError = null;
-      if (supabaseClient) {
-        try {
-          const { error } = await supabaseClient.from('articles').insert([articlePayload]);
-          dbError = error || null;
-        } catch (error) {
-          dbError = error;
-        }
+      try {
+        const { error } = await supabaseClient.from('articles').insert([articlePayload]);
+        dbError = error || null;
+      } catch (error) {
+        dbError = error;
       }
 
       if (dbError) {
-        console.warn('Supabase insert failed; saving article locally instead.', dbError);
+        throw new Error(dbError.message || 'Failed to publish the article to Supabase.');
       }
-
-      const submission = {
-        id: articleId,
-        title,
-        subtitle,
-        authorName,
-        authorPic: authorMeta.pic,
-        author_pic: authorMeta.pic,
-        author_section: authorMeta.section,
-        category,
-        image: imageDataUrl,
-        tags: seoTags,
-        seoTags,
-        publishedAt,
-        published_at: publishedAt,
-        content,
-        description: subtitle
-      };
-
-      const stored = JSON.parse(localStorage.getItem('lightsoutSubmittedArticles') || '[]');
-      stored.unshift(submission);
-      localStorage.setItem('lightsoutSubmittedArticles', JSON.stringify(stored));
 
       statusEl.style.color = 'green';
       statusEl.textContent = 'Published! Redirecting to articles feed...';

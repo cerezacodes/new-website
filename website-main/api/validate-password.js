@@ -20,8 +20,8 @@ function parseEnv(filePath) {
 }
 
 const env = parseEnv(envPath);
-const ADMIN_PASSWORD = env.ADMIN_PASSWORD || 'lightsoutadmin!26';
-const WRITER_PASSWORD = env.WRITER_PASSWORD || 'lightsoutwriter!26';
+const ADMIN_PASSWORD = env.ADMIN_PASSWORD || '';
+const WRITER_PASSWORD = env.WRITER_PASSWORD || '';
 
 const server = http.createServer(async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');

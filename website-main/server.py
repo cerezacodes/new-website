@@ -23,8 +23,8 @@ def parse_env(path):
 
 
 env = parse_env(ENV_PATH)
-ADMIN_PASSWORD = env.get("ADMIN_PASSWORD", "lightsoutadmin!26")
-WRITER_PASSWORD = env.get("WRITER_PASSWORD", "lightsoutwriter!26")
+ADMIN_PASSWORD = env.get("ADMIN_PASSWORD", "")
+WRITER_PASSWORD = env.get("WRITER_PASSWORD", "")
 
 
 class Handler(SimpleHTTPRequestHandler):
