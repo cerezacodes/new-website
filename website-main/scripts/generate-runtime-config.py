@@ -7,7 +7,8 @@ output_path = root / 'js' / 'runtime-config.js'
 config = {
     'SUPABASE_URL': '',
     'SUPABASE_ANON_KEY': '',
-    'ADMIN_PASSWORD': ''
+    'ADMIN_PASSWORD': '',
+    'WRITER_PASSWORD': ''
 }
 
 if env_path.exists():

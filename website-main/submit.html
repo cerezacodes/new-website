@@ -57,6 +57,14 @@
       color: #ffffff;
     }
 
+    .submit-form select {
+      color: #000000;
+    }
+
+    .submit-form select option {
+      color: #000000;
+    }
+
     .submit-form input::placeholder,
     .submit-form textarea::placeholder {
       color: rgba(255,255,255,0.6);
@@ -114,8 +122,8 @@
       </div>
 
       <div>
-        <label for="authorEmail" class="field-label">Author Email *</label>
-        <input type="email" id="authorEmail" required style="width: 100%; padding: 10px; box-sizing: border-box;">
+        <label for="writerPassword" class="field-label">Writer Password *</label>
+        <input type="password" id="writerPassword" required style="width: 100%; padding: 10px; box-sizing: border-box;" placeholder="Enter the writer password">
       </div>
 
       <div>
@@ -281,13 +289,36 @@
   }
 
   window.LIGHTSOUT_ENV = window.LIGHTSOUT_ENV || {
-    SUPABASE_URL: 'https://tffnjaywwjszurbwdylm.supabase.co',
-    SUPABASE_ANON_KEY: 'sb_publishable_ET_3FUuZaJ0TJUCABt3fvQ_uqPRUMfk'
+    SUPABASE_URL: '',
+    SUPABASE_ANON_KEY: '',
+    ADMIN_PASSWORD: '',
+    WRITER_PASSWORD: ''
   };
 
   const runtimeConfig = window.LIGHTSOUT_ENV || {};
   const SUPABASE_URL = (runtimeConfig.SUPABASE_URL || '').replace(/\/rest\/v1\/?$/, '');
   const SUPABASE_ANON_KEY = runtimeConfig.SUPABASE_ANON_KEY || '';
+  const WRITER_PASSWORD = (runtimeConfig.WRITER_PASSWORD || '').trim();
+
+  if (!WRITER_PASSWORD || !SUPABASE_URL || !SUPABASE_ANON_KEY) {
+    fetch('js/runtime-config.js?ts=' + Date.now(), { cache: 'no-store' })
+      .then((response) => response.text())
+      .then((text) => {
+        const writerMatch = text.match(/WRITER_PASSWORD:\s*['\"]([^'\"]+)['\"]/);
+        const supabaseUrlMatch = text.match(/SUPABASE_URL:\s*['\"]([^'\"]+)['\"]/);
+        const supabaseKeyMatch = text.match(/SUPABASE_ANON_KEY:\s*['\"]([^'\"]+)['\"]/);
+
+        if (writerMatch) {
+          window.LIGHTSOUT_ENV = {
+            ...window.LIGHTSOUT_ENV,
+            WRITER_PASSWORD: writerMatch[1],
+            SUPABASE_URL: supabaseUrlMatch ? supabaseUrlMatch[1] : window.LIGHTSOUT_ENV.SUPABASE_URL || '',
+            SUPABASE_ANON_KEY: supabaseKeyMatch ? supabaseKeyMatch[1] : window.LIGHTSOUT_ENV.SUPABASE_ANON_KEY || ''
+          };
+        }
+      })
+      .catch(() => {});
+  }
 
   if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
     console.error('Missing Supabase runtime config. Add the values to .env and generate js/runtime-config.js locally.');
@@ -303,7 +334,7 @@
     const statusEl = document.getElementById('formStatus');
     const submitBtn = document.getElementById('submitBtn');
     const authorName = document.getElementById('authorName').value.trim();
-    const authorEmail = document.getElementById('authorEmail').value.trim();
+    const writerPassword = document.getElementById('writerPassword').value.trim();
     const title = document.getElementById('title').value.trim();
     const subtitle = document.getElementById('subtitle').value.trim();
     const category = document.getElementById('category').value;
@@ -312,9 +343,15 @@
     const imageFile = document.getElementById('coverImage').files[0];
     const publishedAt = new Date().toISOString();
 
-    if (!authorName || !authorEmail || !title || !subtitle || !category || !seoTags || !content || !imageFile) {
+    if (!authorName || !writerPassword || !title || !subtitle || !category || !seoTags || !content || !imageFile) {
       statusEl.style.color = 'red';
       statusEl.textContent = 'Please complete all required fields before submitting.';
+      return;
+    }
+
+    if (writerPassword !== WRITER_PASSWORD) {
+      statusEl.style.color = 'red';
+      statusEl.textContent = 'Incorrect writer password.';
       return;
     }
 
