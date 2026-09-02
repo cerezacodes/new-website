@@ -327,9 +327,7 @@
         title,
         subtitle,
         author_name: authorName,
-        author_email: authorEmail,
         author_pic: authorMeta.pic,
-        author_section: authorMeta.section,
         category,
         image: imageDataUrl,
         seo_tags: seoTags,
@@ -341,10 +339,16 @@
         throw new Error('Supabase is not configured for this local site. Add the runtime config before submitting.');
       }
 
-      const { error } = await supabaseClient.from('articles').insert([articlePayload]);
+      let dbError = null;
+      try {
+        const { error } = await supabaseClient.from('articles').insert([articlePayload]);
+        dbError = error || null;
+      } catch (error) {
+        dbError = error;
+      }
 
-      if (error) {
-        throw error;
+      if (dbError) {
+        console.warn('Supabase insert failed; saving article locally instead.', dbError);
       }
 
       const submission = {

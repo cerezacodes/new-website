@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lights Out Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #060d1d;
+      --panel: #101b2e;
+      --panel-2: #17253d;
+      --text: #f7f7f5;
+      --muted: rgba(255,255,255,0.72);
+      --line: rgba(255,255,255,0.12);
+      --accent: #66ccff;
+      --accent-2: #ff5ca8;
+      --danger: #ff6b6b;
+      --success: #69d98d;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: linear-gradient(180deg, #050b17 0%, #0b1528 100%);
+      color: var(--text);
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 32px 20px 60px;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .brand {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 3vw, 3rem);
+      margin: 0;
+      letter-spacing: 0.04em;
+    }
+
+    .logout-btn,
+    .primary-btn,
+    .danger-btn,
+    .secondary-btn {
+      border: none;
+      border-radius: 8px;
+      padding: 10px 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.15s ease, opacity 0.15s ease;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .primary-btn {
+      background: var(--accent);
+      color: #06121d;
+    }
+
+    .secondary-btn {
+      background: rgba(255,255,255,0.08);
+      color: var(--text);
+      border: 1px solid var(--line);
+    }
+
+    .danger-btn {
+      background: var(--danger);
+      color: white;
+    }
+
+    .logout-btn {
+      background: rgba(255,255,255,0.06);
+      color: var(--text);
+      border: 1px solid var(--line);
+    }
+
+    .primary-btn:hover,
+    .secondary-btn:hover,
+    .danger-btn:hover,
+    .logout-btn:hover {
+      transform: translateY(-1px);
+    }
+
+    #loginScreen {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background: radial-gradient(circle at top, rgba(102, 204, 255, 0.14), transparent 40%), #060d1d;
+    }
+
+    .login-panel {
+      width: min(100%, 430px);
+      background: rgba(16, 27, 46, 0.95);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.35);
+      padding: 32px 24px;
+    }
+
+    .login-panel h2 {
+      margin-top: 0;
+      margin-bottom: 20px;
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      text-align: center;
+    }
+
+    .field {
+      margin-bottom: 18px;
+    }
+
+    .field label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .field input,
+    .field textarea,
+    .field select {
+      width: 100%;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--line);
+      color: var(--text);
+      border-radius: 10px;
+      padding: 12px 14px;
+      font: inherit;
+    }
+
+    .field textarea {
+      min-height: 160px;
+      resize: vertical;
+    }
+
+    .status {
+      min-height: 24px;
+      margin-top: 8px;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .status.error { color: #ff8a8a; }
+    .status.success { color: #7fe8a9; }
+
+    #adminApp {
+      display: none;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 18px 16px;
+    }
+
+    .stat-label {
+      display: block;
+      color: var(--muted);
+      font-size: 0.8rem;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .stat-value {
+      font-size: clamp(1.5rem, 3vw, 2.2rem);
+      font-weight: 700;
+    }
+
+    .article-list {
+      display: grid;
+      gap: 18px;
+    }
+
+    .article-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 18px;
+      overflow: hidden;
+    }
+
+    .article-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .article-header h3 {
+      margin: 0;
+      font-size: 1.2rem;
+    }
+
+    .article-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .article-grid {
+      display: grid;
+      grid-template-columns: minmax(140px, 220px) 1fr;
+      gap: 16px;
+      align-items: start;
+    }
+
+    .article-thumb {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      border-radius: 12px;
+      object-fit: cover;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.04);
+    }
+
+    .article-form {
+      display: grid;
+      gap: 12px;
+    }
+
+    .article-form-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+    }
+
+    .meta-note {
+      color: var(--muted);
+      font-size: 0.8rem;
+      margin-top: -6px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 42px 20px;
+      border: 1px dashed var(--line);
+      border-radius: 16px;
+      color: var(--muted);
+      background: rgba(255,255,255,0.02);
+    }
+
+    @media (max-width: 720px) {
+      .article-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="loginScreen">
+    <div class="login-panel">
+      <h2>Lights Out Admin</h2>
+      <form id="loginForm">
+        <div class="field">
+          <label for="adminPassword">Password</label>
+          <input id="adminPassword" type="password" placeholder="Enter admin password" required />
+        </div>
+        <button class="primary-btn" type="submit" style="width: 100%;">Access dashboard</button>
+        <div id="loginStatus" class="status"></div>
+      </form>
+    </div>
+  </div>
+
+  <div id="adminApp">
+    <div class="container">
+      <div class="top-bar">
+        <h1 class="brand">Article Admin</h1>
+        <button id="logoutBtn" class="logout-btn" type="button">Log out</button>
+      </div>
+
+      <div class="stats">
+        <div class="stat-card">
+          <span class="stat-label">Published</span>
+          <div id="articleCount" class="stat-value">0</div>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Visible on site</span>
+          <div id="liveCount" class="stat-value">0</div>
+        </div>
+      </div>
+
+      <div id="articleList" class="article-list"></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/runtime-config.js"></script>
+  <script>
+    const ADMIN_PASSWORD = 'lightsoutadmin';
+    const STORAGE_KEY = 'lightsoutSubmittedArticles';
+
+    const runtimeConfig = window.LIGHTSOUT_ENV || {};
+    const SUPABASE_URL = (runtimeConfig.SUPABASE_URL || '').replace(/\/rest\/v1\/?$/, '');
+    const SUPABASE_ANON_KEY = runtimeConfig.SUPABASE_ANON_KEY || '';
+    const supabaseClient = SUPABASE_URL && SUPABASE_ANON_KEY ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+
+    const loginScreen = document.getElementById('loginScreen');
+    const adminApp = document.getElementById('adminApp');
+    const loginForm = document.getElementById('loginForm');
+    const loginStatus = document.getElementById('loginStatus');
+    const articleList = document.getElementById('articleList');
+    const articleCount = document.getElementById('articleCount');
+    const liveCount = document.getElementById('liveCount');
+
+    function getArticles() {
+      try {
+        const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+        return Array.isArray(parsed) ? parsed : [];
+      } catch (error) {
+        return [];
+      }
+    }
+
+    function saveArticles(articles) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(articles));
+    }
+
+    function mapDbRowToArticle(row) {
+      return {
+        id: row.id || row.slug || 'untitled-article',
+        title: row.title || 'Untitled Article',
+        subtitle: row.subtitle || '',
+        authorName: row.author_name || 'Lights Out Team',
+        authorPic: row.author_pic || 'assets/images/authors/eya-amri.jpg',
+        author_pic: row.author_pic || 'assets/images/authors/eya-amri.jpg',
+        category: row.category || 'news',
+        image: row.image || 'assets/images/intro.png',
+        seoTags: row.seo_tags || '',
+        tags: row.seo_tags || '',
+        content: row.content || '',
+        description: row.subtitle || '',
+        publishedAt: row.published_at || new Date().toISOString(),
+        published_at: row.published_at || new Date().toISOString(),
+        author_section: row.author_section || 'Lights Out Writer'
+      };
+    }
+
+    async function fetchArticlesFromSupabase() {
+      if (!supabaseClient) {
+        return getArticles();
+      }
+
+      const { data, error } = await supabaseClient
+        .from('articles')
+        .select('*')
+        .order('published_at', { ascending: false });
+
+      if (error) {
+        console.warn('Supabase fetch failed, using localStorage fallback:', error);
+        return getArticles();
+      }
+
+      if (!data || !data.length) {
+        return getArticles();
+      }
+
+      const mapped = data.map(mapDbRowToArticle);
+      saveArticles(mapped);
+      return mapped;
+    }
+
+    function updateStats(articles) {
+      articleCount.textContent = String(articles.length);
+      liveCount.textContent = String(articles.length);
+    }
+
+    function slugify(value) {
+      return (value || '')
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '') || 'untitled-article';
+    }
+
+    async function renderArticles() {
+      const articles = await fetchArticlesFromSupabase();
+      updateStats(articles);
+
+      if (!articles.length) {
+        articleList.innerHTML = `
+          <div class="empty-state">
+            <h3>No published articles yet.</h3>
+            <p>Submitted stories will appear here once they are published.</p>
+          </div>
+        `;
+        return;
+      }
+
+      articleList.innerHTML = articles.map((article, index) => `
+        <article class="article-card" data-index="${index}">
+          <div class="article-header">
+            <h3>${(article.title || 'Untitled Article').replace(/</g, '&lt;')}</h3>
+            <div class="article-actions">
+              <a class="secondary-btn" href="article.html?id=${encodeURIComponent(article.id || slugify(article.title))}" target="_blank" rel="noopener noreferrer" style="display:inline-block;text-decoration:none;">Open</a>
+              <button class="danger-btn" type="button" data-delete-index="${index}">Delete</button>
+            </div>
+          </div>
+
+          <div class="article-grid">
+            <img class="article-thumb" src="${article.image || 'assets/images/intro.png'}" alt="${(article.title || 'Article image').replace(/</g, '&lt;')}" />
+
+            <form class="article-form" data-edit-index="${index}">
+              <div class="article-form-row">
+                <div class="field">
+                  <label>Title</label>
+                  <input name="title" value="${(article.title || '').replace(/"/g, '&quot;')}" />
+                </div>
+                <div class="field">
+                  <label>Author</label>
+                  <input name="authorName" value="${(article.authorName || '').replace(/"/g, '&quot;')}" />
+                </div>
+              </div>
+
+              <div class="article-form-row">
+                <div class="field">
+                  <label>Category</label>
+                  <input name="category" value="${(article.category || '').replace(/"/g, '&quot;')}" />
+                </div>
+                <div class="field">
+                  <label>SEO Tags</label>
+                  <input name="seoTags" value="${(article.seoTags || article.tags || '').replace(/"/g, '&quot;')}" />
+                </div>
+              </div>
+
+              <div class="field">
+                <label>Subtitle</label>
+                <input name="subtitle" value="${(article.subtitle || '').replace(/"/g, '&quot;')}" />
+              </div>
+
+              <div class="field">
+                <label>Image URL</label>
+                <input name="image" value="${(article.image || '').replace(/"/g, '&quot;')}" />
+              </div>
+
+              <div class="field">
+                <label>Content</label>
+                <textarea name="content">${(article.content || '').replace(/</g, '&lt;')}</textarea>
+              </div>
+
+              <div class="article-actions">
+                <button class="primary-btn" type="submit">Save changes</button>
+              </div>
+            </form>
+          </div>
+        </article>
+      `).join('');
+
+      document.querySelectorAll('[data-delete-index]').forEach((button) => {
+        button.addEventListener('click', async () => {
+          const index = Number(button.getAttribute('data-delete-index'));
+          const articles = await fetchArticlesFromSupabase();
+          const article = articles[index];
+          if (!article) return;
+
+          if (supabaseClient) {
+            const { error } = await supabaseClient.from('articles').delete().eq('id', article.id);
+            if (error) {
+              console.error('Delete failed:', error);
+              return;
+            }
+          }
+
+          const remaining = articles.filter((_, itemIndex) => itemIndex !== index);
+          saveArticles(remaining);
+          renderArticles();
+        });
+      });
+
+      document.querySelectorAll('[data-edit-index]').forEach((form) => {
+        form.addEventListener('submit', async (event) => {
+          event.preventDefault();
+          const index = Number(form.getAttribute('data-edit-index'));
+          const articles = await fetchArticlesFromSupabase();
+          const article = articles[index];
+          if (!article) return;
+
+          const formData = new FormData(form);
+          const title = String(formData.get('title') || article.title);
+          const subtitle = String(formData.get('subtitle') || article.subtitle);
+          const authorName = String(formData.get('authorName') || article.authorName);
+          const category = String(formData.get('category') || article.category);
+          const image = String(formData.get('image') || article.image);
+          const seoTags = String(formData.get('seoTags') || article.seoTags || article.tags || '');
+          const content = String(formData.get('content') || article.content);
+          const updatedRow = {
+            id: article.id || slugify(title),
+            title,
+            subtitle,
+            author_name: authorName,
+            author_pic: article.authorPic || article.author_pic || 'assets/images/authors/eya-amri.jpg',
+            category,
+            image,
+            seo_tags: seoTags,
+            published_at: article.publishedAt || article.published_at || new Date().toISOString(),
+            content
+          };
+
+          if (supabaseClient) {
+            const { error } = await supabaseClient
+              .from('articles')
+              .update(updatedRow)
+              .eq('id', article.id);
+
+            if (error) {
+              console.error('Update failed:', error);
+              return;
+            }
+          }
+
+          const updatedArticle = {
+            ...article,
+            ...updatedRow,
+            authorName,
+            authorPic: updatedRow.author_pic,
+            author_pic: updatedRow.author_pic,
+            description: subtitle,
+            tags: seoTags,
+            seoTags
+          };
+
+          const nextArticles = articles.map((item, itemIndex) => itemIndex === index ? updatedArticle : item);
+          saveArticles(nextArticles);
+          renderArticles();
+        });
+      });
+    }
+
+    function showAdmin() {
+      const isUnlocked = sessionStorage.getItem('lightsout-admin-auth') === 'true';
+      if (!isUnlocked) {
+        loginScreen.style.display = 'grid';
+        adminApp.style.display = 'none';
+        return;
+      }
+
+      loginScreen.style.display = 'none';
+      adminApp.style.display = 'block';
+      renderArticles();
+    }
+
+    loginForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const entered = document.getElementById('adminPassword').value;
+
+      if (entered === ADMIN_PASSWORD) {
+        sessionStorage.setItem('lightsout-admin-auth', 'true');
+        loginStatus.textContent = 'Access granted.';
+        loginStatus.className = 'status success';
+        showAdmin();
+      } else {
+        loginStatus.textContent = 'Incorrect password.';
+        loginStatus.className = 'status error';
+      }
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      sessionStorage.removeItem('lightsout-admin-auth');
+      showAdmin();
+    });
+
+    showAdmin();
+  </script>
+</body>
+</html>
