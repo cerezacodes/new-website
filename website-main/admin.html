@@ -311,15 +311,16 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/runtime-config.js"></script>
   <script>
-    const ADMIN_PASSWORD = 'lightsoutadmin';
     const STORAGE_KEY = 'lightsoutSubmittedArticles';
 
     window.LIGHTSOUT_ENV = window.LIGHTSOUT_ENV || {
-      SUPABASE_URL: 'https://tffnjaywwjszurbwdylm.supabase.co',
-      SUPABASE_ANON_KEY: 'sb_publishable_ET_3FUuZaJ0TJUCABt3fvQ_uqPRUMfk'
+      SUPABASE_URL: '',
+      SUPABASE_ANON_KEY: '',
+      ADMIN_PASSWORD: ''
     };
 
     const runtimeConfig = window.LIGHTSOUT_ENV || {};
+    const ADMIN_PASSWORD = (runtimeConfig.ADMIN_PASSWORD || '').trim();
     const SUPABASE_URL = (runtimeConfig.SUPABASE_URL || '').replace(/\/rest\/v1\/?$/, '');
     const SUPABASE_ANON_KEY = runtimeConfig.SUPABASE_ANON_KEY || '';
     const supabaseClient = SUPABASE_URL && SUPABASE_ANON_KEY && window.supabase
@@ -333,6 +334,7 @@
     const articleList = document.getElementById('articleList');
     const articleCount = document.getElementById('articleCount');
     const liveCount = document.getElementById('liveCount');
+    let currentArticles = [];
 
     function getArticles() {
       try {
@@ -372,23 +374,59 @@
         return getArticles();
       }
 
-      const { data, error } = await supabaseClient
-        .from('articles')
-        .select('*')
-        .order('published_at', { ascending: false });
+      try {
+        const { data, error } = await supabaseClient
+          .from('articles')
+          .select('*')
+          .order('published_at', { ascending: false });
 
-      if (error) {
+        if (error) throw error;
+
+        if (!data || !data.length) {
+          return getArticles();
+        }
+
+        const mapped = data.map(mapDbRowToArticle);
+        saveArticles(mapped);
+        return mapped;
+      } catch (error) {
         console.warn('Supabase fetch failed, using localStorage fallback:', error);
         return getArticles();
       }
+    }
 
-      if (!data || !data.length) {
-        return getArticles();
+    async function deleteArticleFromSupabase(article) {
+      if (!supabaseClient || !article || !article.id) {
+        return false;
       }
 
-      const mapped = data.map(mapDbRowToArticle);
-      saveArticles(mapped);
-      return mapped;
+      try {
+        const { error } = await supabaseClient.from('articles').delete().eq('id', article.id);
+        if (error) throw error;
+        return true;
+      } catch (error) {
+        console.warn('Supabase delete not available for this schema; deleting locally only.', error);
+        return false;
+      }
+    }
+
+    async function updateArticleInSupabase(article, updatedRow) {
+      if (!supabaseClient || !article || !article.id) {
+        return false;
+      }
+
+      try {
+        const { error } = await supabaseClient
+          .from('articles')
+          .update(updatedRow)
+          .eq('id', article.id);
+
+        if (error) throw error;
+        return true;
+      } catch (error) {
+        console.warn('Supabase update not available for this schema; saving locally only.', error);
+        return false;
+      }
     }
 
     function updateStats(articles) {
@@ -404,8 +442,7 @@
         .replace(/^-+|-+$/g, '') || 'untitled-article';
     }
 
-    async function renderArticles() {
-      const articles = await fetchArticlesFromSupabase();
+    function renderArticleCards(articles) {
       updateStats(articles);
 
       if (!articles.length) {
@@ -480,21 +517,14 @@
       document.querySelectorAll('[data-delete-index]').forEach((button) => {
         button.addEventListener('click', async () => {
           const index = Number(button.getAttribute('data-delete-index'));
-          const articles = await fetchArticlesFromSupabase();
-          const article = articles[index];
+          const article = currentArticles[index];
           if (!article) return;
 
-          if (supabaseClient) {
-            const { error } = await supabaseClient.from('articles').delete().eq('id', article.id);
-            if (error) {
-              console.error('Delete failed:', error);
-              return;
-            }
-          }
+          await deleteArticleFromSupabase(article);
 
-          const remaining = articles.filter((_, itemIndex) => itemIndex !== index);
-          saveArticles(remaining);
-          renderArticles();
+          currentArticles = currentArticles.filter((_, itemIndex) => itemIndex !== index);
+          saveArticles(currentArticles);
+          renderArticleCards(currentArticles);
         });
       });
 
@@ -502,8 +532,7 @@
         form.addEventListener('submit', async (event) => {
           event.preventDefault();
           const index = Number(form.getAttribute('data-edit-index'));
-          const articles = await fetchArticlesFromSupabase();
-          const article = articles[index];
+          const article = currentArticles[index];
           if (!article) return;
 
           const formData = new FormData(form);
@@ -527,19 +556,9 @@
             content
           };
 
-          if (supabaseClient) {
-            const { error } = await supabaseClient
-              .from('articles')
-              .update(updatedRow)
-              .eq('id', article.id);
+          await updateArticleInSupabase(article, updatedRow);
 
-            if (error) {
-              console.error('Update failed:', error);
-              return;
-            }
-          }
-
-          const updatedArticle = {
+          currentArticles[index] = {
             ...article,
             ...updatedRow,
             authorName,
@@ -550,11 +569,15 @@
             seoTags
           };
 
-          const nextArticles = articles.map((item, itemIndex) => itemIndex === index ? updatedArticle : item);
-          saveArticles(nextArticles);
-          renderArticles();
+          saveArticles(currentArticles);
+          renderArticleCards(currentArticles);
         });
       });
+    }
+
+    async function renderArticles() {
+      currentArticles = await fetchArticlesFromSupabase();
+      renderArticleCards(currentArticles);
     }
 
     function showAdmin() {
