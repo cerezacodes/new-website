@@ -290,35 +290,12 @@
 
   window.LIGHTSOUT_ENV = window.LIGHTSOUT_ENV || {
     SUPABASE_URL: '',
-    SUPABASE_ANON_KEY: '',
-    ADMIN_PASSWORD: '',
-    WRITER_PASSWORD: ''
+    SUPABASE_ANON_KEY: ''
   };
 
   const runtimeConfig = window.LIGHTSOUT_ENV || {};
   const SUPABASE_URL = (runtimeConfig.SUPABASE_URL || '').replace(/\/rest\/v1\/?$/, '');
   const SUPABASE_ANON_KEY = runtimeConfig.SUPABASE_ANON_KEY || '';
-  const WRITER_PASSWORD = (runtimeConfig.WRITER_PASSWORD || '').trim();
-
-  if (!WRITER_PASSWORD || !SUPABASE_URL || !SUPABASE_ANON_KEY) {
-    fetch('js/runtime-config.js?ts=' + Date.now(), { cache: 'no-store' })
-      .then((response) => response.text())
-      .then((text) => {
-        const writerMatch = text.match(/WRITER_PASSWORD:\s*['\"]([^'\"]+)['\"]/);
-        const supabaseUrlMatch = text.match(/SUPABASE_URL:\s*['\"]([^'\"]+)['\"]/);
-        const supabaseKeyMatch = text.match(/SUPABASE_ANON_KEY:\s*['\"]([^'\"]+)['\"]/);
-
-        if (writerMatch) {
-          window.LIGHTSOUT_ENV = {
-            ...window.LIGHTSOUT_ENV,
-            WRITER_PASSWORD: writerMatch[1],
-            SUPABASE_URL: supabaseUrlMatch ? supabaseUrlMatch[1] : window.LIGHTSOUT_ENV.SUPABASE_URL || '',
-            SUPABASE_ANON_KEY: supabaseKeyMatch ? supabaseKeyMatch[1] : window.LIGHTSOUT_ENV.SUPABASE_ANON_KEY || ''
-          };
-        }
-      })
-      .catch(() => {});
-  }
 
   if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
     console.error('Missing Supabase runtime config. Add the values to .env and generate js/runtime-config.js locally.');
@@ -349,7 +326,24 @@
       return;
     }
 
-    if (writerPassword !== WRITER_PASSWORD) {
+    let isValidWriterPassword = false;
+
+    try {
+      const response = await fetch('/api/validate-password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ type: 'writer', password: writerPassword })
+      });
+
+      const result = await response.json();
+      isValidWriterPassword = !!(result && result.ok);
+    } catch (error) {
+      console.error('Writer password validation failed:', error);
+    }
+
+    if (!isValidWriterPassword) {
       statusEl.style.color = 'red';
       statusEl.textContent = 'Incorrect writer password.';
       return;

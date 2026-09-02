@@ -316,42 +316,11 @@
     function normalizeRuntimeConfig(config = {}) {
       return {
         SUPABASE_URL: String(config.SUPABASE_URL || '').trim(),
-        SUPABASE_ANON_KEY: String(config.SUPABASE_ANON_KEY || '').trim(),
-        ADMIN_PASSWORD: String(config.ADMIN_PASSWORD || '').trim()
+        SUPABASE_ANON_KEY: String(config.SUPABASE_ANON_KEY || '').trim()
       };
     }
 
-    async function loadRuntimeConfig() {
-      const initial = normalizeRuntimeConfig(window.LIGHTSOUT_ENV);
-      if (initial.ADMIN_PASSWORD || initial.SUPABASE_URL || initial.SUPABASE_ANON_KEY) {
-        window.LIGHTSOUT_ENV = initial;
-        return initial;
-      }
-
-      try {
-        const response = await fetch('js/runtime-config.js?ts=' + Date.now(), { cache: 'no-store' });
-        const text = await response.text();
-        const next = normalizeRuntimeConfig(window.LIGHTSOUT_ENV);
-        const supabaseUrlMatch = text.match(/SUPABASE_URL:\s*['\"]([^'\"]+)['\"]/);
-        const supabaseKeyMatch = text.match(/SUPABASE_ANON_KEY:\s*['\"]([^'\"]+)['\"]/);
-        const passwordMatch = text.match(/ADMIN_PASSWORD:\s*['\"]([^'\"]+)['\"]/);
-
-        const resolved = {
-          SUPABASE_URL: supabaseUrlMatch ? supabaseUrlMatch[1] : next.SUPABASE_URL,
-          SUPABASE_ANON_KEY: supabaseKeyMatch ? supabaseKeyMatch[1] : next.SUPABASE_ANON_KEY,
-          ADMIN_PASSWORD: passwordMatch ? passwordMatch[1] : next.ADMIN_PASSWORD
-        };
-
-        window.LIGHTSOUT_ENV = resolved;
-        return resolved;
-      } catch (error) {
-        window.LIGHTSOUT_ENV = initial;
-        return initial;
-      }
-    }
-
     let runtimeConfig = normalizeRuntimeConfig(window.LIGHTSOUT_ENV);
-    let ADMIN_PASSWORD = runtimeConfig.ADMIN_PASSWORD;
     let SUPABASE_URL = (runtimeConfig.SUPABASE_URL || '').replace(/\/rest\/v1\/?$/, '');
     let SUPABASE_ANON_KEY = runtimeConfig.SUPABASE_ANON_KEY || '';
     let supabaseClient = SUPABASE_URL && SUPABASE_ANON_KEY && window.supabase
@@ -611,19 +580,6 @@
       renderArticleCards(currentArticles);
     }
 
-    async function refreshRuntimeConfig() {
-      runtimeConfig = await loadRuntimeConfig();
-      if (!runtimeConfig.ADMIN_PASSWORD) {
-        runtimeConfig.ADMIN_PASSWORD = 'lightsoutadmin';
-      }
-      ADMIN_PASSWORD = runtimeConfig.ADMIN_PASSWORD || '';
-      SUPABASE_URL = (runtimeConfig.SUPABASE_URL || '').replace(/\/rest\/v1\/?$/, '');
-      SUPABASE_ANON_KEY = runtimeConfig.SUPABASE_ANON_KEY || '';
-      supabaseClient = SUPABASE_URL && SUPABASE_ANON_KEY && window.supabase
-        ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
-        : null;
-    }
-
     function showAdmin() {
       const isUnlocked = sessionStorage.getItem('lightsout-admin-auth') === 'true';
       if (!isUnlocked) {
@@ -639,18 +595,32 @@
 
     loginForm.addEventListener('submit', async (event) => {
       event.preventDefault();
-      await refreshRuntimeConfig();
-      const entered = document.getElementById('adminPassword').value;
+      const entered = document.getElementById('adminPassword').value.trim();
 
-      if (entered === ADMIN_PASSWORD) {
-        sessionStorage.setItem('lightsout-admin-auth', 'true');
-        loginStatus.textContent = 'Access granted.';
-        loginStatus.className = 'status success';
-        showAdmin();
-      } else {
-        loginStatus.textContent = 'Incorrect password.';
-        loginStatus.className = 'status error';
+      try {
+        const response = await fetch('/api/validate-password', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ type: 'admin', password: entered })
+        });
+
+        const result = await response.json();
+
+        if (result && result.ok) {
+          sessionStorage.setItem('lightsout-admin-auth', 'true');
+          loginStatus.textContent = 'Access granted.';
+          loginStatus.className = 'status success';
+          showAdmin();
+          return;
+        }
+      } catch (error) {
+        console.error('Admin password validation failed:', error);
       }
+
+      loginStatus.textContent = 'Incorrect password.';
+      loginStatus.className = 'status error';
     });
 
     document.getElementById('logoutBtn').addEventListener('click', () => {

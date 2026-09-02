@@ -27,9 +27,7 @@ function parseEnv(filePath) {
 const env = parseEnv(envPath);
 const runtime = {
   SUPABASE_URL: env.SUPABASE_URL || '',
-  SUPABASE_ANON_KEY: env.SUPABASE_ANON_KEY || '',
-  ADMIN_PASSWORD: env.ADMIN_PASSWORD || '',
-  WRITER_PASSWORD: env.WRITER_PASSWORD || ''
+  SUPABASE_ANON_KEY: env.SUPABASE_ANON_KEY || ''
 };
 
 const content = `window.LIGHTSOUT_ENV = ${JSON.stringify(runtime, null, 2)};\n`;
