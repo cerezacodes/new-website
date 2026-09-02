@@ -24,11 +24,20 @@ function parseEnv(filePath) {
   return env;
 }
 
-const env = parseEnv(envPath);
+// Merge local .env (for dev) with process.env (for Vercel/hosting platforms).
+// process.env takes priority so real deployment values always win.
+const fileEnv = parseEnv(envPath);
+const env = { ...fileEnv, ...process.env };
+
 const runtime = {
   SUPABASE_URL: env.SUPABASE_URL || '',
   SUPABASE_ANON_KEY: env.SUPABASE_PUBLISHABLE_KEY || env.SUPABASE_ANON_KEY || ''
 };
+
+if (!runtime.SUPABASE_URL || !runtime.SUPABASE_ANON_KEY) {
+  console.warn('Warning: SUPABASE_URL or SUPABASE_ANON_KEY/SUPABASE_PUBLISHABLE_KEY is missing. ' +
+    'Check your .env file (local) or your platform\'s Environment Variables settings (production).');
+}
 
 const content = `window.LIGHTSOUT_ENV = ${JSON.stringify(runtime, null, 2)};\n`;
 fs.writeFileSync(outputPath, content, 'utf8');
