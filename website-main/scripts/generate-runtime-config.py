@@ -6,7 +6,7 @@ output_path = root / 'js' / 'runtime-config.js'
 
 config = {
     'SUPABASE_URL': '',
-    'SUPABASE_ANON_KEY': ''
+    'SUPABASE_PUBLISHABLE_KEY': ''
 }
 
 if env_path.exists():
@@ -17,11 +17,18 @@ if env_path.exists():
         key, value = stripped.split('=', 1)
         key = key.strip()
         value = value.strip().strip('"\'')
+        if key == 'SUPABASE_ANON_KEY':
+            key = 'SUPABASE_PUBLISHABLE_KEY'
         if key in config:
             config[key] = value
 
+runtime = {
+    'SUPABASE_URL': config['SUPABASE_URL'],
+    'SUPABASE_ANON_KEY': config['SUPABASE_PUBLISHABLE_KEY']
+}
+
 output_path.write_text(
-    'window.LIGHTSOUT_ENV = ' + str({k: v for k, v in config.items() if v}).replace("'", '"') + ';\n',
+    'window.LIGHTSOUT_ENV = ' + str({k: v for k, v in runtime.items() if v}).replace("'", '"') + ';\n',
     encoding='utf-8'
 )
 

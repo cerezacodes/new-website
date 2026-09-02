@@ -1,0 +1,10 @@
+{
+  "name": "lightsout-website",
+  "private": true,
+  "scripts": {
+    "generate-runtime-config": "node scripts/generate-runtime-config.js"
+  },
+  "dependencies": {
+    "@supabase/server": "^1.5.2"
+  }
+}
