@@ -2,7 +2,8 @@
   "name": "lightsout-website",
   "private": true,
   "scripts": {
-    "generate-runtime-config": "node scripts/generate-runtime-config.js"
+    "generate-runtime-config": "node scripts/generate-runtime-config.js",
+    "build": "npm run generate-runtime-config"
   },
   "dependencies": {
     "@supabase/server": "^1.5.2"
