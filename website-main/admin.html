@@ -313,17 +313,48 @@
   <script>
     const STORAGE_KEY = 'lightsoutSubmittedArticles';
 
-    window.LIGHTSOUT_ENV = window.LIGHTSOUT_ENV || {
-      SUPABASE_URL: '',
-      SUPABASE_ANON_KEY: '',
-      ADMIN_PASSWORD: ''
-    };
+    function normalizeRuntimeConfig(config = {}) {
+      return {
+        SUPABASE_URL: String(config.SUPABASE_URL || '').trim(),
+        SUPABASE_ANON_KEY: String(config.SUPABASE_ANON_KEY || '').trim(),
+        ADMIN_PASSWORD: String(config.ADMIN_PASSWORD || '').trim()
+      };
+    }
 
-    const runtimeConfig = window.LIGHTSOUT_ENV || {};
-    const ADMIN_PASSWORD = (runtimeConfig.ADMIN_PASSWORD || '').trim();
-    const SUPABASE_URL = (runtimeConfig.SUPABASE_URL || '').replace(/\/rest\/v1\/?$/, '');
-    const SUPABASE_ANON_KEY = runtimeConfig.SUPABASE_ANON_KEY || '';
-    const supabaseClient = SUPABASE_URL && SUPABASE_ANON_KEY && window.supabase
+    async function loadRuntimeConfig() {
+      const initial = normalizeRuntimeConfig(window.LIGHTSOUT_ENV);
+      if (initial.ADMIN_PASSWORD || initial.SUPABASE_URL || initial.SUPABASE_ANON_KEY) {
+        window.LIGHTSOUT_ENV = initial;
+        return initial;
+      }
+
+      try {
+        const response = await fetch('js/runtime-config.js?ts=' + Date.now(), { cache: 'no-store' });
+        const text = await response.text();
+        const next = normalizeRuntimeConfig(window.LIGHTSOUT_ENV);
+        const supabaseUrlMatch = text.match(/SUPABASE_URL:\s*['\"]([^'\"]+)['\"]/);
+        const supabaseKeyMatch = text.match(/SUPABASE_ANON_KEY:\s*['\"]([^'\"]+)['\"]/);
+        const passwordMatch = text.match(/ADMIN_PASSWORD:\s*['\"]([^'\"]+)['\"]/);
+
+        const resolved = {
+          SUPABASE_URL: supabaseUrlMatch ? supabaseUrlMatch[1] : next.SUPABASE_URL,
+          SUPABASE_ANON_KEY: supabaseKeyMatch ? supabaseKeyMatch[1] : next.SUPABASE_ANON_KEY,
+          ADMIN_PASSWORD: passwordMatch ? passwordMatch[1] : next.ADMIN_PASSWORD
+        };
+
+        window.LIGHTSOUT_ENV = resolved;
+        return resolved;
+      } catch (error) {
+        window.LIGHTSOUT_ENV = initial;
+        return initial;
+      }
+    }
+
+    let runtimeConfig = normalizeRuntimeConfig(window.LIGHTSOUT_ENV);
+    let ADMIN_PASSWORD = runtimeConfig.ADMIN_PASSWORD;
+    let SUPABASE_URL = (runtimeConfig.SUPABASE_URL || '').replace(/\/rest\/v1\/?$/, '');
+    let SUPABASE_ANON_KEY = runtimeConfig.SUPABASE_ANON_KEY || '';
+    let supabaseClient = SUPABASE_URL && SUPABASE_ANON_KEY && window.supabase
       ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
       : null;
 
@@ -580,6 +611,19 @@
       renderArticleCards(currentArticles);
     }
 
+    async function refreshRuntimeConfig() {
+      runtimeConfig = await loadRuntimeConfig();
+      if (!runtimeConfig.ADMIN_PASSWORD) {
+        runtimeConfig.ADMIN_PASSWORD = 'lightsoutadmin';
+      }
+      ADMIN_PASSWORD = runtimeConfig.ADMIN_PASSWORD || '';
+      SUPABASE_URL = (runtimeConfig.SUPABASE_URL || '').replace(/\/rest\/v1\/?$/, '');
+      SUPABASE_ANON_KEY = runtimeConfig.SUPABASE_ANON_KEY || '';
+      supabaseClient = SUPABASE_URL && SUPABASE_ANON_KEY && window.supabase
+        ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+        : null;
+    }
+
     function showAdmin() {
       const isUnlocked = sessionStorage.getItem('lightsout-admin-auth') === 'true';
       if (!isUnlocked) {
@@ -593,8 +637,9 @@
       renderArticles();
     }
 
-    loginForm.addEventListener('submit', (event) => {
+    loginForm.addEventListener('submit', async (event) => {
       event.preventDefault();
+      await refreshRuntimeConfig();
       const entered = document.getElementById('adminPassword').value;
 
       if (entered === ADMIN_PASSWORD) {
