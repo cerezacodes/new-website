@@ -345,13 +345,13 @@
     const imageFile = document.getElementById('coverImage').files[0];
     const publishedAt = new Date().toISOString();
 
-    if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-      statusEl.style.color = 'red';
-      statusEl.textContent = 'Error: Supabase is not configured for this local site. Add the runtime config before submitting.';
-      return;
-    }
+    const supabaseClient = (SUPABASE_URL && SUPABASE_ANON_KEY && window.supabase)
+      ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+      : null;
 
-    const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+    if (!supabaseClient) {
+      console.warn('Supabase is not configured for this local site. Falling back to localStorage submission.');
+    }
 
     if (!authorName || !writerPassword || !title || !subtitle || !category || !seoTags || !content || !imageFile) {
       statusEl.style.color = 'red';
@@ -416,16 +416,14 @@
         content
       };
 
-      if (!supabaseClient) {
-        throw new Error('Supabase is not configured for this local site. Add the runtime config before submitting.');
-      }
-
       let dbError = null;
-      try {
-        const { error } = await supabaseClient.from('articles').insert([articlePayload]);
-        dbError = error || null;
-      } catch (error) {
-        dbError = error;
+      if (supabaseClient) {
+        try {
+          const { error } = await supabaseClient.from('articles').insert([articlePayload]);
+          dbError = error || null;
+        } catch (error) {
+          dbError = error;
+        }
       }
 
       if (dbError) {
