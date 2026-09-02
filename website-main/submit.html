@@ -280,6 +280,11 @@
     });
   }
 
+  window.LIGHTSOUT_ENV = window.LIGHTSOUT_ENV || {
+    SUPABASE_URL: 'https://tffnjaywwjszurbwdylm.supabase.co',
+    SUPABASE_ANON_KEY: 'sb_publishable_ET_3FUuZaJ0TJUCABt3fvQ_uqPRUMfk'
+  };
+
   const runtimeConfig = window.LIGHTSOUT_ENV || {};
   const SUPABASE_URL = (runtimeConfig.SUPABASE_URL || '').replace(/\/rest\/v1\/?$/, '');
   const SUPABASE_ANON_KEY = runtimeConfig.SUPABASE_ANON_KEY || '';
@@ -288,7 +293,7 @@
     console.error('Missing Supabase runtime config. Add the values to .env and generate js/runtime-config.js locally.');
   }
 
-  const supabaseClient = SUPABASE_URL && SUPABASE_ANON_KEY
+  const supabaseClient = SUPABASE_URL && SUPABASE_ANON_KEY && window.supabase
     ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
     : null;
 
