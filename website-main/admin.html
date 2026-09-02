@@ -593,18 +593,31 @@
       renderArticles();
     }
 
+    function getPasswordValidationUrl() {
+      const protocol = window.location.protocol;
+      if (protocol === 'file:') {
+        return 'http://localhost:8000/api/validate-password';
+      }
+      return new URL('/api/validate-password', window.location.origin).toString();
+    }
+
     loginForm.addEventListener('submit', async (event) => {
       event.preventDefault();
       const entered = document.getElementById('adminPassword').value.trim();
 
       try {
-        const response = await fetch('/api/validate-password', {
+        const response = await fetch(getPasswordValidationUrl(), {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({ type: 'admin', password: entered })
         });
+
+        if (!response.ok) {
+          const text = await response.text().catch(() => '');
+          throw new Error(text || `Password service returned ${response.status}`);
+        }
 
         const result = await response.json();
 
@@ -615,8 +628,15 @@
           showAdmin();
           return;
         }
+
+        if (!result || typeof result.ok !== 'boolean') {
+          throw new Error('Password service returned an invalid response.');
+        }
       } catch (error) {
         console.error('Admin password validation failed:', error);
+        loginStatus.textContent = 'Password check failed: ' + (error.message || 'the validation service is unavailable.');
+        loginStatus.className = 'status error';
+        return;
       }
 
       loginStatus.textContent = 'Incorrect password.';

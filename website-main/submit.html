@@ -293,23 +293,48 @@
     SUPABASE_ANON_KEY: ''
   };
 
-  const runtimeConfig = window.LIGHTSOUT_ENV || {};
-  const SUPABASE_URL = (runtimeConfig.SUPABASE_URL || '').replace(/\/rest\/v1\/?$/, '');
-  const SUPABASE_ANON_KEY = runtimeConfig.SUPABASE_ANON_KEY || '';
+  async function ensureRuntimeConfig() {
+    const current = window.LIGHTSOUT_ENV || {};
+    if (current.SUPABASE_URL && current.SUPABASE_ANON_KEY) {
+      return current;
+    }
 
-  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-    console.error('Missing Supabase runtime config. Add the values to .env and generate js/runtime-config.js locally.');
+    try {
+      const response = await fetch('js/runtime-config.js?ts=' + Date.now(), { cache: 'no-store' });
+      const text = await response.text();
+      const supabaseUrlMatch = text.match(/SUPABASE_URL:\s*['\"]([^'\"]+)['\"]/);
+      const supabaseKeyMatch = text.match(/SUPABASE_ANON_KEY:\s*['\"]([^'\"]+)['\"]/);
+
+      const resolved = {
+        ...current,
+        SUPABASE_URL: supabaseUrlMatch ? supabaseUrlMatch[1] : '',
+        SUPABASE_ANON_KEY: supabaseKeyMatch ? supabaseKeyMatch[1] : ''
+      };
+
+      window.LIGHTSOUT_ENV = resolved;
+      return resolved;
+    } catch (error) {
+      console.warn('Could not refresh Supabase runtime config.', error);
+      return current;
+    }
   }
 
-  const supabaseClient = SUPABASE_URL && SUPABASE_ANON_KEY && window.supabase
-    ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
-    : null;
+  function getPasswordValidationUrl() {
+    const protocol = window.location.protocol;
+    if (protocol === 'file:') {
+      return 'http://localhost:8000/api/validate-password';
+    }
+    return new URL('/api/validate-password', window.location.origin).toString();
+  }
 
   document.getElementById('articleForm').addEventListener('submit', async (e) => {
     e.preventDefault();
 
     const statusEl = document.getElementById('formStatus');
     const submitBtn = document.getElementById('submitBtn');
+    const runtimeConfig = await ensureRuntimeConfig();
+    const SUPABASE_URL = (runtimeConfig.SUPABASE_URL || '').replace(/\/rest\/v1\/?$/, '');
+    const SUPABASE_ANON_KEY = runtimeConfig.SUPABASE_ANON_KEY || '';
     const authorName = document.getElementById('authorName').value.trim();
     const writerPassword = document.getElementById('writerPassword').value.trim();
     const title = document.getElementById('title').value.trim();
@@ -320,6 +345,14 @@
     const imageFile = document.getElementById('coverImage').files[0];
     const publishedAt = new Date().toISOString();
 
+    if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+      statusEl.style.color = 'red';
+      statusEl.textContent = 'Error: Supabase is not configured for this local site. Add the runtime config before submitting.';
+      return;
+    }
+
+    const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+
     if (!authorName || !writerPassword || !title || !subtitle || !category || !seoTags || !content || !imageFile) {
       statusEl.style.color = 'red';
       statusEl.textContent = 'Please complete all required fields before submitting.';
@@ -329,7 +362,7 @@
     let isValidWriterPassword = false;
 
     try {
-      const response = await fetch('/api/validate-password', {
+      const response = await fetch(getPasswordValidationUrl(), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -337,10 +370,22 @@
         body: JSON.stringify({ type: 'writer', password: writerPassword })
       });
 
+      if (!response.ok) {
+        const text = await response.text().catch(() => '');
+        throw new Error(text || `Password service returned ${response.status}`);
+      }
+
       const result = await response.json();
-      isValidWriterPassword = !!(result && result.ok);
+      if (!result || typeof result.ok !== 'boolean') {
+        throw new Error('Password service returned an invalid response.');
+      }
+
+      isValidWriterPassword = result.ok;
     } catch (error) {
       console.error('Writer password validation failed:', error);
+      statusEl.style.color = 'red';
+      statusEl.textContent = 'Password check failed: ' + (error.message || 'the validation service is unavailable.');
+      return;
     }
 
     if (!isValidWriterPassword) {
