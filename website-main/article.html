@@ -136,6 +136,8 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/runtime-config.js"></script>
     <script>
         const articles = { 
 
@@ -2365,81 +2367,134 @@ Not only is this his maiden victory in the Principality, but it marks an astonis
 
 
 
-        const submittedEntries = (() => {
+        function normalizeRuntimeConfig(config = {}) {
+            return {
+                SUPABASE_URL: String(config.SUPABASE_URL || '').trim(),
+                SUPABASE_ANON_KEY: String(config.SUPABASE_ANON_KEY || '').trim()
+            };
+        }
+
+        function mapDbRowToArticle(row) {
+            if (!row || !row.id) return null;
+            return {
+                title: row.title || 'Untitled Article',
+                subtitle: row.subtitle || row.description || 'Freshly submitted article',
+                image: row.image || 'assets/images/intro.png',
+                authorName: row.author_name || 'Lights Out Team',
+                authorPic: row.author_pic || 'assets/images/authors/eya-amri.jpg',
+                content: row.content || '',
+                font: "'Playfair Display', serif",
+                category: row.category || 'news',
+                publishedAt: row.published_at || new Date().toISOString()
+            };
+        }
+
+        async function loadSubmittedEntries() {
+            const runtimeConfig = normalizeRuntimeConfig(window.LIGHTSOUT_ENV);
+            const supabaseUrl = (runtimeConfig.SUPABASE_URL || '').replace(/\/rest\/v1\/?$/, '');
+            const supabaseAnonKey = runtimeConfig.SUPABASE_ANON_KEY || '';
+            const supabaseClient = supabaseUrl && supabaseAnonKey && window.supabase
+                ? window.supabase.createClient(supabaseUrl, supabaseAnonKey)
+                : null;
+
+            if (supabaseClient) {
+                try {
+                    const { data, error } = await supabaseClient
+                        .from('articles')
+                        .select('*')
+                        .order('published_at', { ascending: false });
+
+                    if (!error && Array.isArray(data)) {
+                        data.forEach((row) => {
+                            const mapped = mapDbRowToArticle(row);
+                            if (mapped) {
+                                articles[row.id] = mapped;
+                            }
+                        });
+                    }
+                } catch (error) {
+                    console.warn('Supabase article detail fetch failed; using local fallback.', error);
+                }
+            }
+
             try {
                 const parsed = JSON.parse(localStorage.getItem('lightsoutSubmittedArticles') || '[]');
-                return Array.isArray(parsed) ? parsed : [];
+                const localEntries = Array.isArray(parsed) ? parsed : [];
+                localEntries.forEach((article) => {
+                    if (!article || !article.id) return;
+                    articles[article.id] = {
+                        title: article.title || 'Untitled Article',
+                        subtitle: article.subtitle || article.description || 'Freshly submitted article',
+                        image: article.image || 'assets/images/intro.png',
+                        authorName: article.authorName || article.author_name || 'Lights Out Team',
+                        authorPic: article.authorPic || article.author_pic || 'assets/images/authors/eya-amri.jpg',
+                        content: article.content || '',
+                        font: "'Playfair Display', serif",
+                        category: article.category || 'news',
+                        publishedAt: article.publishedAt || article.published_at || new Date().toISOString()
+                    };
+                });
             } catch (error) {
-                return [];
+                console.warn('Local submitted article fallback failed.', error);
             }
-        })();
-
-        submittedEntries.forEach((article) => {
-            if (!article || !article.id) return;
-
-            articles[article.id] = {
-                title: article.title || 'Untitled Article',
-                subtitle: article.subtitle || article.description || 'Freshly submitted article',
-                image: article.image || 'assets/images/intro.png',
-                authorName: article.authorName || article.author_name || 'Lights Out Team',
-                authorPic: article.authorPic || article.author_pic || 'assets/images/authors/eya-amri.jpg',
-                content: article.content || '',
-                font: "'Playfair Display', serif",
-                category: article.category || 'news',
-                publishedAt: article.publishedAt || article.published_at || new Date().toISOString()
-            };
-        });
+        }
 
         const urlParams = new URLSearchParams(window.location.search);
         const articleId = urlParams.get('id');
 
-        if (articleId && articles[articleId]) {
-            const currentArticle = articles[articleId];
-            const articleTitle = document.getElementById('article-title');
-            const articleSubtitle = document.getElementById('article-subtitle');
-            const articleImage = document.getElementById('article-image');
-            const articleContent = document.getElementById('article-content');
-            const authorNameEl = document.getElementById('authorName');
-            const authorPicEl = document.getElementById('authorPic');
-            const divider = document.getElementById('author-divider');
-            const authorBox = document.getElementById('author-box');
+        async function renderSelectedArticle() {
+            await loadSubmittedEntries();
 
-            articleTitle.innerText = currentArticle.title;
-            articleSubtitle.innerText = currentArticle.subtitle;
-            articleImage.src = currentArticle.image;
-            articleImage.alt = currentArticle.title;
-            articleContent.innerHTML = currentArticle.content || '';
+            if (articleId && articles[articleId]) {
+                const currentArticle = articles[articleId];
+                const articleTitle = document.getElementById('article-title');
+                const articleSubtitle = document.getElementById('article-subtitle');
+                const articleImage = document.getElementById('article-image');
+                const articleContent = document.getElementById('article-content');
+                const authorNameEl = document.getElementById('authorName');
+                const authorPicEl = document.getElementById('authorPic');
+                const divider = document.getElementById('author-divider');
+                const authorBox = document.getElementById('author-box');
 
-            if (currentArticle.authorName && currentArticle.authorPic) {
-                authorNameEl.innerText = currentArticle.authorName;
-                authorPicEl.src = currentArticle.authorPic;
-                authorPicEl.alt = currentArticle.authorName;
-                authorPicEl.style.width = '90px';
-                authorPicEl.style.height = '90px';
-                authorPicEl.style.borderRadius = '50%';
-                authorPicEl.style.objectFit = 'cover';
-                authorPicEl.style.margin = '10px';
-                if (divider) divider.style.display = 'block';
-                if (authorBox) authorBox.style.display = 'flex';
+                articleTitle.innerText = currentArticle.title;
+                articleSubtitle.innerText = currentArticle.subtitle;
+                articleImage.src = currentArticle.image;
+                articleImage.alt = currentArticle.title;
+                articleContent.innerHTML = currentArticle.content || '';
+
+                if (currentArticle.authorName && currentArticle.authorPic) {
+                    authorNameEl.innerText = currentArticle.authorName;
+                    authorPicEl.src = currentArticle.authorPic;
+                    authorPicEl.alt = currentArticle.authorName;
+                    authorPicEl.style.width = '90px';
+                    authorPicEl.style.height = '90px';
+                    authorPicEl.style.borderRadius = '50%';
+                    authorPicEl.style.objectFit = 'cover';
+                    authorPicEl.style.margin = '10px';
+                    if (divider) divider.style.display = 'block';
+                    if (authorBox) authorBox.style.display = 'flex';
+                } else {
+                    if (divider) divider.style.display = 'none';
+                    if (authorBox) authorBox.style.display = 'none';
+                }
+
+                if (currentArticle.font) {
+                    articleTitle.style.fontFamily = currentArticle.font;
+                    articleSubtitle.style.fontFamily = currentArticle.font;
+                    articleContent.style.fontFamily = currentArticle.font;
+                } else {
+                    const defaultFont = "'Libre Baskerville', serif";
+                    articleTitle.style.fontFamily = defaultFont;
+                    articleSubtitle.style.fontFamily = defaultFont;
+                    articleContent.style.fontFamily = defaultFont;
+                }
+
+                document.title = `${currentArticle.title} | Lights Out`;
             } else {
-                if (divider) divider.style.display = 'none';
-                if (authorBox) authorBox.style.display = 'none';
+                document.getElementById('article-title').innerText = 'Article Not Found';
+                document.getElementById('article-content').innerText = "Sorry, we couldn't find the article you were looking for.";
             }
-
-            if (currentArticle.font) {
-                articleTitle.style.fontFamily = currentArticle.font;
-                articleSubtitle.style.fontFamily = currentArticle.font;
-                articleContent.style.fontFamily = currentArticle.font;
-            } else {
-                const defaultFont = "'Libre Baskerville', serif";
-                articleTitle.style.fontFamily = defaultFont;
-                articleSubtitle.style.fontFamily = defaultFont;
-                articleContent.style.fontFamily = defaultFont;
-            }
-
-            document.title = `${currentArticle.title} | Lights Out`;
-        } else {
-            document.getElementById('article-title').innerText = 'Article Not Found';
-            document.getElementById('article-content').innerText = "Sorry, we couldn't find the article you were looking for.";
         }
+
+        renderSelectedArticle();
     </script>

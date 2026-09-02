@@ -1029,6 +1029,154 @@
     setInterval(updateTimeAgo, 60000);
   </script>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/runtime-config.js"></script>
+  <script>
+    const STORAGE_KEY = 'lightsoutSubmittedArticles';
+
+    function normalizeRuntimeConfig(config = {}) {
+      return {
+        SUPABASE_URL: String(config.SUPABASE_URL || '').trim(),
+        SUPABASE_ANON_KEY: String(config.SUPABASE_ANON_KEY || '').trim()
+      };
+    }
+
+    function getLocalArticles() {
+      try {
+        const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+        return Array.isArray(parsed) ? parsed : [];
+      } catch (error) {
+        return [];
+      }
+    }
+
+    function saveLocalArticles(articles) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(articles));
+    }
+
+    function mapDbRowToArticle(row) {
+      return {
+        id: row.id || row.slug || 'untitled-article',
+        title: row.title || 'Untitled Article',
+        subtitle: row.subtitle || row.description || '',
+        authorName: row.author_name || 'Lights Out Team',
+        authorPic: row.author_pic || 'assets/images/authors/eya-amri.jpg',
+        author_pic: row.author_pic || 'assets/images/authors/eya-amri.jpg',
+        category: row.category || 'news',
+        image: row.image || 'assets/images/intro.png',
+        seoTags: row.seo_tags || row.tags || '',
+        tags: row.seo_tags || row.tags || '',
+        content: row.content || '',
+        description: row.subtitle || row.description || '',
+        publishedAt: row.published_at || new Date().toISOString(),
+        published_at: row.published_at || new Date().toISOString(),
+        author_section: row.author_section || 'Lights Out Writer'
+      };
+    }
+
+    const runtimeConfig = normalizeRuntimeConfig(window.LIGHTSOUT_ENV);
+    const SUPABASE_URL = (runtimeConfig.SUPABASE_URL || '').replace(/\/rest\/v1\/?$/, '');
+    const SUPABASE_ANON_KEY = runtimeConfig.SUPABASE_ANON_KEY || '';
+    const supabaseClient = SUPABASE_URL && SUPABASE_ANON_KEY && window.supabase
+      ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+      : null;
+
+    async function fetchPublishedArticles() {
+      if (supabaseClient) {
+        try {
+          const { data, error } = await supabaseClient
+            .from('articles')
+            .select('*')
+            .order('published_at', { ascending: false });
+
+          if (!error && data && data.length) {
+            const mapped = data.map(mapDbRowToArticle);
+            saveLocalArticles(mapped);
+            return mapped;
+          }
+        } catch (error) {
+          console.warn('Supabase article fetch failed; using local fallback.', error);
+        }
+      }
+
+      return getLocalArticles();
+    }
+
+    async function renderPublishedArticles() {
+      const container = document.querySelector('.news-grid-container');
+      if (!container) return;
+
+      const submitted = await fetchPublishedArticles();
+      container.querySelectorAll('.news-card[data-source="supabase"]').forEach((node) => node.remove());
+
+      submitted.forEach((article) => {
+        const card = document.createElement('article');
+        const category = article.category || 'news';
+        const title = article.title || 'Untitled Article';
+        const description = article.subtitle || article.description || 'A freshly submitted story from the Lights Out newsroom.';
+        const image = article.image || 'assets/images/intro.png';
+        const publishedAt = article.publishedAt || article.published_at || new Date().toISOString();
+        const articleId = article.id || title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+
+        card.className = 'news-card';
+        card.setAttribute('data-category', category);
+        card.setAttribute('data-source', 'supabase');
+        card.innerHTML = `
+          <div class="card-image-box">
+            <a href="article.html?id=${articleId}">
+              <img src="${image}" alt="${title}">
+            </a>
+          </div>
+          <div class="card-text-box">
+            <h3 class="card-title">${title}</h3>
+            <p class="card-description">${description}</p>
+            <span class="card-time" data-timestamp="${publishedAt}">Calculating time...</span>
+          </div>
+        `;
+
+        container.prepend(card);
+      });
+
+      const updateTimeLabels = () => {
+        const timeLabels = document.querySelectorAll('.card-time');
+        const now = new Date();
+
+        timeLabels.forEach(label => {
+          const timestampStr = label.getAttribute('data-timestamp');
+          if (!timestampStr) return;
+          const postDate = new Date(timestampStr);
+          const secondsAgo = Math.floor((now - postDate) / 1000);
+
+          if (secondsAgo < 0) {
+            label.textContent = 'Just now';
+            return;
+          }
+
+          const intervals = { year: 31536000, month: 2592000, week: 604800, day: 86400, hour: 3600, minute: 60 };
+          let timeString = 'Just now';
+
+          for (const [unit, value] of Object.entries(intervals)) {
+            const count = Math.floor(secondsAgo / value);
+            if (count >= 1) {
+              timeString = `${count} ${unit}${count > 1 ? 's' : ''} ago`;
+              break;
+            }
+          }
+
+          if (timeString === 'Just now' && secondsAgo >= 1) {
+            timeString = `${secondsAgo} second${secondsAgo > 1 ? 's' : ''} ago`;
+          }
+
+          label.textContent = timeString;
+        });
+      };
+
+      updateTimeLabels();
+    }
+
+    renderPublishedArticles();
+  </script>
+
 </main>
 </body>
 </html>

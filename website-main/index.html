@@ -246,10 +246,19 @@
 
     <button class="scroll-top-btn" type="button" aria-label="Scroll back to top">↑</button>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/runtime-config.js"></script>
     <script>
       const STORAGE_KEY = 'lightsoutSubmittedArticles';
 
-      function getSubmittedArticles() {
+      function normalizeRuntimeConfig(config = {}) {
+        return {
+          SUPABASE_URL: String(config.SUPABASE_URL || '').trim(),
+          SUPABASE_ANON_KEY: String(config.SUPABASE_ANON_KEY || '').trim()
+        };
+      }
+
+      function getLocalArticles() {
         try {
           const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
           return Array.isArray(parsed) ? parsed : [];
@@ -258,11 +267,63 @@
         }
       }
 
-      function renderSubmittedArticles() {
+      function saveLocalArticles(articles) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(articles));
+      }
+
+      function mapDbRowToArticle(row) {
+        return {
+          id: row.id || row.slug || 'untitled-article',
+          title: row.title || 'Untitled Article',
+          subtitle: row.subtitle || row.description || '',
+          authorName: row.author_name || 'Lights Out Team',
+          authorPic: row.author_pic || 'assets/images/authors/eya-amri.jpg',
+          author_pic: row.author_pic || 'assets/images/authors/eya-amri.jpg',
+          category: row.category || 'news',
+          image: row.image || 'assets/images/intro.png',
+          seoTags: row.seo_tags || row.tags || '',
+          tags: row.seo_tags || row.tags || '',
+          content: row.content || '',
+          description: row.subtitle || row.description || '',
+          publishedAt: row.published_at || new Date().toISOString(),
+          published_at: row.published_at || new Date().toISOString(),
+          author_section: row.author_section || 'Lights Out Writer'
+        };
+      }
+
+      const runtimeConfig = normalizeRuntimeConfig(window.LIGHTSOUT_ENV);
+      const SUPABASE_URL = (runtimeConfig.SUPABASE_URL || '').replace(/\/rest\/v1\/?$/, '');
+      const SUPABASE_ANON_KEY = runtimeConfig.SUPABASE_ANON_KEY || '';
+      const supabaseClient = SUPABASE_URL && SUPABASE_ANON_KEY && window.supabase
+        ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+        : null;
+
+      async function fetchPublishedArticles() {
+        if (supabaseClient) {
+          try {
+            const { data, error } = await supabaseClient
+              .from('articles')
+              .select('*')
+              .order('published_at', { ascending: false });
+
+            if (!error && data && data.length) {
+              const mapped = data.map(mapDbRowToArticle);
+              saveLocalArticles(mapped);
+              return mapped;
+            }
+          } catch (error) {
+            console.warn('Supabase article fetch failed; using local fallback.', error);
+          }
+        }
+
+        return getLocalArticles();
+      }
+
+      async function renderSubmittedArticles() {
         const target = document.querySelector('#articles main');
         if (!target) return;
 
-        const submissions = getSubmittedArticles();
+        const submissions = await fetchPublishedArticles();
         if (!submissions.length) return;
 
         submissions.forEach((article) => {
