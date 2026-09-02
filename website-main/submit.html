@@ -350,12 +350,15 @@
       : null;
 
     if (!supabaseClient) {
+      const hasConfig = Boolean(runtimeConfig.SUPABASE_URL && runtimeConfig.SUPABASE_ANON_KEY);
       const configHint = window.location.protocol === 'file:'
         ? 'Serve the site over http://localhost:8000 and regenerate js/runtime-config.js from .env.'
-        : 'Run node scripts/generate-runtime-config.js from the project root to generate js/runtime-config.js from .env.';
+        : hasConfig
+          ? 'The Supabase JavaScript library did not load. Check your internet connection or browser network access.'
+          : 'Run node scripts/generate-runtime-config.js from the project root to generate js/runtime-config.js from .env.';
 
       statusEl.style.color = 'red';
-      statusEl.textContent = 'Live publishing is unavailable: Supabase is not configured for this site. ' + configHint;
+      statusEl.textContent = 'Live publishing is unavailable: ' + (hasConfig ? 'Supabase client did not initialize.' : 'Supabase is not configured for this site.') + ' ' + configHint;
       return;
     }
 
