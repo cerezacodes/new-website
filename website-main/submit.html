@@ -9,6 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/runtime-config.js"></script>
   <style>
     body {
       background: #090f1c;
@@ -217,12 +218,18 @@
     'Eya Amri': {
       pic: 'assets/images/authors/eya-amri.jpg',
       section: 'Lights Out Founder and Editor-in-chief'
+    },
+    Default: {
+      pic: 'assets/images/authors/eya-amri.jpg',
+      section: 'Lights Out Writer'
     }
   };
 
   function getAuthorMeta(name) {
     const trimmed = (name || '').trim();
-    const key = Object.keys(AUTHOR_META).find((authorName) => authorName.toLowerCase() === trimmed.toLowerCase());
+    const key = Object.keys(AUTHOR_META)
+      .filter((authorName) => authorName !== 'Default')
+      .find((authorName) => authorName.toLowerCase() === trimmed.toLowerCase());
     return key ? AUTHOR_META[key] : AUTHOR_META.Default;
   }
 
@@ -329,6 +336,10 @@
         published_at: publishedAt,
         content
       };
+
+      if (!supabaseClient) {
+        throw new Error('Supabase is not configured for this local site. Add the runtime config before submitting.');
+      }
 
       const { error } = await supabaseClient.from('articles').insert([articlePayload]);
 
