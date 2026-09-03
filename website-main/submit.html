@@ -49,6 +49,55 @@
       font-family: 'Poppins', sans-serif;
     }
 
+    .editor-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 10px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.18);
+      border-bottom: 0;
+      border-radius: 4px 4px 0 0;
+    }
+
+    .editor-toolbar button {
+      min-width: 38px;
+      padding: 7px 10px;
+      background: #ffffff;
+      color: #090f1c;
+      border: 0;
+      border-radius: 3px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .editor-toolbar select {
+      min-height: 34px;
+      padding: 5px;
+      color: #000000;
+      border-radius: 3px;
+    }
+
+    .article-editor {
+      min-height: 260px;
+      padding: 12px;
+      background: #ffffff;
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 0 0 4px 4px;
+      color: #000000;
+      outline: none;
+      line-height: 1.6;
+    }
+
+    .article-editor:focus {
+      border-color: #ffffff;
+    }
+
+    .article-editor img {
+      max-width: 100%;
+      height: auto;
+    }
+
     .submit-form input,
     .submit-form select,
     .submit-form textarea {
@@ -61,8 +110,67 @@
       color: #000000;
     }
 
+    .editor-toolbar select {
+      color: #ffffff;
+      background: #1d2635;
+    }
+
     .submit-form select option {
       color: #000000;
+      background: #ffffff;
+    }
+
+    .category-picker {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      min-height: 44px;
+      padding: 6px 8px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 4px;
+    }
+
+    .category-picker:focus-within {
+      border-color: #ffffff;
+    }
+
+    #categoryChips {
+      display: contents;
+    }
+
+    .category-picker input {
+      flex: 1 1 180px;
+      min-width: 150px;
+      padding: 7px 4px;
+      background: transparent;
+      border: 0;
+      color: #ffffff;
+      outline: none;
+    }
+
+    .category-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 8px;
+      background: #ffffff;
+      color: #090f1c;
+      border-radius: 3px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .category-chip button {
+      min-width: 18px;
+      padding: 0;
+      background: transparent;
+      color: #090f1c;
+      border: 0;
+      cursor: pointer;
+      font-size: 1rem;
+      line-height: 1;
     }
 
     .submit-form input::placeholder,
@@ -138,24 +246,28 @@
 
       <div>
         <label for="category" class="field-label">Category *</label>
-        <select id="category" required style="width: 100%; padding: 10px; box-sizing: border-box;">
-          <option value="">Select a category</option>
-          <option value="zandvoort">Zandvoort '26</option>
-          <option value="hungary">Hungary '26</option>
-          <option value="monaco">Monaco '26</option>
-          <option value="barcelona">Barcelona '26</option>
-          <option value="austria">Austria '26</option>
-          <option value="UK">Britain '26</option>
-          <option value="spa">Belgium '26</option>
-          <option value="F2">Formula 2</option>
-          <option value="F1A">Formula 1 Academy</option>
-          <option value="LLO">Lady Lights Out</option>
-          <option value="wheel">Let's Torque Wheel</option>
-          <option value="history">Let's Torque History</option>
-          <option value="lightson">Lights On</option>
-          <option value="news">News</option>
-          <option value="fashion">Paddock Fashion</option>
-        </select>
+        <div class="category-picker" id="categoryPicker">
+          <div id="categoryChips" aria-live="polite"></div>
+          <input id="category" type="text" list="categoryOptions" autocomplete="off" placeholder="Type a category and press Enter">
+          <datalist id="categoryOptions">
+            <option value="zandvoort">Zandvoort '26</option>
+            <option value="hungary">Hungary '26</option>
+            <option value="monaco">Monaco '26</option>
+            <option value="barcelona">Barcelona '26</option>
+            <option value="austria">Austria '26</option>
+            <option value="UK">Britain '26</option>
+            <option value="spa">Belgium '26</option>
+            <option value="F2">Formula 2</option>
+            <option value="F1A">Formula 1 Academy</option>
+            <option value="LLO">Lady Lights Out</option>
+            <option value="wheel">Let's Torque Wheel</option>
+            <option value="history">Let's Torque History</option>
+            <option value="lightson">Lights On</option>
+            <option value="news">News</option>
+            <option value="fashion">Paddock Fashion</option>
+          </datalist>
+        </div>
+        <input type="hidden" id="categoryValues" name="category">
       </div>
 
       <div>
@@ -173,7 +285,19 @@
 
       <div>
         <label for="content" class="field-label">Article Content *</label>
-        <textarea id="content" rows="10" required style="width: 100%; padding: 10px; box-sizing: border-box;" placeholder="Paste your draft or write your article here..."></textarea>
+        <div class="editor-toolbar" role="toolbar" aria-label="Article formatting tools">
+          <select id="headingTool" aria-label="Text style">
+            <option value="p">Paragraph</option>
+            <option value="h2">Heading 2</option>
+            <option value="h3">Heading 3</option>
+            <option value="blockquote">Quote</option>
+          </select>
+          <button type="button" data-command="bold" aria-label="Bold"><strong>B</strong></button>
+          <button type="button" data-command="italic" aria-label="Italic"><em>I</em></button>
+          <button type="button" id="inlineImageBtn" aria-label="Insert inline image">Image</button>
+          <input type="file" id="inlineImageInput" accept="image/*" hidden>
+        </div>
+        <div id="content" class="article-editor" contenteditable="true" role="textbox" aria-multiline="true" aria-label="Article content" data-placeholder="Write your article here..."></div>
       </div>
 
       <div class="preview-box">
@@ -251,6 +375,86 @@
   }
 
   document.getElementById('authorName').addEventListener('input', updateAuthorPreview);
+
+  const categoryInput = document.getElementById('category');
+  const categoryChips = document.getElementById('categoryChips');
+  const categoryValues = document.getElementById('categoryValues');
+  const selectedCategories = [];
+
+  function renderCategoryChips() {
+    categoryChips.innerHTML = '';
+    selectedCategories.forEach((category) => {
+      const chip = document.createElement('span');
+      chip.className = 'category-chip';
+      chip.textContent = category;
+
+      const removeButton = document.createElement('button');
+      removeButton.type = 'button';
+      removeButton.setAttribute('aria-label', `Remove ${category}`);
+      removeButton.textContent = 'x';
+      removeButton.addEventListener('click', () => {
+        const index = selectedCategories.indexOf(category);
+        if (index !== -1) selectedCategories.splice(index, 1);
+        renderCategoryChips();
+      });
+
+      chip.appendChild(removeButton);
+      categoryChips.appendChild(chip);
+    });
+    categoryValues.value = selectedCategories.join(' ');
+  }
+
+  categoryInput.addEventListener('keydown', (event) => {
+    if (event.key !== 'Enter' && event.key !== ',') return;
+    event.preventDefault();
+
+    const values = categoryInput.value.split(',')
+      .map((value) => value.trim())
+      .filter(Boolean);
+
+    values.forEach((value) => {
+      if (!selectedCategories.includes(value)) selectedCategories.push(value);
+    });
+    categoryInput.value = '';
+    renderCategoryChips();
+  });
+
+  categoryInput.addEventListener('blur', () => {
+    if (categoryInput.value.trim()) {
+      categoryInput.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }));
+    }
+  });
+
+  const articleEditor = document.getElementById('content');
+
+  document.querySelectorAll('[data-command]').forEach((button) => {
+    button.addEventListener('click', () => {
+      articleEditor.focus();
+      document.execCommand(button.dataset.command, false);
+    });
+  });
+
+  document.getElementById('headingTool').addEventListener('change', (event) => {
+    articleEditor.focus();
+    document.execCommand('formatBlock', false, event.target.value);
+  });
+
+  document.getElementById('inlineImageBtn').addEventListener('click', () => {
+    document.getElementById('inlineImageInput').click();
+  });
+
+  document.getElementById('inlineImageInput').addEventListener('change', (event) => {
+    const file = event.target.files && event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      articleEditor.focus();
+      document.execCommand('insertImage', false, reader.result);
+      event.target.value = '';
+    };
+    reader.readAsDataURL(file);
+  });
 
   document.getElementById('coverImage').addEventListener('change', function () {
     const file = this.files && this.files[0];
@@ -339,9 +543,10 @@
     const writerPassword = document.getElementById('writerPassword').value.trim();
     const title = document.getElementById('title').value.trim();
     const subtitle = document.getElementById('subtitle').value.trim();
-    const category = document.getElementById('category').value;
+    const category = selectedCategories.join(' ');
     const seoTags = document.getElementById('seoTags').value.trim();
-    const content = document.getElementById('content').value.trim();
+    const content = articleEditor.innerHTML.trim();
+    const contentText = articleEditor.textContent.trim();
     const imageFile = document.getElementById('coverImage').files[0];
     const publishedAt = new Date().toISOString();
 
@@ -362,7 +567,7 @@
       return;
     }
 
-    if (!authorName || !writerPassword || !title || !subtitle || !category || !seoTags || !content || !imageFile) {
+    if (!authorName || !writerPassword || !title || !subtitle || !category || !seoTags || (!contentText && !articleEditor.querySelector('img')) || !imageFile) {
       statusEl.style.color = 'red';
       statusEl.textContent = 'Please complete all required fields before submitting.';
       return;
