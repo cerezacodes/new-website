@@ -17,32 +17,37 @@ create table if not exists public.articles (
   content text not null default ''
 );
 
+-- Force id to text even if it was previously created as bigint/identity.
+-- Must drop identity/default BEFORE changing the type, or Postgres will error out.
+alter table public.articles alter column id drop default;
+alter table public.articles alter column id drop identity if exists;
+alter table public.articles alter column id type text using id::text;
+
 create index if not exists idx_articles_published_at
 on public.articles (published_at desc);
 
--- Existing projects may have created id as bigint. Article URLs use text slugs,
--- so migrate that column before publishing new articles.
-alter table public.articles
-alter column id type text using id::text;
-
 alter table public.articles enable row level security;
 
+drop policy if exists "Public read access" on public.articles;
 create policy "Public read access"
 on public.articles for select
 to public
 using (true);
 
+drop policy if exists "Public insert access" on public.articles;
 create policy "Public insert access"
 on public.articles for insert
 to public
 with check (true);
 
+drop policy if exists "Public update access" on public.articles;
 create policy "Public update access"
 on public.articles for update
 to public
 using (true)
 with check (true);
 
+drop policy if exists "Public delete access" on public.articles;
 create policy "Public delete access"
 on public.articles for delete
 to public
