@@ -32,7 +32,7 @@ body {
   align-self: center;
   height: 250px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  border: 1px solid rgba(0, 0, 0, 0.03);
+  border: 1px solid rgba(0, 0, 0, 0.12);
   box-sizing: border-box;
 }
 
@@ -150,6 +150,16 @@ body {
   transform: translateY(-2px);
 }
 
+.nav-toggle {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.menu-toggle {
+  display: none;
+}
+
 .filter-nav {
   margin-top: 6rem;
 }
@@ -168,33 +178,92 @@ body {
 
   /* 1. Navbar Adjustments */
   .navbar {
-    position: relative; 
+    position: fixed;
     padding: 1rem !important;
-    justify-content: center; 
+    justify-content: flex-end;
     width: 100% !important;
+    pointer-events: auto;
+    z-index: 9999 !important;
   }
 
   .navbar nav {
-    column-gap: 1rem;
-    row-gap: 0.3rem;
+    position: absolute;
+    top: 4.5rem;
+    right: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.65rem;
+    min-width: 11rem;
+    padding: 1rem;
+    background-color: #111111;
+    border: 2px solid #ffffff;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(-10px);
+    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
+  }
+
+  .menu-toggle {
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 2.75rem;
+    height: 2.75rem;
+    background-color: #111111;
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 12;
+  }
+
+  .menu-toggle span {
+    display: block;
+    width: 1.15rem;
+    height: 2px;
+    margin: 0 auto;
+    background-color: #ffffff;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+
+  .nav-toggle:checked + .menu-toggle span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+  }
+
+  .nav-toggle:checked + .menu-toggle span:nth-child(2) {
+    opacity: 0;
+  }
+
+  .nav-toggle:checked + .menu-toggle span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+  }
+
+  .nav-toggle:checked ~ nav {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0);
   }
 
   .navbar nav a {
-    font-size: 0.9rem; 
+    font-size: 1.15rem;
     font-weight: 700 !important;
   }
 
   /* 2. Filter Buttons Carousel */
   .filter-nav {
-    margin-top: 1rem !important;
+    margin-top: 5.5rem !important;
     display: flex;
     gap: 0.5rem;
-    padding: 0 1rem !important; /* Kept minimal breathing room just for the button line */
+    padding: 0 1rem 0.75rem !important;
     overflow-x: auto;
     white-space: nowrap;
     -webkit-overflow-scrolling: touch;
     box-sizing: border-box;
     width: 100% !important;
+    scrollbar-width: thin;
   }
 
   .filter-nav::-webkit-scrollbar {
@@ -211,12 +280,12 @@ body {
   /* 3. Grid Container - Forces True Full Viewport Width Edge to Edge */
   .news-grid-container {
     grid-template-columns: 1fr !important;
-    padding: 0 !important; /* CRITICAL: Wipes out internal spacing entirely */
+    padding: 1.25rem 1rem 2rem !important;
     gap: 1rem; /* Space between cards stacking vertically */
     width: 100% !important;
     max-width: 100% !important;
     box-sizing: border-box;
-    margin: 0 !important; 
+    margin: 0 !important;
   }
 
   /* 4. Column Layout Transition */
@@ -227,9 +296,9 @@ body {
     width: 100% !important;
     max-width: 100% !important;
     box-sizing: border-box;
-    border-left: none !important;  /* Removes boundary borders if they distort full-bleed look */
-    border-right: none !important;
-    border-radius: 0 !important;   /* Option: Square edges look better for true full-bleed edge cards */
+    border: 1px solid rgba(0, 0, 0, 0.16) !important;
+    border-radius: 10px !important;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
   }
 
   .card-image-box {

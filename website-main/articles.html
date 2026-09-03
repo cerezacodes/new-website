@@ -11,6 +11,12 @@
 <body>
 
     <header class="navbar">
+      <input class="nav-toggle" type="checkbox" id="nav-toggle" aria-label="Toggle navigation menu">
+      <label class="menu-toggle" for="nav-toggle" aria-label="Open navigation menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </label>
         <nav id="site-nav">
             <a href="index.html#home">home</a>
             <a href="index.html#about">about</a>
@@ -916,131 +922,6 @@
       <span class="card-time" data-timestamp="2026-06-06T20:52:00Z">Calculating time...</span>    
 </div>
   </article>
-
-   <script>
-    const STORAGE_KEY = 'lightsoutSubmittedArticles';
-
-    function getSubmittedArticles() {
-      try {
-        const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-        return Array.isArray(parsed) ? parsed : [];
-      } catch (error) {
-        return [];
-      }
-    }
-
-    function buildSubmittedCard(article) {
-      const card = document.createElement('article');
-      const category = article.category || 'news';
-      const title = article.title || 'Untitled Article';
-      const description = article.subtitle || article.description || 'A freshly submitted story from the Lights Out newsroom.';
-      const image = article.image || 'assets/images/intro.png';
-      const authorName = article.authorName || article.author_name || 'Lights Out Team';
-      const publishedAt = article.publishedAt || article.published_at || new Date().toISOString();
-      const articleId = article.id || title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-
-      card.className = 'news-card';
-      card.setAttribute('data-category', category);
-      card.innerHTML = `
-        <div class="card-image-box">
-          <a href="article.html?id=${articleId}">
-            <img src="${image}" alt="${title}">
-          </a>
-        </div>
-        <div class="card-text-box">
-          <h3 class="card-title">${title}</h3>
-          <p class="card-description">${description}</p>
-          <span class="card-time" data-timestamp="${publishedAt}">Calculating time...</span>
-        </div>
-      `;
-
-      return card;
-    }
-
-    function renderSubmittedArticles() {
-      const container = document.querySelector('.news-grid-container');
-      if (!container) return;
-
-      const submitted = getSubmittedArticles();
-
-      submitted.forEach((article) => {
-        const card = buildSubmittedCard(article);
-        container.prepend(card);
-      });
-    }
-
-    renderSubmittedArticles();
-
-    document.addEventListener('DOMContentLoaded', () => {
-      const filterButtons = document.querySelectorAll('.filter-btn');
-      const articles = document.querySelectorAll('.news-card');
-
-      filterButtons.forEach(button => {
-        button.addEventListener('click', () => {
-          filterButtons.forEach(btn => btn.classList.remove('active'));
-          button.classList.add('active');
-
-          const filterValue = button.getAttribute('data-filter');
-
-          articles.forEach(article => {
-            const articleCategories = article.getAttribute('data-category').split(' ');
-
-            if (filterValue === 'all' || articleCategories.includes(filterValue)) {
-              article.style.display = 'flex';
-            } else {
-              article.style.display = 'none';
-            }
-          });
-        });
-      });
-    });
-
-    function updateTimeAgo() {
-      const timeLabels = document.querySelectorAll('.card-time');
-      const now = new Date();
-
-      timeLabels.forEach(label => {
-        const timestampStr = label.getAttribute('data-timestamp');
-        if (!timestampStr) return;
-
-        const postDate = new Date(timestampStr);
-        const secondsAgo = Math.floor((now - postDate) / 1000);
-
-        if (secondsAgo < 0) {
-          label.textContent = 'Just now';
-          return;
-        }
-
-        const intervals = {
-          year: 31536000,
-          month: 2592000,
-          week: 604800,
-          day: 86400,
-          hour: 3600,
-          minute: 60
-        };
-
-        let timeString = 'Just now';
-
-        for (const [unit, value] of Object.entries(intervals)) {
-          const count = Math.floor(secondsAgo / value);
-          if (count >= 1) {
-            timeString = `${count} ${unit}${count > 1 ? 's' : ''} ago`;
-            break;
-          }
-        }
-
-        if (timeString === 'Just now' && secondsAgo >= 1) {
-          timeString = `${secondsAgo} second${secondsAgo > 1 ? 's' : ''} ago`;
-        }
-
-        label.textContent = timeString;
-      });
-    }
-
-    document.addEventListener('DOMContentLoaded', updateTimeAgo);
-    setInterval(updateTimeAgo, 60000);
-  </script>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/runtime-config.js"></script>
