@@ -976,25 +976,27 @@
       : null;
 
     async function fetchPublishedArticles() {
-      if (supabaseClient) {
-        try {
-          const { data, error } = await supabaseClient
-            .from('articles')
-            .select('*')
-            .order('published_at', { ascending: false });
+  if (supabaseClient) {
+    try {
+      const { data, error } = await supabaseClient
+        .from('articles')
+        .select('*')
+        .order('published_at', { ascending: false });
 
-          if (!error && data) {
-            const mapped = data.map(mapDbRowToArticle);
-            saveLocalArticles(mapped);
-            return mapped;
-          }
-        } catch (error) {
-          console.warn('Supabase article fetch failed; using local fallback.', error);
-        }
+      if (!error && data) {
+        return data.map(mapDbRowToArticle);
       }
 
-      return getLocalArticles();
+      if (error) {
+        console.warn('Supabase article fetch returned an error; using local fallback.', error);
+      }
+    } catch (error) {
+      console.warn('Supabase article fetch failed; using local fallback.', error);
     }
+  }
+
+  return getLocalArticles();
+}
 
     async function renderPublishedArticles() {
       const container = document.querySelector('.news-grid-container');
