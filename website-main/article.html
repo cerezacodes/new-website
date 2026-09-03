@@ -63,7 +63,14 @@
         #article-content { 
             font-size: 1.25rem;
             line-height: 1.8;
+            font-family: "Libre Baskerville", serif;
             white-space: pre-line; /* Keeps your paragraph line breaks intact */
+        }
+
+        #article-content p,
+        #article-content li {
+            font-size: inherit;
+            line-height: inherit;
         }
 
         #article-content img {
@@ -102,7 +109,7 @@
             align-self: center;
         }
         #article-content { 
-            font-size: 1rem;
+            font-size: 1.25rem;
             line-height: 1.8;
             white-space: pre-line;
         }
@@ -2413,7 +2420,7 @@ Not only is this his maiden victory in the Principality, but it marks an astonis
                 authorName: row.author_name || 'Lights Out Team',
                 authorPic: row.author_pic || 'assets/images/authors/eya-amri.jpg',
                 content: row.content || '',
-                font: "'Playfair Display', serif",
+                font: '"Libre Baskerville", serif',
                 category: row.category || 'news',
                 publishedAt: row.published_at || new Date().toISOString()
             };
@@ -2459,7 +2466,7 @@ Not only is this his maiden victory in the Principality, but it marks an astonis
                         authorName: article.authorName || article.author_name || 'Lights Out Team',
                         authorPic: article.authorPic || article.author_pic || 'assets/images/authors/eya-amri.jpg',
                         content: article.content || '',
-                        font: "'Playfair Display', serif",
+                        font: '"Libre Baskerville", serif',
                         category: article.category || 'news',
                         publishedAt: article.publishedAt || article.published_at || new Date().toISOString()
                     };
