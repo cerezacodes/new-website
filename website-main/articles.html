@@ -976,27 +976,31 @@
       : null;
 
     async function fetchPublishedArticles() {
-  if (supabaseClient) {
-    try {
-      const { data, error } = await supabaseClient
-        .from('articles')
-        .select('*')
-        .order('published_at', { ascending: false });
+      const getPublishedTimestamp = (article) => new Date(article.publishedAt || article.published_at || 0).getTime();
 
-      if (!error && data) {
-        return data.map(mapDbRowToArticle);
+      if (supabaseClient) {
+        try {
+          const { data, error } = await supabaseClient
+            .from('articles')
+            .select('*')
+            .order('published_at', { ascending: false });
+
+          if (!error && data) {
+            return data
+              .map(mapDbRowToArticle)
+              .sort((a, b) => getPublishedTimestamp(b) - getPublishedTimestamp(a));
+          }
+
+          if (error) {
+            console.warn('Supabase article fetch returned an error; using local fallback.', error);
+          }
+        } catch (error) {
+          console.warn('Supabase article fetch failed; using local fallback.', error);
+        }
       }
 
-      if (error) {
-        console.warn('Supabase article fetch returned an error; using local fallback.', error);
-      }
-    } catch (error) {
-      console.warn('Supabase article fetch failed; using local fallback.', error);
+      return getLocalArticles().sort((a, b) => getPublishedTimestamp(b) - getPublishedTimestamp(a));
     }
-  }
-
-  return getLocalArticles();
-}
 
     async function renderPublishedArticles() {
       const container = document.querySelector('.news-grid-container');
@@ -1005,7 +1009,14 @@
       const submitted = await fetchPublishedArticles();
       container.querySelectorAll('.news-card[data-source="supabase"]').forEach((node) => node.remove());
 
-      submitted.forEach((article) => {
+      const newestFirst = [...submitted].sort((a, b) => {
+        const left = new Date(a.publishedAt || a.published_at || 0).getTime();
+        const right = new Date(b.publishedAt || b.published_at || 0).getTime();
+        return right - left;
+      });
+
+      for (let index = newestFirst.length - 1; index >= 0; index -= 1) {
+        const article = newestFirst[index];
         const card = document.createElement('article');
         const category = article.category || 'news';
         const title = article.title || 'Untitled Article';
@@ -1031,7 +1042,7 @@
         `;
 
         container.prepend(card);
-      });
+      }
 
       const updateTimeLabels = () => {
         const timeLabels = document.querySelectorAll('.card-time');
