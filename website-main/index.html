@@ -299,6 +299,8 @@
         : null;
 
       async function fetchPublishedArticles() {
+        const getPublishedTimestamp = (article) => new Date(article.publishedAt || article.published_at || 0).getTime();
+
         if (supabaseClient) {
           try {
             const { data, error } = await supabaseClient
@@ -307,16 +309,20 @@
               .order('published_at', { ascending: false });
 
             if (!error && data) {
-              const mapped = data.map(mapDbRowToArticle);
+              const mapped = data
+                .map(mapDbRowToArticle)
+                .sort((a, b) => getPublishedTimestamp(b) - getPublishedTimestamp(a));
               saveLocalArticles(mapped);
-              return mapped;
+              return mapped.slice(0, 4);
             }
           } catch (error) {
             console.warn('Supabase article fetch failed; using local fallback.', error);
           }
         }
 
-        return getLocalArticles();
+        return getLocalArticles()
+          .sort((a, b) => getPublishedTimestamp(b) - getPublishedTimestamp(a))
+          .slice(0, 4);
       }
 
       async function renderSubmittedArticles() {
@@ -326,7 +332,14 @@
         const submissions = await fetchPublishedArticles();
         if (!submissions.length) return;
 
-        submissions.forEach((article) => {
+        const newestFirst = [...submissions].sort((a, b) => {
+          const left = new Date(a.publishedAt || a.published_at || 0).getTime();
+          const right = new Date(b.publishedAt || b.published_at || 0).getTime();
+          return right - left;
+        }).slice(0, 4);
+
+        for (let index = newestFirst.length - 1; index >= 0; index -= 1) {
+          const article = newestFirst[index];
           const card = document.createElement('article');
           const category = article.category || 'news';
           const title = article.title || 'Untitled Article';
@@ -351,7 +364,7 @@
           `;
 
           target.prepend(card);
-        });
+        }
 
         if (typeof updateArticleTimes === 'function') {
           updateArticleTimes();
