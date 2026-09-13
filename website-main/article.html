@@ -2420,7 +2420,7 @@ Not only is this his maiden victory in the Principality, but it marks an astonis
                 authorName: row.author_name || 'Lights Out Team',
                 authorPic: row.author_pic || 'assets/images/authors/eya-amri.jpg',
                 content: row.content || '',
-                font: '"Libre Baskerville", serif',
+                font: "'Playfair Display', serif",
                 category: row.category || 'news',
                 publishedAt: row.published_at || new Date().toISOString()
             };
@@ -2466,7 +2466,7 @@ Not only is this his maiden victory in the Principality, but it marks an astonis
                         authorName: article.authorName || article.author_name || 'Lights Out Team',
                         authorPic: article.authorPic || article.author_pic || 'assets/images/authors/eya-amri.jpg',
                         content: article.content || '',
-                        font: '"Libre Baskerville", serif',
+                        font: "'Playfair Display', serif",
                         category: article.category || 'news',
                         publishedAt: article.publishedAt || article.published_at || new Date().toISOString()
                     };
@@ -2515,16 +2515,16 @@ Not only is this his maiden victory in the Principality, but it marks an astonis
                     if (authorBox) authorBox.style.display = 'none';
                 }
 
-                if (currentArticle.font) {
-                    articleTitle.style.fontFamily = currentArticle.font;
-                    articleSubtitle.style.fontFamily = currentArticle.font;
-                    articleContent.style.fontFamily = currentArticle.font;
-                } else {
-                    const defaultFont = "'Libre Baskerville', serif";
-                    articleTitle.style.fontFamily = defaultFont;
-                    articleSubtitle.style.fontFamily = defaultFont;
-                    articleContent.style.fontFamily = defaultFont;
-                }
+                const articleFont = currentArticle.fontFamily || currentArticle.font_family || currentArticle.font || "'Playfair Display', serif";
+                const articleTextSize = Number(currentArticle.fontSize || currentArticle.font_size || 20);
+
+                articleTitle.style.fontFamily = articleFont;
+                articleSubtitle.style.fontFamily = articleFont;
+                articleContent.style.fontFamily = articleFont;
+                articleTitle.style.fontSize = '2.25rem';
+                articleSubtitle.style.fontSize = '1.2rem';
+                articleContent.style.fontSize = `${articleTextSize}px`;
+                articleContent.style.lineHeight = '1.8';
 
                 document.title = `${currentArticle.title} | Lights Out`;
             } else {

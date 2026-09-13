@@ -496,6 +496,22 @@
                 <input name="subtitle" value="${(article.subtitle || '').replace(/"/g, '&quot;')}" />
               </div>
 
+              <div class="article-form-row">
+                <div class="field">
+                  <label>Text font</label>
+                  <select name="fontFamily">
+                    <option value="'Playfair Display', serif" ${((article.fontFamily || article.font || "'Playfair Display', serif") === "'Playfair Display', serif") ? 'selected' : ''}>Playfair Display</option>
+                    <option value="'Poppins', sans-serif" ${((article.fontFamily || article.font || "'Playfair Display', serif") === "'Poppins', sans-serif") ? 'selected' : ''}>Poppins</option>
+                    <option value="'Libre Baskerville', serif" ${((article.fontFamily || article.font || "'Playfair Display', serif") === "'Libre Baskerville', serif") ? 'selected' : ''}>Libre Baskerville</option>
+                    <option value="Georgia, serif" ${((article.fontFamily || article.font || "'Playfair Display', serif") === 'Georgia, serif') ? 'selected' : ''}>Georgia</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label>Text size (px)</label>
+                  <input name="fontSize" type="number" min="12" max="44" value="${Number(article.fontSize || article.font_size || 20)}" />
+                </div>
+              </div>
+
               <div class="field">
                 <label>Image URL</label>
                 <input name="image" value="${(article.image || '').replace(/"/g, '&quot;')}" />
@@ -543,6 +559,8 @@
           const image = String(formData.get('image') || article.image);
           const seoTags = String(formData.get('seoTags') || article.seoTags || article.tags || '');
           const content = String(formData.get('content') || article.content);
+          const fontFamily = String(formData.get('fontFamily') || article.fontFamily || article.font || "'Playfair Display', serif");
+          const fontSize = Number(formData.get('fontSize') || article.fontSize || article.font_size || 20);
           const updatedRow = {
             id: article.id || slugify(title),
             title,
@@ -553,7 +571,11 @@
             image,
             seo_tags: seoTags,
             published_at: article.publishedAt || article.published_at || new Date().toISOString(),
-            content
+            content,
+            font_family: fontFamily,
+            font_size: fontSize,
+            fontFamily,
+            fontSize
           };
 
           await updateArticleInSupabase(article, updatedRow);
@@ -566,7 +588,10 @@
             author_pic: updatedRow.author_pic,
             description: subtitle,
             tags: seoTags,
-            seoTags
+            seoTags,
+            fontFamily,
+            font_size: fontSize,
+            fontSize
           };
 
           saveArticles(currentArticles);

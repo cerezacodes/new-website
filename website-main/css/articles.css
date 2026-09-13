@@ -59,13 +59,14 @@ body {
   flex-direction: column;
   justify-content: space-between;
   box-sizing: border-box;
+  font-family: 'Playfair Display', serif;
 }
 
 /* ==========================================================================
    4. TYPOGRAPHY & BUTTONS
    ========================================================================== */
 .card-title {
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Playfair Display', serif;
   font-size: 1.3rem;
   font-weight: 700;
   line-height: 1.4;
@@ -74,10 +75,11 @@ body {
 }
 
 .card-description {
-  font-family: 'Poppins', sans-serif;
-  font-size: 1.1rem;
+  font-family: 'Playfair Display', serif;
+  font-size: 0.75rem;
   color: #111111;
   margin: 0.5rem 0;
+  line-height: 1.6;
 }
 
 .card-time {
