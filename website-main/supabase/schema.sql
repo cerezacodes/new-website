@@ -11,11 +11,16 @@ create table if not exists public.articles (
   author_section text,
   category text not null default 'news',
   image text not null default 'assets/images/intro.png',
+  image_caption text,
+  image_credit text,
   seo_tags text,
   tags text,
   published_at timestamptz not null default now(),
   content text not null default ''
 );
+
+alter table public.articles add column if not exists image_caption text;
+alter table public.articles add column if not exists image_credit text;
 
 -- Force id to text even if it was previously created as bigint/identity.
 -- Must drop identity/default BEFORE changing the type, or Postgres will error out.

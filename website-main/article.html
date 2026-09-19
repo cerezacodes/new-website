@@ -60,6 +60,26 @@
     margin: 0 auto 30px auto; /* Centers it left/right, keeps your 30px bottom margin */
 }
 
+        #article-figure {
+            margin: 0 auto 30px;
+            width: 80%;
+        }
+
+        #article-figure #article-image {
+            width: 100%;
+            margin: 0;
+        }
+
+        #article-caption {
+            display: none;
+            margin-top: 8px;
+            color: rgba(0, 0, 0, 0.52);
+            font-family: "Poppins", sans-serif;
+            font-size: 0.78rem;
+            line-height: 1.5;
+            text-align: center;
+        }
+
         #article-content { 
             font-size: 1.25rem;
             line-height: 1.8;
@@ -108,6 +128,10 @@
             margin-bottom: 10px;
             align-self: center;
         }
+        #article-figure {
+            width: 100%;
+            margin-bottom: 10px;
+        }
         #article-content { 
             font-size: 1.25rem;
             line-height: 1.8;
@@ -136,7 +160,10 @@
 
         <h1 id="article-title">Loading...</h1>
         <p id="article-subtitle"></p>
-        <img id="article-image" src="" alt="">
+        <figure id="article-figure">
+            <img id="article-image" src="" alt="">
+            <figcaption id="article-caption"></figcaption>
+        </figure>
         <p id="article-content"></p>
 
         <!-- Dynamic Author Bio Section Elements -->
@@ -2417,6 +2444,8 @@ Not only is this his maiden victory in the Principality, but it marks an astonis
                 title: row.title || 'Untitled Article',
                 subtitle: row.subtitle || row.description || 'Freshly submitted article',
                 image: row.image || 'assets/images/intro.png',
+                imageCaption: row.image_caption || '',
+                imageCredit: row.image_credit || '',
                 authorName: row.author_name || 'Lights Out Team',
                 authorPic: row.author_pic || 'assets/images/authors/eya-amri.jpg',
                 content: row.content || '',
@@ -2463,6 +2492,8 @@ Not only is this his maiden victory in the Principality, but it marks an astonis
                         title: article.title || 'Untitled Article',
                         subtitle: article.subtitle || article.description || 'Freshly submitted article',
                         image: article.image || 'assets/images/intro.png',
+                        imageCaption: article.imageCaption || article.image_caption || '',
+                        imageCredit: article.imageCredit || article.image_credit || '',
                         authorName: article.authorName || article.author_name || 'Lights Out Team',
                         authorPic: article.authorPic || article.author_pic || 'assets/images/authors/eya-amri.jpg',
                         content: article.content || '',
@@ -2488,6 +2519,7 @@ Not only is this his maiden victory in the Principality, but it marks an astonis
                 const articleSubtitle = document.getElementById('article-subtitle');
                 const articleImage = document.getElementById('article-image');
                 const articleContent = document.getElementById('article-content');
+                const articleCaption = document.getElementById('article-caption');
                 const authorNameEl = document.getElementById('authorName');
                 const authorPicEl = document.getElementById('authorPic');
                 const divider = document.getElementById('author-divider');
@@ -2497,6 +2529,9 @@ Not only is this his maiden victory in the Principality, but it marks an astonis
                 articleSubtitle.innerText = currentArticle.subtitle;
                 articleImage.src = currentArticle.image;
                 articleImage.alt = currentArticle.title;
+                const captionParts = [currentArticle.imageCaption, currentArticle.imageCredit ? `Photo: ${currentArticle.imageCredit}` : ''].filter(Boolean);
+                articleCaption.textContent = captionParts.join(' | ');
+                articleCaption.style.display = captionParts.length ? 'block' : 'none';
                 articleContent.innerHTML = currentArticle.content || '';
 
                 if (currentArticle.authorName && currentArticle.authorPic) {

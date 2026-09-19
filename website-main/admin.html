@@ -359,6 +359,8 @@
         author_pic: row.author_pic || 'assets/images/authors/eya-amri.jpg',
         category: row.category || 'news',
         image: row.image || 'assets/images/intro.png',
+        imageCaption: row.image_caption || '',
+        imageCredit: row.image_credit || '',
         seoTags: row.seo_tags || row.tags || '',
         tags: row.seo_tags || row.tags || '',
         content: row.content || '',
@@ -517,6 +519,17 @@
                 <input name="image" value="${(article.image || '').replace(/"/g, '&quot;')}" />
               </div>
 
+              <div class="article-form-row">
+                <div class="field">
+                  <label>Image caption</label>
+                  <input name="imageCaption" value="${(article.imageCaption || '').replace(/"/g, '&quot;')}" />
+                </div>
+                <div class="field">
+                  <label>Photographer / image author</label>
+                  <input name="imageCredit" value="${(article.imageCredit || '').replace(/"/g, '&quot;')}" />
+                </div>
+              </div>
+
               <div class="field">
                 <label>Content</label>
                 <textarea name="content">${(article.content || '').replace(/</g, '&lt;')}</textarea>
@@ -557,6 +570,8 @@
           const authorName = String(formData.get('authorName') || article.authorName);
           const category = String(formData.get('category') || article.category);
           const image = String(formData.get('image') || article.image);
+          const imageCaption = String(formData.get('imageCaption') || article.imageCaption || '');
+          const imageCredit = String(formData.get('imageCredit') || article.imageCredit || '');
           const seoTags = String(formData.get('seoTags') || article.seoTags || article.tags || '');
           const content = String(formData.get('content') || article.content);
           const fontFamily = String(formData.get('fontFamily') || article.fontFamily || article.font || "'Playfair Display', serif");
@@ -569,6 +584,8 @@
             author_pic: article.authorPic || article.author_pic || 'assets/images/authors/eya-amri.jpg',
             category,
             image,
+            image_caption: imageCaption,
+            image_credit: imageCredit,
             seo_tags: seoTags,
             published_at: article.publishedAt || article.published_at || new Date().toISOString(),
             content,
@@ -586,6 +603,8 @@
             authorName,
             authorPic: updatedRow.author_pic,
             author_pic: updatedRow.author_pic,
+            imageCaption,
+            imageCredit,
             description: subtitle,
             tags: seoTags,
             seoTags,

@@ -311,6 +311,10 @@
       <div>
         <label for="coverImage" class="field-label">Article Picture *</label>
         <input type="file" id="coverImage" accept="image/*" required style="width: 100%; padding: 10px; box-sizing: border-box;">
+        <label for="imageCaption" class="field-label" style="margin-top: 10px;">Image Caption *</label>
+        <input type="text" id="imageCaption" required maxlength="240" style="width: 100%; padding: 10px; box-sizing: border-box;" placeholder="Describe what the image shows">
+        <label for="imageCredit" class="field-label" style="margin-top: 10px;">Photographer / Image Author *</label>
+        <input type="text" id="imageCredit" required maxlength="120" style="width: 100%; padding: 10px; box-sizing: border-box;" placeholder="Name of the photographer or image author">
         <div id="imagePreviewWrap" style="margin-top: 10px; display: none;">
           <img id="imagePreview" alt="Article preview" style="max-width: 220px; max-height: 220px; object-fit: cover; border-radius: 12px; border: 1px solid #ddd;">
         </div>
@@ -586,6 +590,8 @@
     const content = articleEditor.innerHTML.trim();
     const contentText = articleEditor.textContent.trim();
     const imageFile = document.getElementById('coverImage').files[0];
+    const imageCaption = document.getElementById('imageCaption').value.trim();
+    const imageCredit = document.getElementById('imageCredit').value.trim();
     const publishedAt = new Date().toISOString();
 
     const supabaseClient = (SUPABASE_URL && SUPABASE_ANON_KEY && window.supabase)
@@ -605,7 +611,7 @@
       return;
     }
 
-    if (!authorName || !writerPassword || !title || !subtitle || !category || !seoTags || (!contentText && !articleEditor.querySelector('img')) || !imageFile) {
+    if (!authorName || !writerPassword || !title || !subtitle || !category || !seoTags || (!contentText && !articleEditor.querySelector('img')) || !imageFile || !imageCaption || !imageCredit) {
       statusEl.style.color = 'red';
       statusEl.textContent = 'Please complete all required fields before submitting.';
       return;
@@ -665,6 +671,8 @@
         author_section: authorMeta.section,
         category,
         image: imageDataUrl,
+        image_caption: imageCaption,
+        image_credit: imageCredit,
         seo_tags: seoTags,
         tags: seoTags,
         published_at: publishedAt,
