@@ -2472,6 +2472,7 @@ Not only is this his maiden victory in the Principality, but it marks an astonis
 
                     if (!error && Array.isArray(data)) {
                         data.forEach((row) => {
+                            if (new Date(row.published_at || 0).getTime() > Date.now()) return;
                             const mapped = mapDbRowToArticle(row);
                             if (mapped) {
                                 articles[row.id] = mapped;
@@ -2488,6 +2489,7 @@ Not only is this his maiden victory in the Principality, but it marks an astonis
                 const localEntries = Array.isArray(parsed) ? parsed : [];
                 localEntries.forEach((article) => {
                     if (!article || !article.id) return;
+                    if (new Date(article.publishedAt || article.published_at || 0).getTime() > Date.now()) return;
                     articles[article.id] = {
                         title: article.title || 'Untitled Article',
                         subtitle: article.subtitle || article.description || 'Freshly submitted article',

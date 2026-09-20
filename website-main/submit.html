@@ -353,7 +353,14 @@
         </div>
       </div>
 
-      <button type="submit" id="submitBtn" style="padding: 12px; font-weight: bold; cursor: pointer; background-color: #ffffff; color: #090f1c; border: none; border-radius: 4px;">Submit Draft</button>
+      <div style="display: flex; flex-wrap: wrap; align-items: end; gap: 10px;">
+        <div style="flex: 1 1 240px;">
+          <label for="scheduledAt" class="field-label">Schedule date and time</label>
+          <input type="datetime-local" id="scheduledAt" style="width: 100%; padding: 10px; box-sizing: border-box;">
+        </div>
+        <button type="submit" name="publishMode" value="now" id="publishNowBtn" style="padding: 12px; font-weight: bold; cursor: pointer; background-color: #ffffff; color: #090f1c; border: none; border-radius: 4px;">Publish now</button>
+        <button type="submit" name="publishMode" value="schedule" id="scheduleBtn" style="padding: 12px; font-weight: bold; cursor: pointer; background-color: #66ccff; color: #090f1c; border: none; border-radius: 4px;">Schedule</button>
+      </div>
 
       <p id="formStatus" class="form-status" style="font-weight: bold; margin-top: 10px;"></p>
     </form>
@@ -581,7 +588,9 @@
     e.preventDefault();
 
     const statusEl = document.getElementById('formStatus');
-    const submitBtn = document.getElementById('submitBtn');
+    const publishNowBtn = document.getElementById('publishNowBtn');
+    const scheduleBtn = document.getElementById('scheduleBtn');
+    const publishMode = e.submitter ? e.submitter.value : 'now';
     const runtimeConfig = await ensureRuntimeConfig();
     const SUPABASE_URL = (runtimeConfig.SUPABASE_URL || '').replace(/\/rest\/v1\/?$/, '');
     const SUPABASE_ANON_KEY = runtimeConfig.SUPABASE_ANON_KEY || '';
@@ -596,7 +605,11 @@
     const imageFile = document.getElementById('coverImage').files[0];
     const imageCaption = document.getElementById('imageCaption').value.trim();
     const imageCredit = document.getElementById('imageCredit').value.trim();
-    const publishedAt = new Date().toISOString();
+    const scheduledAtInput = document.getElementById('scheduledAt').value;
+    const scheduledAt = publishMode === 'now' ? new Date() : (scheduledAtInput ? new Date(scheduledAtInput) : null);
+    const publishedAt = scheduledAt && !Number.isNaN(scheduledAt.getTime())
+      ? scheduledAt.toISOString()
+      : '';
 
     const supabaseClient = (SUPABASE_URL && SUPABASE_ANON_KEY && window.supabase)
       ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
@@ -615,7 +628,7 @@
       return;
     }
 
-    if (!authorName || !writerPassword || !title || !subtitle || !category || !seoTags || (!contentText && !articleEditor.querySelector('img')) || !imageFile || !imageCaption || !imageCredit) {
+    if (!authorName || !writerPassword || !title || !subtitle || !category || !seoTags || !publishedAt || (publishMode === 'schedule' && !scheduledAtInput) || (!contentText && !articleEditor.querySelector('img')) || !imageFile || !imageCaption || !imageCredit) {
       statusEl.style.color = 'red';
       statusEl.textContent = 'Please complete all required fields before submitting.';
       return;
@@ -656,9 +669,10 @@
       return;
     }
 
-    submitBtn.disabled = true;
+    publishNowBtn.disabled = true;
+    scheduleBtn.disabled = true;
     statusEl.style.color = 'black';
-    statusEl.textContent = 'Publishing article...';
+    statusEl.textContent = publishMode === 'now' ? 'Publishing article...' : 'Scheduling article...';
 
     try {
       const imageDataUrl = await readFileAsDataUrl(imageFile);
@@ -696,7 +710,7 @@
       }
 
       statusEl.style.color = 'green';
-      statusEl.textContent = 'Published! Redirecting to articles feed...';
+      statusEl.textContent = publishMode === 'now' ? 'Published! Redirecting to articles feed...' : 'Scheduled! Redirecting to articles feed...';
 
       setTimeout(() => {
         window.location.href = 'articles.html';
@@ -705,7 +719,8 @@
       console.error('Submission error:', err);
       statusEl.style.color = 'red';
       statusEl.textContent = 'Error: ' + (err.message || 'Unable to publish this article.');
-      submitBtn.disabled = false;
+      publishNowBtn.disabled = false;
+      scheduleBtn.disabled = false;
     }
   });
 

@@ -290,7 +290,10 @@
     <div class="container">
       <div class="top-bar">
         <h1 class="brand">Article Admin</h1>
-        <button id="logoutBtn" class="logout-btn" type="button">Log out</button>
+        <div class="article-actions">
+          <a class="secondary-btn" href="index.html" target="_blank" rel="noopener noreferrer" style="text-decoration:none;">Open website</a>
+          <button id="logoutBtn" class="logout-btn" type="button">Log out</button>
+        </div>
       </div>
 
       <div class="stats">
@@ -301,6 +304,10 @@
         <div class="stat-card">
           <span class="stat-label">Visible on site</span>
           <div id="liveCount" class="stat-value">0</div>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Scheduled</span>
+          <div id="scheduledCount" class="stat-value">0</div>
         </div>
       </div>
 
@@ -334,6 +341,7 @@
     const articleList = document.getElementById('articleList');
     const articleCount = document.getElementById('articleCount');
     const liveCount = document.getElementById('liveCount');
+    const scheduledCount = document.getElementById('scheduledCount');
     let currentArticles = [];
 
     function getArticles() {
@@ -367,6 +375,7 @@
         description: row.subtitle || row.description || '',
         publishedAt: row.published_at || new Date().toISOString(),
         published_at: row.published_at || new Date().toISOString(),
+        scheduledAt: row.published_at || new Date().toISOString(),
         author_section: row.author_section || 'Lights Out Writer'
       };
     }
@@ -433,7 +442,9 @@
 
     function updateStats(articles) {
       articleCount.textContent = String(articles.length);
-      liveCount.textContent = String(articles.length);
+      const scheduled = articles.filter((article) => new Date(article.publishedAt || article.published_at || 0).getTime() > Date.now());
+      liveCount.textContent = String(articles.length - scheduled.length);
+      scheduledCount.textContent = String(scheduled.length);
     }
 
     function slugify(value) {
@@ -466,6 +477,8 @@
               <button class="danger-btn" type="button" data-delete-index="${index}">Delete</button>
             </div>
           </div>
+
+          <div class="meta-note">${new Date(article.publishedAt || article.published_at || Date.now()).getTime() > Date.now() ? 'Scheduled for' : 'Published'}: ${new Date(article.publishedAt || article.published_at || Date.now()).toLocaleString()}</div>
 
           <div class="article-grid">
             <img class="article-thumb" src="${article.image || 'assets/images/intro.png'}" alt="${(article.title || 'Article image').replace(/</g, '&lt;')}" />
@@ -512,6 +525,11 @@
                   <label>Text size (px)</label>
                   <input name="fontSize" type="number" min="12" max="44" value="${Number(article.fontSize || article.font_size || 20)}" />
                 </div>
+              </div>
+
+              <div class="field">
+                <label>Publish date and time</label>
+                <input name="publishedAt" type="datetime-local" value="${(() => { const date = new Date(article.publishedAt || article.published_at || Date.now()); const offset = date.getTimezoneOffset() * 60000; return new Date(date.getTime() - offset).toISOString().slice(0, 16); })()}" />
               </div>
 
               <div class="field">
@@ -576,6 +594,9 @@
           const content = String(formData.get('content') || article.content);
           const fontFamily = String(formData.get('fontFamily') || article.fontFamily || article.font || "'Playfair Display', serif");
           const fontSize = Number(formData.get('fontSize') || article.fontSize || article.font_size || 20);
+          const publishedAtInput = String(formData.get('publishedAt') || '');
+          const publishedDate = publishedAtInput ? new Date(publishedAtInput) : new Date(article.publishedAt || article.published_at || Date.now());
+          const publishedAt = Number.isNaN(publishedDate.getTime()) ? (article.publishedAt || article.published_at || new Date().toISOString()) : publishedDate.toISOString();
           const updatedRow = {
             id: article.id || slugify(title),
             title,
@@ -587,7 +608,7 @@
             image_caption: imageCaption,
             image_credit: imageCredit,
             seo_tags: seoTags,
-            published_at: article.publishedAt || article.published_at || new Date().toISOString(),
+            published_at: publishedAt,
             content,
             font_family: fontFamily,
             font_size: fontSize,
@@ -600,6 +621,7 @@
           currentArticles[index] = {
             ...article,
             ...updatedRow,
+            publishedAt,
             authorName,
             authorPic: updatedRow.author_pic,
             author_pic: updatedRow.author_pic,

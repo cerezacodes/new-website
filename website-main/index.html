@@ -302,6 +302,7 @@
 
       async function fetchPublishedArticles() {
         const getPublishedTimestamp = (article) => new Date(article.publishedAt || article.published_at || 0).getTime();
+        const isPublished = (article) => getPublishedTimestamp(article) <= Date.now();
 
         if (supabaseClient) {
           try {
@@ -313,6 +314,7 @@
             if (!error && data) {
               const mapped = data
                 .map(mapDbRowToArticle)
+                .filter(isPublished)
                 .sort((a, b) => getPublishedTimestamp(b) - getPublishedTimestamp(a));
               saveLocalArticles(mapped);
               return mapped.slice(0, 4);
@@ -323,6 +325,7 @@
         }
 
         return getLocalArticles()
+          .filter(isPublished)
           .sort((a, b) => getPublishedTimestamp(b) - getPublishedTimestamp(a))
           .slice(0, 4);
       }

@@ -15,6 +15,7 @@ create table if not exists public.articles (
   image_credit text,
   seo_tags text,
   tags text,
+  -- Future timestamps represent scheduled articles; timestamps in the past are live.
   published_at timestamptz not null default now(),
   content text not null default ''
 );

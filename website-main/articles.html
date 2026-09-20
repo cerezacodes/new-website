@@ -979,6 +979,7 @@
 
     async function fetchPublishedArticles() {
       const getPublishedTimestamp = (article) => new Date(article.publishedAt || article.published_at || 0).getTime();
+      const isPublished = (article) => getPublishedTimestamp(article) <= Date.now();
 
       if (supabaseClient) {
         try {
@@ -990,6 +991,7 @@
           if (!error && data) {
             return data
               .map(mapDbRowToArticle)
+              .filter(isPublished)
               .sort((a, b) => getPublishedTimestamp(b) - getPublishedTimestamp(a));
           }
 
@@ -1001,7 +1003,7 @@
         }
       }
 
-      return getLocalArticles().sort((a, b) => getPublishedTimestamp(b) - getPublishedTimestamp(a));
+      return getLocalArticles().filter(isPublished).sort((a, b) => getPublishedTimestamp(b) - getPublishedTimestamp(a));
     }
 
     async function renderPublishedArticles() {
