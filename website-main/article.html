@@ -6,6 +6,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Poppins:ital,wght@0,300;0,400;0,700&display=swap" rel="stylesheet">    <title>Article Viewer</title>
+<link rel="icon" type="image/png" href="assets/images/insta logo.png">
     <style>
         body {
             background-color: #f1efe5; /* Matches your site's bright blue background */
@@ -41,7 +42,8 @@
         #article-title {
             font-size: 2.25rem;
             margin-bottom: 10px;
-            color: #0078FF
+            color: #0078FF;
+            font-family: "Playfair Display", serif !important;
         }
 
         #article-subtitle {
@@ -49,6 +51,7 @@
             font-style: italic;
             margin-bottom: 20px;
             opacity: 0.9;
+            font-family: "Playfair Display", serif !important;
         }
 
         #article-image {
@@ -83,8 +86,12 @@
         #article-content { 
             font-size: 1.25rem;
             line-height: 1.8;
-            font-family: "Libre Baskerville", serif;
+            font-family: "Playfair Display", serif !important;
             white-space: pre-line; /* Keeps your paragraph line breaks intact */
+        }
+
+        #article-content * {
+            font-family: "Playfair Display", serif !important;
         }
 
         #article-content p,
@@ -2552,12 +2559,11 @@ Not only is this his maiden victory in the Principality, but it marks an astonis
                     if (authorBox) authorBox.style.display = 'none';
                 }
 
-                const articleFont = currentArticle.fontFamily || currentArticle.font_family || currentArticle.font || "'Playfair Display', serif";
                 const articleTextSize = Number(currentArticle.fontSize || currentArticle.font_size || 20);
 
-                articleTitle.style.fontFamily = articleFont;
-                articleSubtitle.style.fontFamily = articleFont;
-                articleContent.style.fontFamily = articleFont;
+                articleTitle.style.fontFamily = "'Playfair Display', serif";
+                articleSubtitle.style.fontFamily = "'Playfair Display', serif";
+                articleContent.style.fontFamily = "'Playfair Display', serif";
                 articleTitle.style.fontSize = '2.25rem';
                 articleSubtitle.style.fontSize = '1.2rem';
                 articleContent.style.fontSize = `${articleTextSize}px`;
