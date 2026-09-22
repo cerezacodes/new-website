@@ -405,7 +405,20 @@
   }
 }
 
-      articleList.innerHTML = articles.map((article, index) => `
+function renderArticleCards(articles) {
+  updateStats(articles);
+
+  if (!articles.length) {
+    articleList.innerHTML = `
+      <div class="empty-state">
+        <h3>No published articles yet.</h3>
+        <p>Submitted stories will appear here once they are published.</p>
+      </div>
+    `;
+    return;
+  }
+
+  articleList.innerHTML = articles.map((article, index) => `
         <article class="article-card" data-index="${index}">
           <div class="article-header">
             <h3>${(article.title || 'Untitled Article').replace(/</g, '&lt;')}</h3>
