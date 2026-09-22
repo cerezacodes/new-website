@@ -382,92 +382,28 @@
     }
 
     async function fetchArticlesFromSupabase() {
-      if (!supabaseClient) {
-        return getArticles();
-      }
+  if (!supabaseClient) {
+    return getArticles();
+  }
 
-      try {
-        const { data, error } = await supabaseClient
-          .from('articles')
-          .select('*')
-          .order('published_at', { ascending: false });
+  try {
+    const { data, error } = await supabaseClient
+      .from('articles')
+      .select('*')
+      .order('published_at', { ascending: false });
 
-        if (error) throw error;
+    if (error) throw error;
 
-        if (!data || !data.length) {
-          return getArticles();
-        }
-
-        const mapped = data.map(mapDbRowToArticle);
-        saveArticles(mapped);
-        return mapped;
-      } catch (error) {
-        console.warn('Supabase fetch failed, using localStorage fallback:', error);
-        return getArticles();
-      }
+    if (!data || !data.length) {
+      return getArticles();
     }
 
-    async function deleteArticleFromSupabase(article) {
-      if (!supabaseClient || !article || !article.id) {
-        return false;
-      }
-
-      try {
-        const { error } = await supabaseClient.from('articles').delete().eq('id', article.id);
-        if (error) throw error;
-        return true;
-      } catch (error) {
-        console.warn('Supabase delete not available for this schema; deleting locally only.', error);
-        return false;
-      }
-    }
-
-    async function updateArticleInSupabase(article, updatedRow) {
-      if (!supabaseClient || !article || !article.id) {
-        return false;
-      }
-
-      try {
-        const { error } = await supabaseClient
-          .from('articles')
-          .update(updatedRow)
-          .eq('id', article.id);
-
-        if (error) throw error;
-        return true;
-      } catch (error) {
-        console.warn('Supabase update not available for this schema; saving locally only.', error);
-        return false;
-      }
-    }
-
-    function updateStats(articles) {
-      articleCount.textContent = String(articles.length);
-      const scheduled = articles.filter((article) => new Date(article.publishedAt || article.published_at || 0).getTime() > Date.now());
-      liveCount.textContent = String(articles.length - scheduled.length);
-      scheduledCount.textContent = String(scheduled.length);
-    }
-
-    function slugify(value) {
-      return (value || '')
-        .toLowerCase()
-        .trim()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/^-+|-+$/g, '') || 'untitled-article';
-    }
-
-    function renderArticleCards(articles) {
-      updateStats(articles);
-
-      if (!articles.length) {
-        articleList.innerHTML = `
-          <div class="empty-state">
-            <h3>No published articles yet.</h3>
-            <p>Submitted stories will appear here once they are published.</p>
-          </div>
-        `;
-        return;
-      }
+    return data.map(mapDbRowToArticle);
+  } catch (error) {
+    console.warn('Supabase fetch failed, using localStorage fallback:', error);
+    return getArticles();
+  }
+}
 
       articleList.innerHTML = articles.map((article, index) => `
         <article class="article-card" data-index="${index}">
