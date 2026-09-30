@@ -116,12 +116,11 @@
 
   .container {
     width: 100% !important;
-    max-width: 100% !important; /* Overrides the 50% restriction */
-    padding: 1.5rem 1rem !important; /* Gives the text nice, clean readability margins on mobile screens */
+    max-width: 100% !important;
+    padding: 1.5rem 1rem !important; 
     box-sizing: border-box !important;
   }
 
-  /* Make sure images inside the article scale up nicely too */
   .container img {
     width: 100% !important;
     max-width: 100% !important;
@@ -145,7 +144,7 @@
             white-space: pre-line;
         }
     }
-  /* --- Mobile Responsive Fixes --- */
+
   @media (max-width: 768px) {
     #authorPic {
       width: 90px !important;
@@ -162,7 +161,6 @@
 <body>
 
     <div class="container">
-        <!-- Back button pointing to your main page -->
         <a href="articles.html" class="back-link">← Back to Articles</a>
 
         <h1 id="article-title">Loading...</h1>
@@ -190,6 +188,7 @@
     <script src="js/runtime-config.js"></script>
     
 <script>
+        const articles = {};
         function normalizeRuntimeConfig(config = {}) {
             return {
                 SUPABASE_URL: String(config.SUPABASE_URL || '').trim(),
@@ -215,33 +214,31 @@
         }
 
         async function loadSubmittedEntries() {
-            const runtimeConfig = normalizeRuntimeConfig(window.LIGHTSOUT_ENV);
-            const supabaseUrl = (runtimeConfig.SUPABASE_URL || '').replace(/\/rest\/v1\/?$/, '');
-            const supabaseAnonKey = runtimeConfig.SUPABASE_ANON_KEY || '';
-            const supabaseClient = supabaseUrl && supabaseAnonKey && window.supabase
-                ? window.supabase.createClient(supabaseUrl, supabaseAnonKey)
-                : null;
+  const runtimeConfig = normalizeRuntimeConfig(window.LIGHTSOUT_ENV);
+  const supabaseUrl = (runtimeConfig.SUPABASE_URL || '').replace(/\/rest\/v1\/?$/, '');
+  const supabaseAnonKey = runtimeConfig.SUPABASE_ANON_KEY || '';
+  const supabaseClient = supabaseUrl && supabaseAnonKey && window.supabase
+    ? window.supabase.createClient(supabaseUrl, supabaseAnonKey)
+    : null;
 
-            if (supabaseClient) {
-                try {
-                    const { data, error } = await supabaseClient
-                        .from('articles')
-                        .select('*')
-                        .order('published_at', { ascending: false });
+  if (supabaseClient && articleId) {
+    try {
+      const { data, error } = await supabaseClient
+        .from('articles')
+        .select('*')
+        .eq('id', articleId)
+        .single();
 
-                    if (!error && Array.isArray(data)) {
-                        data.forEach((row) => {
-                            if (new Date(row.published_at || 0).getTime() > Date.now()) return;
-                            const mapped = mapDbRowToArticle(row);
-                            if (mapped) {
-                                articles[row.id] = mapped;
-                            }
-                        });
-                    }
-                } catch (error) {
-                    console.warn('Supabase article detail fetch failed; using local fallback.', error);
-                }
-            }
+      if (!error && data && new Date(data.published_at || 0).getTime() <= Date.now()) {
+        const mapped = mapDbRowToArticle(data);
+        if (mapped) {
+          articles[data.id] = mapped;
+        }
+      }
+    } catch (error) {
+      console.warn('Supabase article detail fetch failed; using local fallback.', error);
+    }
+  }
 
             try {
                 const parsed = JSON.parse(localStorage.getItem('lightsoutSubmittedArticles') || '[]');

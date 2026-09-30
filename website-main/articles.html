@@ -7,6 +7,32 @@
   <link rel="icon" type="image/png" href="assets/images/insta logo.png">
   <link rel="stylesheet" href="css/articles.css">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Poppins:ital,wght@0,300;0,400;0,700&display=swap" rel="stylesheet">
+  <style>
+    .load-more-wrap {
+      display: flex;
+      justify-content: center;
+      padding: 24px 0 48px;
+    }
+    .load-more-btn {
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      padding: 12px 28px;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,0.15);
+      background: #ffffff;
+      cursor: pointer;
+      transition: transform 0.15s ease, opacity 0.15s ease;
+    }
+    .load-more-btn:hover {
+      transform: translateY(-1px);
+    }
+    .load-more-btn:disabled {
+      opacity: 0.5;
+      cursor: default;
+      transform: none;
+    }
+  </style>
 </head>
 
 <body>
@@ -47,13 +73,22 @@
   <button class="filter-btn" data-filter="F2">Formula 2</button>
   <button class="filter-btn" data-filter="F1A">Formula 1 Academy</button>
 </nav>
-<main class="news-grid-container"> 
 
+<main class="news-grid-container" id="newsGrid"></main>
+
+<div class="load-more-wrap" id="loadMoreWrap" style="display:none;">
+  <button class="load-more-btn" id="loadMoreBtn" type="button">Load more articles</button>
+</div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/runtime-config.js"></script>
   <script>
     const STORAGE_KEY = 'lightsoutSubmittedArticles';
+    const PAGE_SIZE = 24;
+
+    let currentOffset = 0;
+    let reachedEnd = false;
+    let isLoading = false;
 
     function normalizeRuntimeConfig(config = {}) {
       return {
@@ -71,10 +106,6 @@
       }
     }
 
-    function saveLocalArticles(articles) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(articles));
-    }
-
     function mapDbRowToArticle(row) {
       return {
         id: row.id || row.slug || 'untitled-article',
@@ -85,11 +116,8 @@
         author_pic: row.author_pic || 'assets/images/authors/eya-amri.jpg',
         category: row.category || 'news',
         image: row.image || 'assets/images/intro.png',
-          imageCaption: row.image_caption || '',
-          imageCredit: row.image_credit || '',
         seoTags: row.seo_tags || row.tags || '',
         tags: row.seo_tags || row.tags || '',
-        content: row.content || '',
         description: row.subtitle || row.description || '',
         publishedAt: row.published_at || new Date().toISOString(),
         published_at: row.published_at || new Date().toISOString(),
@@ -104,22 +132,20 @@
       ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
       : null;
 
-    async function fetchPublishedArticles() {
-      const getPublishedTimestamp = (article) => new Date(article.publishedAt || article.published_at || 0).getTime();
-      const isPublished = (article) => getPublishedTimestamp(article) <= Date.now();
-
+    // Fetches one page of already-published articles, newest first.
+    // Only requests the columns the card grid actually displays.
+    async function fetchArticlePage(offset, limit) {
       if (supabaseClient) {
         try {
           const { data, error } = await supabaseClient
-      .from('articles')
-      .select('id, title, subtitle, description, author_name, author_pic, category, image, published_at')
-      .order('published_at', { ascending: false });
+            .from('articles')
+            .select('id, title, subtitle, description, author_name, author_pic, category, image, published_at')
+            .lte('published_at', new Date().toISOString())
+            .order('published_at', { ascending: false })
+            .range(offset, offset + limit - 1);
 
           if (!error && data) {
-            return data
-              .map(mapDbRowToArticle)
-              .filter(isPublished)
-              .sort((a, b) => getPublishedTimestamp(b) - getPublishedTimestamp(a));
+            return data.map(mapDbRowToArticle);
           }
 
           if (error) {
@@ -130,91 +156,131 @@
         }
       }
 
-      return getLocalArticles().filter(isPublished).sort((a, b) => getPublishedTimestamp(b) - getPublishedTimestamp(a));
+      // Local fallback has no real pagination (it's a small, device-local list),
+      // so just return everything on the first page and nothing after that.
+      if (offset > 0) return [];
+      const isPublished = (article) =>
+        new Date(article.publishedAt || article.published_at || 0).getTime() <= Date.now();
+      return getLocalArticles()
+        .filter(isPublished)
+        .sort((a, b) => new Date(b.publishedAt || b.published_at) - new Date(a.publishedAt || a.published_at));
     }
 
-    async function renderPublishedArticles() {
-      const container = document.querySelector('.news-grid-container');
-      if (!container) return;
+    function articleCardHTML(article) {
+      const category = article.category || 'news';
+      const title = article.title || 'Untitled Article';
+      const description = article.subtitle || article.description || 'A freshly submitted story from the Lights Out newsroom.';
+      const image = article.image || 'assets/images/intro.png';
+      const publishedAt = article.publishedAt || article.published_at || new Date().toISOString();
+      const articleId = article.id || title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
 
-      const submitted = await fetchPublishedArticles();
-      container.querySelectorAll('.news-card[data-source="supabase"]').forEach((node) => node.remove());
-
-      const newestFirst = [...submitted].sort((a, b) => {
-        const left = new Date(a.publishedAt || a.published_at || 0).getTime();
-        const right = new Date(b.publishedAt || b.published_at || 0).getTime();
-        return right - left;
-      });
-
-      for (let index = newestFirst.length - 1; index >= 0; index -= 1) {
-        const article = newestFirst[index];
-        const card = document.createElement('article');
-        const category = article.category || 'news';
-        const title = article.title || 'Untitled Article';
-        const description = article.subtitle || article.description || 'A freshly submitted story from the Lights Out newsroom.';
-        const image = article.image || 'assets/images/intro.png';
-        const publishedAt = article.publishedAt || article.published_at || new Date().toISOString();
-        const articleId = article.id || title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-
-        card.className = 'news-card';
-        card.setAttribute('data-category', category);
-        card.setAttribute('data-source', 'supabase');
-        card.innerHTML = `
+      return `
+        <article class="news-card" data-category="${category}">
           <div class="card-image-box">
-            <a href="article.html?id=${articleId}">
-              <img src="${image}" alt="${title}">
+            <a href="article.html?id=${encodeURIComponent(articleId)}">
+              <img src="${image}" alt="${title.replace(/"/g, '&quot;')}">
             </a>
           </div>
           <div class="card-text-box">
-            <h3 class="card-title" style="font-family: 'Playfair Display', serif; font-size: 1.3rem; line-height: 1.4;">${title}</h3>
-            <p class="card-description" style="font-family: 'Playfair Display', serif; font-size: 0.75rem; line-height: 1.6;">${description}</p>
+            <h3 class="card-title">${title}</h3>
+            <p class="card-description">${description}</p>
             <span class="card-time" data-timestamp="${publishedAt}">Calculating time...</span>
           </div>
-        `;
-
-        container.prepend(card);
-      }
-
-      const updateTimeLabels = () => {
-        const timeLabels = document.querySelectorAll('.card-time');
-        const now = new Date();
-
-        timeLabels.forEach(label => {
-          const timestampStr = label.getAttribute('data-timestamp');
-          if (!timestampStr) return;
-          const postDate = new Date(timestampStr);
-          const secondsAgo = Math.floor((now - postDate) / 1000);
-
-          if (secondsAgo < 0) {
-            label.textContent = 'Just now';
-            return;
-          }
-
-          const intervals = { year: 31536000, month: 2592000, week: 604800, day: 86400, hour: 3600, minute: 60 };
-          let timeString = 'Just now';
-
-          for (const [unit, value] of Object.entries(intervals)) {
-            const count = Math.floor(secondsAgo / value);
-            if (count >= 1) {
-              timeString = `${count} ${unit}${count > 1 ? 's' : ''} ago`;
-              break;
-            }
-          }
-
-          if (timeString === 'Just now' && secondsAgo >= 1) {
-            timeString = `${secondsAgo} second${secondsAgo > 1 ? 's' : ''} ago`;
-          }
-
-          label.textContent = timeString;
-        });
-      };
-
-      updateTimeLabels();
+        </article>
+      `;
     }
 
-    renderPublishedArticles();
+    function updateTimeLabels() {
+      const now = new Date();
+      document.querySelectorAll('.card-time').forEach((label) => {
+        const timestampStr = label.getAttribute('data-timestamp');
+        if (!timestampStr) return;
+        const postDate = new Date(timestampStr);
+        const secondsAgo = Math.floor((now - postDate) / 1000);
+
+        if (secondsAgo < 0) {
+          label.textContent = 'Just now';
+          return;
+        }
+
+        const intervals = { year: 31536000, month: 2592000, week: 604800, day: 86400, hour: 3600, minute: 60 };
+        let timeString = 'Just now';
+
+        for (const [unit, value] of Object.entries(intervals)) {
+          const count = Math.floor(secondsAgo / value);
+          if (count >= 1) {
+            timeString = `${count} ${unit}${count > 1 ? 's' : ''} ago`;
+            break;
+          }
+        }
+
+        if (timeString === 'Just now' && secondsAgo >= 1) {
+          timeString = `${secondsAgo} second${secondsAgo > 1 ? 's' : ''} ago`;
+        }
+
+        label.textContent = timeString;
+      });
+    }
+
+    async function loadNextPage() {
+      if (isLoading || reachedEnd) return;
+      isLoading = true;
+
+      const loadMoreBtn = document.getElementById('loadMoreBtn');
+      const loadMoreWrap = document.getElementById('loadMoreWrap');
+      if (loadMoreBtn) {
+        loadMoreBtn.disabled = true;
+        loadMoreBtn.textContent = 'Loading...';
+      }
+
+      const grid = document.getElementById('newsGrid');
+      const batch = await fetchArticlePage(currentOffset, PAGE_SIZE);
+
+      if (batch.length > 0) {
+        grid.insertAdjacentHTML('beforeend', batch.map(articleCardHTML).join(''));
+        currentOffset += batch.length;
+        updateTimeLabels();
+        applyActiveFilter();
+      }
+
+      if (batch.length < PAGE_SIZE) {
+        reachedEnd = true;
+        if (loadMoreWrap) loadMoreWrap.style.display = 'none';
+      } else if (loadMoreWrap) {
+        loadMoreWrap.style.display = 'flex';
+        if (loadMoreBtn) {
+          loadMoreBtn.disabled = false;
+          loadMoreBtn.textContent = 'Load more articles';
+        }
+      }
+
+      isLoading = false;
+    }
+
+    function applyActiveFilter() {
+      const activeBtn = document.querySelector('.filter-btn.active');
+      const filter = activeBtn ? activeBtn.getAttribute('data-filter') : 'all';
+      document.querySelectorAll('#newsGrid .news-card').forEach((card) => {
+        const cats = (card.getAttribute('data-category') || '').split(' ');
+        card.style.display = (filter === 'all' || cats.includes(filter)) ? '' : 'none';
+      });
+    }
+
+    document.querySelectorAll('.filter-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn').forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+        applyActiveFilter();
+      });
+    });
+
+    document.getElementById('loadMoreBtn').addEventListener('click', loadNextPage);
+
+    // Refresh "time ago" labels every minute without re-fetching anything.
+    setInterval(updateTimeLabels, 60000);
+
+    loadNextPage();
   </script>
 
-</main>
 </body>
 </html>
