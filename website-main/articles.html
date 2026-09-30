@@ -985,9 +985,9 @@
       if (supabaseClient) {
         try {
           const { data, error } = await supabaseClient
-            .from('articles')
-            .select('*')
-            .order('published_at', { ascending: false });
+      .from('articles')
+      .select('id, title, subtitle, description, author_name, author_pic, category, image, published_at')
+      .order('published_at', { ascending: false });
 
           if (!error && data) {
             return data
