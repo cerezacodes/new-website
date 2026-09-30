@@ -345,7 +345,6 @@
     const scheduledCount = document.getElementById('scheduledCount');
     let currentArticles = [];
 
-    // ---------- Local fallback storage (never allowed to crash the app) ----------
     function getArticles() {
       try {
         const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
@@ -359,13 +358,11 @@
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(articles));
       } catch (error) {
-        // Large payloads (e.g. base64 images) can exceed browser storage quota.
-        // This must never break rendering, so we just log and move on.
+       
         console.warn('Could not cache articles locally (storage quota exceeded). This is safe to ignore.', error);
       }
     }
 
-    // ---------- Helpers ----------
     function slugify(value) {
       return (value || '')
         .toLowerCase()
@@ -408,7 +405,6 @@
       scheduledCount.textContent = String(scheduled.length);
     }
 
-    // ---------- Supabase operations ----------
     async function fetchArticlesFromSupabase() {
       if (!supabaseClient) {
         return getArticles();
@@ -467,7 +463,6 @@
       }
     }
 
-    // ---------- Rendering ----------
     function articleCardHTML(article, index) {
       return `
         <article class="article-card" data-index="${index}">
@@ -579,7 +574,6 @@
       articleList.innerHTML = articles.map((article, index) => articleCardHTML(article, index)).join('');
     }
 
-    // ---------- Event delegation (attached once, works for every render) ----------
     articleList.addEventListener('click', async (event) => {
       const deleteBtn = event.target.closest('[data-delete-index]');
       if (!deleteBtn) return;
@@ -663,7 +657,6 @@
       renderArticleCards(currentArticles);
     });
 
-    // ---------- App bootstrapping ----------
     async function renderArticles() {
       currentArticles = await fetchArticlesFromSupabase();
       renderArticleCards(currentArticles);

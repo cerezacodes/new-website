@@ -54,7 +54,6 @@
         </nav>
     </header>
   
-<!-- Category Filter Navigation Bar -->
 <nav class="filter-nav">
   <button class="filter-btn active" data-filter="all">All</button>
     <button class="filter-btn" data-filter="barcelona">Barcelona '26</button>
@@ -132,8 +131,6 @@
       ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
       : null;
 
-    // Fetches one page of already-published articles, newest first.
-    // Only requests the columns the card grid actually displays.
     async function fetchArticlePage(offset, limit) {
       if (supabaseClient) {
         try {
@@ -156,8 +153,6 @@
         }
       }
 
-      // Local fallback has no real pagination (it's a small, device-local list),
-      // so just return everything on the first page and nothing after that.
       if (offset > 0) return [];
       const isPublished = (article) =>
         new Date(article.publishedAt || article.published_at || 0).getTime() <= Date.now();
@@ -276,7 +271,6 @@
 
     document.getElementById('loadMoreBtn').addEventListener('click', loadNextPage);
 
-    // Refresh "time ago" labels every minute without re-fetching anything.
     setInterval(updateTimeLabels, 60000);
 
     loadNextPage();
