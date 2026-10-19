@@ -418,26 +418,17 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     async function fetchArticlesFromSupabase() {
       if (!supabaseClient) {
-        return getArticles();
+        throw new Error('Supabase is not configured. Check the deployment runtime configuration.');
       }
 
-      try {
-        const { data, error } = await supabaseClient
-          .from('articles')
-          .select('*')
-          .order('published_at', { ascending: false });
+      const { data, error } = await supabaseClient
+        .from('articles')
+        .select('*')
+        .order('published_at', { ascending: false });
 
-        if (error) throw error;
+      if (error) throw error;
 
-        if (!data || !data.length) {
-          return getArticles();
-        }
-
-        return data.map(mapDbRowToArticle);
-      } catch (error) {
-        console.warn('Supabase fetch failed, using localStorage fallback:', error);
-        return getArticles();
-      }
+      return (data || []).map(mapDbRowToArticle);
     }
 
     async function deleteArticleFromSupabase(article) {
@@ -669,8 +660,24 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     });
 
     async function renderArticles() {
-      currentArticles = await fetchArticlesFromSupabase();
-      renderArticleCards(currentArticles);
+      try {
+        currentArticles = await fetchArticlesFromSupabase();
+        renderArticleCards(currentArticles);
+      } catch (error) {
+        currentArticles = [];
+        articleCount.textContent = '—';
+        liveCount.textContent = '—';
+        scheduledCount.textContent = '—';
+        articleList.innerHTML = `
+          <div class="empty-state" role="alert">
+            <h3>Could not load articles.</h3>
+            <p id="articleLoadError"></p>
+          </div>
+        `;
+        articleList.querySelector('#articleLoadError').textContent =
+          error instanceof Error ? error.message : String(error);
+        console.error('Could not load articles from Supabase:', error);
+      }
     }
 
     function showAdmin() {
